@@ -1,4 +1,4 @@
-name: hotel_managment
+name: hotel_management
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   get: ^4.6.6
   supabase_flutter: ^1.10.24
+  intl: ^0.18.1
 
 
 dev_dependencies:

@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SupabaseController {
+class SupabaseDatabaseController {
   final supabase = Supabase.instance.client;
 
   getData() async {

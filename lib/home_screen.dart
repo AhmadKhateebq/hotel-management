@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_managment/util/const.dart';
+import 'package:hotel_management/util/const.dart';
+import 'package:hotel_management/util/date_formatter_util.dart';
+
 Color background = Colors.redAccent;
 
 class HomeScreen extends StatefulWidget {
@@ -36,9 +38,9 @@ homeScreen(BuildContext context) {
           child: Column(
             children: [
               Container(
-                color:background,
+                color: background,
                 height: (context.height) * (1 / 4),
-                child:  Padding(
+                child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 15),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +48,7 @@ homeScreen(BuildContext context) {
                       Align(
                           alignment: AlignmentDirectional.centerEnd,
                           child: Image.network(
-                           noImage,
+                            noImage,
                             width: 100,
                           )),
                       const Align(
@@ -68,7 +70,11 @@ homeScreen(BuildContext context) {
                 leading: const Icon(Icons.info),
                 title: const Text("more"),
                 onTap: () async {
-
+                  String now = DateFormatter.formatWithTime(DateTime.now());
+                  print(now);
+                  print(DateFormatter.parse(now));
+                  print(DateFormatter.parseWithTime(now));
+                  print(DateTime.now());
                 },
               ),
               ListTile(
@@ -77,22 +83,18 @@ homeScreen(BuildContext context) {
                   color: Colors.red,
                 ),
                 title: const Text("logout"),
-                onTap: () async {
-
-                },
+                onTap: () async {},
               ),
             ],
           )),
       body: const Center(
         child: Text('Hotel'),
       ),
-      floatingActionButton:FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         // title: Text("add".tr),
         backgroundColor: background,
         child: const Icon(Icons.add, color: Colors.black),
-        onPressed: () async {
-
-        },
+        onPressed: () async {},
       ),
     ),
   );

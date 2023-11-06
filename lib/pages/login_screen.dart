@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/component/google_sign_in_button.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
+import 'package:hotel_management/controller/database_controller.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -41,13 +42,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _setupAuthListener() {
-    subscription = authController.initWithData((data) {
+    subscription = authController.setSubscription((data) async {
       final event = data.event;
       if (event == AuthChangeEvent.signedIn) {
         authController.session = data.session;
         authController.user = data.session!.user;
         if (context.mounted) {
-          Get.toNamed('/home');
+          Get.toNamed('/loading');
+          await (Get.find<SupabaseDatabaseController>().getCustomerDetails(authController.user!.id));
         }
       }
     });
@@ -63,32 +65,32 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 ClipRect(
                     child: Image.asset(
-                      'assets/st_barth.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
+                  'assets/st_barth.jpg',
+                  fit: BoxFit.fill,
+                  height: Get.height / 4,
+                  width: Get.width,
+                )),
                 ClipRect(
                     child: Image.asset(
-                      'assets/maldives.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
+                  'assets/maldives.jpg',
+                  fit: BoxFit.fill,
+                  height: Get.height / 4,
+                  width: Get.width,
+                )),
                 ClipRect(
                     child: Image.asset(
-                      'assets/thailand.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
+                  'assets/thailand.jpg',
+                  fit: BoxFit.fill,
+                  height: Get.height / 4,
+                  width: Get.width,
+                )),
                 ClipRect(
                     child: Image.asset(
-                      'assets/thailand.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
+                  'assets/thailand.jpg',
+                  fit: BoxFit.fill,
+                  height: Get.height / 4,
+                  width: Get.width,
+                )),
               ],
             ),
             Center(
@@ -99,8 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: const BorderRadius.all(Radius.circular(20))),
                 height: Get.height * (2 / 3),
                 width: Get.width * (7 / 8),
-                child:Obx(()=>
-                loading.value ? loadingWidget() : loginForm()),
+                child: Obx(() => loading.value ? loadingWidget() : loginForm()),
               ),
             ),
           ],
@@ -117,12 +118,14 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Center(
                 child: Image.asset(
-                  'assets/hotel_logo.png',
-                  scale: 3,
-                )),
+              'assets/hotel_logo.png',
+              scale: 3,
+            )),
             TextFormField(
               controller: _emailController,
               decoration: const InputDecoration(
+                  floatingLabelStyle:
+                      TextStyle(color: Colors.black, fontSize: 18),
                   labelText: 'Email',
                   filled: true,
                   fillColor: Colors.white60,
@@ -138,28 +141,35 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 5,
             ),
-            Obx(()=>TextFormField(
-              obscureText: !showPassword,
-              enableSuggestions: false,
-              autocorrect: false,
-              controller: _passwordController,
-              decoration:  InputDecoration(
-                  suffixIcon: IconButton(onPressed: (){
-                    showPassword = !showPassword;
-                    eyeClicked.value = !eyeClicked.value;
-                  }, icon: eyeClicked.value?const Icon(Icons.visibility):const Icon(Icons.visibility_off)),
-                  labelText: 'Password',
-                  filled: true,
-                  fillColor: Colors.white60,
-                  border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            )),
+            Obx(() => TextFormField(
+                  obscureText: !showPassword,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                      floatingLabelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 18),
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            showPassword = !showPassword;
+                            eyeClicked.value = !eyeClicked.value;
+                          },
+                          icon: eyeClicked.value
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off)),
+                      labelText: 'Password',
+                      filled: true,
+                      fillColor: Colors.white60,
+                      border: const OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(10.0)))),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                )),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               alignment: Alignment.center,
@@ -171,14 +181,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(20))),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    _signIn();
+                    if(isLogin.value){
+                      _signIn();
+                    }else{
+                      _register();
+                    }
                   }
                 },
-                child:Obx(()=>
-                    isLogin.value
-                        ? buildText('Sign In')
-                        : buildText('Register')
-                ),
+                child: Obx(() => isLogin.value
+                    ? buildText('Sign In')
+                    : buildText('Register')),
               ),
             ),
             const Center(child: GoogleSignInButton()),
@@ -188,11 +200,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   isLogin.value = !isLogin.value;
                 },
-                child:Obx(()=>
-                isLogin.value
-                    ? buildText('don\'t have an account yet? Register', color: Colors.white60,fontSize: 15)
-                    : buildText('do you have an account? Log in', color: Colors.white60,fontSize: 15)
-                ),
+                child: Obx(() => isLogin.value
+                    ? buildText('don\'t have an account yet? Register',
+                        color: Colors.white60, fontSize: 15)
+                    : buildText('do you have an account? Log in',
+                        color: Colors.white60, fontSize: 15)),
               ),
             )
           ],
@@ -202,14 +214,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget loadingWidget() {
-    return const Center(child: CircularProgressIndicator(),);
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
   }
-  Text buildText(String text,{Color? color,double? fontSize}){
+
+  Text buildText(String text, {Color? color, double? fontSize}) {
     return Text(
       text,
       style: TextStyle(
-        fontSize: fontSize??20,
-        color: color??Colors.black54,
+        fontSize: fontSize ?? 20,
+        color: color ?? Colors.black54,
         fontWeight: FontWeight.w600,
       ),
     );
@@ -219,18 +234,22 @@ class _LoginScreenState extends State<LoginScreen> {
     authController.signUp(
       email: _emailController.text,
       password: _passwordController.text,
-    );
+    ).then((value) => setState((){
+      // print(value.toString());
+    }));
     setState(() {
       loading.value = true;
     });
   }
 
   void _signIn() async {
-    authController.signIn(
+    authController
+        .signIn(
       email: _emailController.text,
       password: _passwordController.text,
-    ).then((value){
-      if(value!='true'){
+    )
+        .then((value) {
+      if (value != 'true') {
         loading.value = false;
         Get.snackbar(value, 'login failed');
       }

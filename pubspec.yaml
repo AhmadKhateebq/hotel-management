@@ -39,6 +39,8 @@ dependencies:
   supabase_flutter: ^1.10.24
   intl: ^0.18.1
   google_sign_in: ^6.1.5
+  loading_indicator: ^3.1.1
+  image_picker: ^1.0.4
 
 
 dev_dependencies:

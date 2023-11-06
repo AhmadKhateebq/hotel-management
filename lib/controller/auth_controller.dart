@@ -5,46 +5,66 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hotel_management/controller/database_controller.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SupabaseAuthController extends GetxController{
+class SupabaseAuthController extends GetxController {
   final _supabase = Supabase.instance.client;
   User? user;
   Session? session;
   late final StreamSubscription _authSubscription;
-  init(){
+  final SupabaseDatabaseController databaseController = Get.find();
+  final GoogleSignIn googleSignInPlatform = GoogleSignIn(
+    clientId: iosClientId,
+    serverClientId: webClientId,
+  );
+  init() {
+    // databaseController  = Get.find();
+  }
+
+  setSubscriptionLog() {
     a(AuthState data) {
       final AuthChangeEvent event = data.event;
       session = data.session;
-      log(event.toString(),name: 'event');
+      log(event.toString(), name: 'event');
     }
+
     _authSubscription = _supabase.auth.onAuthStateChange.listen(a);
   }
-  StreamSubscription<AuthState>initWithData(void Function(AuthState) onData){
+
+  StreamSubscription<AuthState> setSubscription(
+      void Function(AuthState) onData) {
     // _authSubscription =
-        return _supabase.auth.onAuthStateChange.listen(onData);
+    return _supabase.auth.onAuthStateChange.listen(onData);
   }
-  endSubscription(){
+
+  endSubscription() {
     _authSubscription.cancel();
   }
-  resumeSubscription(){
+
+  resumeSubscription() {
     _authSubscription.resume();
   }
-  pauseSubscription(){
+
+  pauseSubscription() {
     _authSubscription.pause();
   }
-  signUp({required String email, required String password}) async {
+
+  Future<AuthResponse> signUp(
+      {required String email, required String password}) async {
     final AuthResponse res = await _supabase.auth.signUp(
       email: email,
       password: password,
     );
     session = res.session;
     user = res.user;
-
+    return res;
   }
-  Future<String> signIn({required String email,required String password}) async {
-    try{
+
+  Future<String> signIn(
+      {required String email, required String password}) async {
+    try {
       final AuthResponse res = await _supabase.auth.signInWithPassword(
         email: email,
         password: password,
@@ -52,12 +72,14 @@ class SupabaseAuthController extends GetxController{
       session = res.session;
       user = res.user;
       return 'true';
-    }catch(e,s){
+    } catch (e, s) {
       String message = (e as AuthException).message;
-      print(message);
+      log(message);
+      printError(info: s.toString());
       return message;
     }
   }
+
   signInWithOtp(String email) async {
     await _supabase.auth.signInWithOtp(
       email: email,
@@ -66,18 +88,22 @@ class SupabaseAuthController extends GetxController{
     session = _supabase.auth.currentSession;
     user = _supabase.auth.currentUser;
   }
+
   signInWithGoogle(BuildContext context) async {
-    await _supabase.auth.signInWithOAuth(Provider.google,context: context,authScreenLaunchMode: LaunchMode.inAppWebView);
+    await _supabase.auth.signInWithOAuth(Provider.google,
+        context: context, authScreenLaunchMode: LaunchMode.inAppWebView);
   }
+
   signOut() async {
     await _supabase.auth.signOut();
+    if(await googleSignInPlatform.isSignedIn()){
+      googleSignInPlatform.signOut();
+    }
+
   }
+
   Future<AuthResponse> googleSignIn() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: iosClientId,
-      serverClientId: webClientId,
-    );
-    final googleUser = await googleSignIn.signIn();
+    final googleUser = await googleSignInPlatform.signIn();
     final googleAuth = await googleUser!.authentication;
     final accessToken = googleAuth.accessToken;
     final idToken = googleAuth.idToken;
@@ -94,9 +120,11 @@ class SupabaseAuthController extends GetxController{
     );
   }
 
-
-  Future<AuthResponse> signInWithIdToken({required Provider provider, required String idToken, required String accessToken}) async {
-    AuthResponse res =  await _supabase.auth.signInWithIdToken(
+  Future<AuthResponse> signInWithIdToken(
+      {required Provider provider,
+      required String idToken,
+      required String accessToken}) async {
+    AuthResponse res = await _supabase.auth.signInWithIdToken(
       provider: Provider.google,
       idToken: idToken,
       accessToken: accessToken,

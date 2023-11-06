@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/util/const.dart';
-import 'package:hotel_management/util/date_formatter_util.dart';
+import 'package:hotel_management/controller/database_controller.dart';
+import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Color background = Colors.redAccent;
@@ -16,9 +16,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final SupabaseAuthController authController = Get.find();
+  final SupabaseDatabaseController databaseController = Get.find();
   late final User user;
   late final String profileImageUrl;
   late final String fullName;
+  late final ROLE role;
 
   @override
   void initState() {
@@ -97,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () async {
                     await authController.signOut();
                     if (context.mounted) {
-                      Get.offAllNamed( '/login');
+                      Get.offAllNamed('/login');
                     }
                   },
                 ),
@@ -106,19 +108,40 @@ class _HomeScreenState extends State<HomeScreen> {
         body: const Center(
           child: Text('Hotel'),
         ),
-        floatingActionButton: FloatingActionButton(
-          // title: Text("add".tr),
-          backgroundColor: background,
-          child: const Icon(Icons.add, color: Colors.black),
-          onPressed: () async {},
-        ),
+        floatingActionButton: getFloatingActionButton(),
       ),
+    );
+  }
+
+  FloatingActionButton getFloatingActionButton() {
+    return (role == ROLE.reception ||
+        role== ROLE.admin) ?
+    FloatingActionButton(
+      // title: Text("add".tr),
+      backgroundColor: background,
+      onPressed: floatingActionOnClick,
+      child: const Icon(Icons.add, color: Colors.black),
+    ) : FloatingActionButton(
+        backgroundColor: background,
+        onPressed: () {}
     );
   }
 
   getUserData() {
     user = authController.user!;
-    profileImageUrl = user.userMetadata?['avatar_url'];
-    fullName = user.userMetadata?['full_name'];
+    profileImageUrl = user.userMetadata?['avatar_url'] != null
+        ? user.userMetadata!['avatar_url']
+        : databaseController.currentCustomerDetails.pictureUrl ??
+        'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
+    fullName = user.userMetadata?['full_name'] != null
+        ? user.userMetadata!['full_name']
+        : '${databaseController.currentCustomerDetails
+        .firstName} ${databaseController.currentCustomerDetails.lastName}';
+    role = databaseController.currentCustomerRole;
+
+  }
+
+  floatingActionOnClick() async {
+
   }
 }

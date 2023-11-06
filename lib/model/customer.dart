@@ -1,18 +1,27 @@
 import 'dart:convert';
 
-class Customer {
-  int id;
-  bool reserving;
-  String username;
+import 'package:hotel_management/util/util_classes.dart';
 
-  Customer({required this.id, required this.reserving, required this.username});
+
+class Customer {
+  String id;
+  bool reserving;
+  ROLE role;
+  String fullName;
+
+  Customer(
+      {required this.id,
+      required this.reserving,
+      required this.fullName,
+      required this.role});
 
   factory Customer.fromJson(String json) {
     final data = jsonDecode(json);
     return Customer(
       id: data['id'],
       reserving: data['reserving'],
-      username: data['username'],
+      fullName: data['full_name'],
+      role: data['role'],
     );
   }
 
@@ -21,13 +30,15 @@ class Customer {
     return Customer(
       id: data['id'],
       reserving: data['reserving'],
-      username: data['username'],
+      fullName: data['full_name'],
+      role: data['role'],
     );
   }
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'reserving': reserving,
-        'username': username,
+        'full_name': fullName,
+        'role': role,
       };
 }

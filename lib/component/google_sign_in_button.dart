@@ -34,15 +34,15 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Image(
+                    _isSigningIn
+                        ? const CircularProgressIndicator()
+                        :const Image(
                       image: AssetImage("assets/google_logo.png"),
                       height: 35.0,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: _isSigningIn
-                          ? const CircularProgressIndicator()
-                          :const Text(
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
                         'Sign in with Google',
                         style: TextStyle(
                           fontSize: 20,

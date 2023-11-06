@@ -9,8 +9,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseDatabaseController {
   final _supabase = Supabase.instance.client;
   late CustomerDetails currentCustomerDetails;
-  late ROLE currentCustomerRole;
+  late ROLE _currentCustomerRole;
 
+
+  ROLE get currentCustomerRole => _currentCustomerRole;
 
   Future<void> _saveCustomerDetails(CustomerDetails details) async {
     await _supabase.from('customer_details').insert(details);
@@ -64,7 +66,7 @@ class SupabaseDatabaseController {
         .select('*')
         .eq('customer_id', customerId);
     currentCustomerDetails = CustomerDetails.fromDynamicMap(a[0]);
-    currentCustomerRole = Role.fromString(ids[0]['role']);
+    _currentCustomerRole = Role.fromString(ids[0]['role']);
     Get.offAllNamed('/home');
   }
 

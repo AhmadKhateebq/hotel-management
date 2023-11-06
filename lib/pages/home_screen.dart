@@ -47,11 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   homeScreen() {
-    return  const Center(
+    return const Center(
       child: RoomsListView(),
     );
   }
-  getDrawer(){
+
+  getDrawer() {
     return Drawer(
         elevation: 10,
         width: (context.width) * (3 / 4),
@@ -91,13 +92,16 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 10,
             ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text("more"),
-              onTap: () async {
-                Get.to( const ScaffoldBuilder(body: RequestsListView(), title: 'requests'));
-              },
-            ),
+            databaseController.currentCustomerRole == ROLE.customer
+                ? const SizedBox()
+                : ListTile(
+                    leading: const Icon(Icons.info),
+                    title: const Text("more"),
+                    onTap: () async {
+                      Get.to(const ScaffoldBuilder(
+                          body: RequestsListView(), title: 'requests'));
+                    },
+                  ),
             ListTile(
               leading: const Icon(
                 Icons.logout,

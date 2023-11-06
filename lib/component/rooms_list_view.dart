@@ -16,6 +16,7 @@ class RoomsListView extends StatefulWidget {
 class _RoomsListViewState extends State<RoomsListView> {
   final SupabaseDatabaseController databaseController = Get.find();
   late Stream<List<Map<String, dynamic>>> _stream;
+  int currentFloor = 0;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _RoomsListViewState extends State<RoomsListView> {
           print(snapshot.data);
           List<Room> rooms =
               snapshot.data?.map((e) => Room.fromDynamicMap(e)).toList() ?? [];
+          rooms.sort();
           return ListView.builder(
             itemCount: rooms.length,
             itemBuilder: (context, index) {
@@ -41,27 +43,50 @@ class _RoomsListViewState extends State<RoomsListView> {
         });
   }
 
-  ListTile listTileBuilder(Room room) {
-
+  Widget listTileBuilder(Room room) {
+    var floor = int.parse(room.roomId.replaceAll(RegExp(r'[^0-9]'), ''));
+    if (floor != currentFloor) {
+      currentFloor = floor;
+      return Column(
+        children: [
+          const Divider(
+              color: Colors.black,
+            thickness: 2,
+          ),
+          Text('floor $currentFloor'),
+          const Divider(
+            color: Colors.black,
+            thickness: 2,
+          ),
+          ListTile(
+            title: Text(room.roomId),
+            subtitle: Text(room.reserved ? "Reserved" : "Free"),
+            onTap: () => listTileOnTap(room.roomId),
+          )
+        ],
+      );
+    }
     return ListTile(
       title: Text(room.roomId),
-      subtitle: Text(room.reserved?"Reserved":"Free"),
+      subtitle: Text(room.reserved ? "Reserved" : "Free"),
       onTap: () => listTileOnTap(room.roomId),
     );
   }
 
   listTileOnTap(String roomId) async {
+    print(roomId);
+  }
+  reserveRoom(String roomId,DateTime startingDate,DateTime endingDate,) async {
     if (databaseController.currentCustomerRole == ROLE.customer) {
       RoomRequest request = RoomRequest(
           id: 0,
           time: DateTime.now(),
-          startingDate: DateTime.now(),
-          endingDate: DateTime.now().add(const Duration(days: 120)),
+          startingDate: startingDate,
+          endingDate: endingDate,
           status: STATUS.pending,
           roomId: roomId,
           customerId: databaseController.currentCustomerDetails.customerId);
       await Get.find<RoomRequestController>().addRoomRequest(request);
     }
-    print(roomId);
   }
 }

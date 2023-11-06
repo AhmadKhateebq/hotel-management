@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class Room {
+class Room implements Comparable {
   String roomId;
   bool reserved;
 
@@ -30,4 +30,26 @@ class Room {
   }
 
   Map<String, dynamic> toJson() => {'room_id': roomId, 'reserved': reserved};
+
+  @override
+  int compareTo(other) {
+    final aFloor = roomId.replaceAll(RegExp(r'[^0-9]'), '');
+    final bFloor = other.roomId.replaceAll(RegExp(r'[^0-9]'), '');
+    if (aFloor != bFloor) {
+      return aFloor.compareTo(bFloor);
+    }
+    if (reserved) {
+      if (other.reserved) {
+        return 0;
+      }
+      return 2;
+    }
+    if (other.reserved) {
+      if (reserved) {
+        return 0;
+      }
+      return -2;
+    }
+    return roomId.compareTo(other.roomId);
+  }
 }

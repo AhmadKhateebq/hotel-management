@@ -1,4 +1,3 @@
-
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/model/customer.dart';
@@ -11,6 +10,7 @@ class SupabaseDatabaseController {
   final _supabase = Supabase.instance.client;
   late CustomerDetails currentCustomerDetails;
   late ROLE currentCustomerRole;
+
 
   Future<void> _saveCustomerDetails(CustomerDetails details) async {
     await _supabase.from('customer_details').insert(details);
@@ -47,19 +47,16 @@ class SupabaseDatabaseController {
       if (await Get.find<SupabaseAuthController>()
           .googleSignInPlatform
           .isSignedIn()) {
-        var metadata = Get.find<SupabaseAuthController>()
-            .user!
-            .userMetadata!;
-        await Get.toNamed('/add_customer', arguments: {
+        var metadata = Get.find<SupabaseAuthController>().user!.userMetadata!;
+        await Get.offNamed('/add_customer', arguments: {
           'firstName': metadata['full_name'].split(' ').first,
           'lastName': metadata['full_name'].split(' ').last,
           'imageUrl': metadata['avatar_url'],
         });
-      }else{
-        await Get.toNamed('/add_customer');
+      } else {
+        await Get.offNamed('/add_customer');
       }
-      ids =
-      await _supabase.from('customer').select('*').eq('id', id);
+      ids = await _supabase.from('customer').select('*').eq('id', id);
     }
     String customerId = ids[0]['id'];
     var a = await _supabase
@@ -75,8 +72,7 @@ class SupabaseDatabaseController {
       {required String firstName,
       required String lastName,
       required DateTime dateOfBirth,
-        String? imageUrl
-      }) async {
+      String? imageUrl}) async {
     var user = Get.find<SupabaseAuthController>().user;
     var customerId = user!.id;
     String email = user.email!;
@@ -86,17 +82,26 @@ class SupabaseDatabaseController {
         lastName: lastName,
         email: email,
         dateOfBirth: dateOfBirth,
-      pictureUrl: imageUrl??noImage
-    );
+        pictureUrl: imageUrl ?? noImage);
     Customer customer = Customer(
-        id: customerId, reserving: false, fullName: '$firstName $lastName', role: ROLE.customer);
+        id: customerId,
+        reserving: false,
+        fullName: '$firstName $lastName',
+        role: ROLE.customer);
     if (!(await _customerExists(customerId))) {
       await _saveCustomer(customer);
     }
     await Get.find<SupabaseDatabaseController>()._saveCustomerDetails(details);
   }
+
+  Stream<List<Map<String, dynamic>>> getRoomsStream() {
+    return _supabase.from('room').stream(primaryKey: ['room_id']);
+  }
+
+
 }
 
+// ignore: unused_element
 class _Methods extends SupabaseDatabaseController {
   getData() async {
     final data = await _supabase.from('cities').select('name');

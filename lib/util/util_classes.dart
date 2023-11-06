@@ -1,5 +1,5 @@
 enum ROLE { customer, admin, reception }
-
+enum STATUS { pending, approved, denied, reserved }
 class Role {
   static const customer = ROLE.customer;
   static const admin = ROLE.admin;

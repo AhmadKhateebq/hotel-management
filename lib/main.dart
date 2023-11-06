@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/controller/database_controller.dart';
+import 'package:hotel_management/controller/requests_controller.dart';
 import 'package:hotel_management/pages/add_new_customer.dart';
 import 'package:hotel_management/pages/login_screen.dart';
 import 'package:hotel_management/pages/profile_screen.dart';
@@ -18,6 +19,7 @@ void main() async{
     anonKey: publicAnonKey,
   );
   Get.put(SupabaseDatabaseController());
+  Get.put(RoomRequestController());
   Get.put(SupabaseAuthController());
   runApp( GetMaterialApp(
     getPages:[

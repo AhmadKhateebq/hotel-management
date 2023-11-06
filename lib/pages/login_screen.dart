@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   var showPassword = false;
   var eyeClicked = false.obs;
   var isLogin = true.obs;
-
+  GoogleSignInButton button = GoogleSignInButton();
   @override
   void initState() {
     _setupAuthListener();
@@ -49,7 +49,12 @@ class _LoginScreenState extends State<LoginScreen> {
         authController.user = data.session!.user;
         if (context.mounted) {
           Get.toNamed('/loading');
-          await (Get.find<SupabaseDatabaseController>().getCustomerDetails(authController.user!.id));
+          try{
+            await (Get.find<SupabaseDatabaseController>().getCustomerDetails(authController.user!.id));
+          }catch(e){
+            button.rebuild();
+            authController.signOut();
+          }
         }
       }
     });
@@ -193,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     : buildText('Register')),
               ),
             ),
-            const Center(child: GoogleSignInButton()),
+            Center(child: button),
             Container(
               alignment: Alignment.center,
               child: TextButton(
@@ -256,4 +261,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     loading.value = true;
   }
+
+
 }

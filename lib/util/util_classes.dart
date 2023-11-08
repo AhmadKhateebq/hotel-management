@@ -1,4 +1,4 @@
-enum ROLE { customer, admin, reception }
+enum ROLE { customer, admin, reception ,}
 enum STATUS { pending, approved, denied, reserved }
 class Role {
   static const customer = ROLE.customer;
@@ -14,6 +14,17 @@ class Role {
       return resp;
     } else {
       return customer;
+    }
+  }
+  static String roleToString(ROLE role) {
+    if (role == ROLE.customer) {
+      return 'customer';
+    } else if (role == ROLE.admin) {
+      return 'admin';
+    } else if (role == ROLE.reception) {
+      return 'reception';
+    } else {
+      return 'customer';
     }
   }
 }

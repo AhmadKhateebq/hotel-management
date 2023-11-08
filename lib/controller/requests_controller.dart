@@ -6,16 +6,35 @@ class RoomRequestController {
   final _requestsSupabase = Supabase.instance.client.from('request');
   final _roomSupabase = Supabase.instance.client.from('room');
 
-  addRoomRequest(RoomRequest request) async {
-    await _requestsSupabase.insert(request);
+  Future<bool> addRoomRequest(RoomRequest request) async {
+    var a = await _requestsSupabase
+        .select('*')
+        .eq('customer_id', request.customerId)
+        .eq('room_id', request.roomId);
+    try {
+      var temp = RoomRequest.fromDynamic(a[0]);
+      if (matchDates(temp.startingDate, request.startingDate, false) &&
+          matchDates(temp.endingDate, request.endingDate, true) &&
+          (temp.status == STATUS.denied ||
+          temp.status == STATUS.pending ||
+          temp.status == STATUS.approved)) {
+        return false;
+      }
+    } catch (e) {
+      await _requestsSupabase.insert(request);
+    }
+    return true;
+  }
+
+  bool matchDates(DateTime first, DateTime second, bool depart) {
+    return true;
   }
 
   _updateStatus(List<int> ids) async {
-    var a = await _requestsSupabase
+    await _requestsSupabase
         .update({'status': 'reserved'})
         .in_('id', ids)
         .select();
-    print(a.toString());
   }
 
   Future<List<dynamic>> _getAllRequestsWithRoomId(String roomId) async {

@@ -163,7 +163,7 @@ class _AddCustomerState extends State<AddCustomer> {
     DateTime dateOfBirth = DateFormatter.parse(dateController.text);
     print(dateOfBirth.toString());
     print(imageUrl);
-    await Get.find<SupabaseDatabaseController>().save(
+    await Get.find<SupabaseDatabaseController>().saveCustomer(
         firstName: firstName,
         lastName: lastName,
         dateOfBirth: dateOfBirth,
@@ -172,8 +172,6 @@ class _AddCustomerState extends State<AddCustomer> {
   }
 
   skip() async {
-    await Get.find<SupabaseDatabaseController>()
-        .save(firstName: 'john', lastName: 'doe', dateOfBirth: DateTime.now());
     Get.back();
   }
 }

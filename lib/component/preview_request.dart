@@ -12,7 +12,9 @@ class PreviewRequest extends StatelessWidget {
       required this.requestTime,
       required this.roomId,
       required this.requestId,
-      required this.status, required this.controller});
+      required this.status,
+      required this.controller});
+
   final String customerId;
   final String requestId;
   final String startingDate;
@@ -21,9 +23,20 @@ class PreviewRequest extends StatelessWidget {
   final String roomId;
   final String status;
   final RoomRequestController controller;
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldBuilder(
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: const Icon(Icons.close)),
+        backgroundColor: Colors.redAccent,
+        title: Text('Room $roomId Requests'),
+        centerTitle: true,
+      ),
       title: "$roomId request",
       body: SizedBox.expand(
         child: Column(
@@ -40,26 +53,33 @@ class PreviewRequest extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 OutlinedButton(onPressed: deny, child: const Text('deny')),
-                const SizedBox(width: 10,),
-                OutlinedButton(onPressed: approve, child: const Text('Approve')),
+                const SizedBox(
+                  width: 10,
+                ),
+                OutlinedButton(
+                    onPressed: approve, child: const Text('Approve')),
               ],
             ),
-            OutlinedButton(onPressed: autoApprove, child: const Text('Auto Approve')),
+            OutlinedButton(
+                onPressed: autoApprove, child: const Text('Auto Approve')),
           ],
         ),
       ),
     );
   }
-  approve(){
-    controller.approve(int.parse(requestId),roomId);
+
+  approve() {
+    controller.approve(int.parse(requestId), roomId);
     Get.back();
   }
-  autoApprove(){
+
+  autoApprove() {
     controller.autoApprove(roomId);
     Get.back();
   }
-  deny(){
-    controller.deny(int.parse(requestId),roomId);
+
+  deny() {
+    controller.deny(int.parse(requestId), roomId);
     Get.back();
   }
 }

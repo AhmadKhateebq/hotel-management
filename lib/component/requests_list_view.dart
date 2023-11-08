@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/component/preview_request.dart';
+import 'package:hotel_management/component/preview_requests_details.dart';
 import 'package:hotel_management/controller/requests_controller.dart';
 import 'package:hotel_management/model/request.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
+import 'package:hotel_management/util/util_classes.dart';
 
 class RequestsListView extends StatefulWidget {
-  const RequestsListView({super.key});
+  const RequestsListView(
+      {super.key, this.pending, this.approved, this.intertwined, this.denied});
+
+  final bool? pending;
+
+  final bool? approved;
+
+  final bool? intertwined;
+
+  final bool? denied;
 
   @override
   State<RequestsListView> createState() => _RequestsListViewState();
@@ -29,35 +40,60 @@ class _RequestsListViewState extends State<RequestsListView> {
         builder: (context, snapshot) {
           List<RoomRequest> requests = snapshot.data
                   ?.map((e) => RoomRequest.fromDynamicMap(e))
+                  .where(filterRequests)
                   .toList() ??
               [];
           return ListView.builder(
             itemCount: requests.length,
             itemBuilder: (context, index) {
               RoomRequest request = requests[index];
-              return listTileBuilder(request);
+              return listTileBuilder(request,index,requests);
             },
           );
         });
   }
 
-  ListTile listTileBuilder(RoomRequest request) {
-    return ListTile(
-      title: Text('room ${request.roomId}'),
-      subtitle: Text(RoomRequest.getStatusString(request.status)),
-      onTap: () => listTileOnTap(request),
+  bool filterRequests(RoomRequest request) {
+    bool a = true;
+    if(widget.approved??false){
+      a = request.status == STATUS.approved;
+    }
+    if(widget.pending??false){
+      a = request.status == STATUS.pending;
+    }
+    if(widget.intertwined??false){
+      a = request.status == STATUS.reserved;
+    }
+    if(widget.denied??false){
+      a = request.status == STATUS.denied;
+    }
+    return a;
+  }
+
+  Widget listTileBuilder(RoomRequest request,int index,List<RoomRequest> requests) {
+    return Card(
+      child: ListTile(
+        title: Text('Room ${request.roomId}'),
+        subtitle: Text('Made On:${DateFormatter.formatWithTime(request.time)}'),
+        trailing: Text('${DateFormatter.format(request.startingDate)} - ${DateFormatter.format(request.endingDate)}'),
+        onTap: () => listTileOnTap(request,index,requests),
+      ),
     );
   }
 
-  listTileOnTap(RoomRequest request) async {
-    Get.to(preview(request));
+  listTileOnTap(RoomRequest request,int index,List<RoomRequest> requests) async {
+    Get.to(() =>RequestsPreviewList(list: requests,initialPage: index,) );
+    // Get.to(preview(request));
   }
+
   preview(RoomRequest request) => PreviewRequest(
-    customerId: request.customerId,
-    startingDate: DateFormatter.formatWithTime(request.startingDate),
-    endingDate: DateFormatter.formatWithTime(request.endingDate),
-    requestTime: DateFormatter.formatWithTime(request.time),
-    roomId: request.roomId,
-    requestId: request.id.toString(),
-    status: RoomRequest.getStatusString(request.status), controller: Get.find(),);
+        customerId: request.customerId,
+        startingDate: DateFormatter.formatWithTime(request.startingDate),
+        endingDate: DateFormatter.formatWithTime(request.endingDate),
+        requestTime: DateFormatter.formatWithTime(request.time),
+        roomId: request.roomId,
+        requestId: request.id.toString(),
+        status: RoomRequest.getStatusString(request.status),
+        controller: Get.find(),
+      );
 }

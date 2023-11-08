@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/component/requests_list_view.dart';
 import 'package:hotel_management/component/rooms_list_view.dart';
 import 'package:hotel_management/component/scaffold_widget.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/controller/database_controller.dart';
+import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -36,19 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
         child: ScaffoldBuilder(
             body: homeScreen(),
-            title: 'hotel management',
+            title: 'Available Rooms ',
             drawer: getDrawer(),
-            floatingChild: (role == ROLE.reception || role == ROLE.admin)
-                ? const Icon(Icons.add)
-                : null,
-            onPressed: (role == ROLE.reception || role == ROLE.admin)
-                ? floatingActionOnClick
-                : null));
+          floatingActionButton: getFloatingActionButton(),
+    ));
   }
 
   homeScreen() {
-    return const Center(
-      child: RoomsListView(),
+    return Center(
+      child: RoomsListView(
+        startDate: databaseController.start,
+        endDate: databaseController.end,
+      ),
     );
   }
 
@@ -85,6 +84,29 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Text(
+                        'From ${DateFormatter.format(databaseController.start)} To ${DateFormatter.format(databaseController.end)}',
+                        style: const TextStyle(
+                            fontSize: 14, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Text(
+                        role == ROLE.customer
+                            ? 'Customer'
+                            : role == ROLE.reception
+                                ? 'Reception'
+                                : 'Admin',
+                        style: const TextStyle(
+                            fontSize: 14, fontStyle: FontStyle.italic),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -92,14 +114,22 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 10,
             ),
+            ListTile(
+              leading: const Icon(Icons.date_range),
+              title: const Text("select dates"),
+              onTap: () async {
+                Future.delayed(const Duration(seconds: 1));
+                await pickDates();
+                setState(() {});
+              },
+            ),
             databaseController.currentCustomerRole == ROLE.customer
                 ? const SizedBox()
                 : ListTile(
-                    leading: const Icon(Icons.info),
-                    title: const Text("more"),
+                    leading: const Icon(Icons.request_page),
+                    title: const Text('To Requests'),
                     onTap: () async {
-                      Get.to(const ScaffoldBuilder(
-                          body: RequestsListView(), title: 'requests'));
+                      Get.offAllNamed('/recep_home');
                     },
                   ),
             ListTile(
@@ -119,15 +149,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  FloatingActionButton getFloatingActionButton() {
-    return (role == ROLE.reception || role == ROLE.admin)
+  Widget getFloatingActionButton() {
+    return (role == ROLE.admin)
         ? FloatingActionButton(
             // title: Text("add".tr),
             backgroundColor: background,
             onPressed: floatingActionOnClick,
             child: const Icon(Icons.add, color: Colors.black),
           )
-        : FloatingActionButton(backgroundColor: background, onPressed: () {});
+        : const SizedBox();
   }
 
   getUserData() {
@@ -142,5 +172,28 @@ class _HomeScreenState extends State<HomeScreen> {
     role = databaseController.currentCustomerRole;
   }
 
-  floatingActionOnClick() async {}
+  floatingActionOnClick() async {
+    Get.toNamed('/add_room');
+    print('add room pressed on ${role.toString()}');
+  }
+
+  Future<DateTime> pickDate({DateTime? startingDate}) async {
+    return (await showDatePicker(
+          helpText: startingDate == null
+              ? "Chose a starting date"
+              : "Chose an Ending date",
+          context: Get.context!,
+          initialDate: startingDate ?? DateTime.now(),
+          firstDate: startingDate ?? DateTime.now(),
+          lastDate: DateTime.now().add(const Duration(days: 365)),
+          initialDatePickerMode: DatePickerMode.year,
+        )) ??
+        DateTime.now();
+  }
+
+  pickDates() async {
+    databaseController.start = await pickDate();
+    databaseController.end =
+        await pickDate(startingDate: databaseController.start);
+  }
 }

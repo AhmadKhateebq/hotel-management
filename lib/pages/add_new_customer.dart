@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/component/scaffold_widget.dart';
 import 'package:hotel_management/controller/database_controller.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
@@ -48,9 +47,20 @@ class _AddCustomerState extends State<AddCustomer> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: ScaffoldBuilder(body: getForm(), title: 'Add your details', floatingChild: null, onPressed: null));
+    return SafeArea(
+        child: Scaffold(
+            body: getForm(),
+            appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
+              title: const Text(
+                'Add your details',
+                style: TextStyle(fontSize: 24),
+              ),
+            )));
   }
-  getForm(){
+
+  getForm() {
     return Form(
       child: Padding(
         padding: const EdgeInsets.all(6),
@@ -67,29 +77,28 @@ class _AddCustomerState extends State<AddCustomer> {
                 child: ClipOval(
                   child: Obx(() => imagePicked.value == false
                       ? Image.network(
-                    imageUrl ?? noImage,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  )
+                          imageUrl ?? noImage,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        )
                       : Image.file(
-                    File(image!.path),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  )),
+                          File(image!.path),
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        )),
                 )),
             TextFormField(
               controller: firstNameController,
               decoration: const InputDecoration(
                   floatingLabelStyle:
-                  TextStyle(color: Colors.black, fontSize: 18),
+                      TextStyle(color: Colors.black, fontSize: 18),
                   labelText: 'First Name',
                   filled: true,
                   fillColor: Colors.white60,
                   border: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)))),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
             ),
             const SizedBox(
               height: 10,
@@ -98,13 +107,12 @@ class _AddCustomerState extends State<AddCustomer> {
               controller: lastNameController,
               decoration: const InputDecoration(
                   floatingLabelStyle:
-                  TextStyle(color: Colors.black, fontSize: 18),
+                      TextStyle(color: Colors.black, fontSize: 18),
                   labelText: 'Last Name',
                   filled: true,
                   fillColor: Colors.white60,
                   border: OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)))),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
             ),
             const SizedBox(
               height: 10,
@@ -115,16 +123,14 @@ class _AddCustomerState extends State<AddCustomer> {
               onTap: pickDate,
               decoration: InputDecoration(
                   floatingLabelStyle:
-                  const TextStyle(color: Colors.black, fontSize: 18),
+                      const TextStyle(color: Colors.black, fontSize: 18),
                   labelText: 'Date of birth',
                   filled: true,
                   suffixIcon: IconButton(
-                      onPressed: pickDate,
-                      icon: const Icon(Icons.date_range)),
+                      onPressed: pickDate, icon: const Icon(Icons.date_range)),
                   fillColor: Colors.white60,
                   border: const OutlineInputBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(10.0)))),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -138,6 +144,7 @@ class _AddCustomerState extends State<AddCustomer> {
       ),
     );
   }
+
   pickDate() async {
     dateOfBirth = (await showDatePicker(
           context: Get.context!,
@@ -153,7 +160,6 @@ class _AddCustomerState extends State<AddCustomer> {
   imagePicker() async {
     image = await ImagePicker().pickImage(source: ImageSource.gallery);
     imagePicked.value = false;
-
     imagePicked.value = true;
   }
 
@@ -161,8 +167,6 @@ class _AddCustomerState extends State<AddCustomer> {
     String firstName = firstNameController.text;
     String lastName = lastNameController.text;
     DateTime dateOfBirth = DateFormatter.parse(dateController.text);
-    print(dateOfBirth.toString());
-    print(imageUrl);
     await Get.find<SupabaseDatabaseController>().saveCustomer(
         firstName: firstName,
         lastName: lastName,

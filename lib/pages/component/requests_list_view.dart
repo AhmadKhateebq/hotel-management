@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/component/preview_request.dart';
-import 'package:hotel_management/component/preview_requests_details.dart';
 import 'package:hotel_management/controller/requests_controller.dart';
 import 'package:hotel_management/model/request.dart';
+import 'package:hotel_management/pages/component/preview_request.dart';
+import 'package:hotel_management/pages/component/preview_requests_details.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:hotel_management/util/util_classes.dart';
 

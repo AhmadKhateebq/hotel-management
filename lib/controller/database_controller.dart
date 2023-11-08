@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/model/customer.dart';
@@ -6,15 +8,13 @@ import 'package:hotel_management/model/room.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:hotel_management/util/util_classes.dart';
+import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseDatabaseController {
   final _supabase = Supabase.instance.client;
   late CustomerDetails currentCustomerDetails;
   late ROLE _currentCustomerRole;
-  DateTime start = DateTime.now();
-  DateTime end = DateTime.now();
-
   ROLE get currentCustomerRole => _currentCustomerRole;
 
   Future<void> _saveCustomerDetails(CustomerDetails details) async {
@@ -26,13 +26,22 @@ class SupabaseDatabaseController {
   }
 
   Future<void> saveRoom(Room room) async {
-   return await _supabase.from('room').insert(room);
+    return await _supabase.from('room').insert(room);
+  }
+
+  Future<String> uploadImage(File file, String roomId) async {
+    await _supabase.storage
+        .from('room_images')
+        .upload('$roomId/thumbnail${p.extension(file.path)}', file);
+    final res = _supabase.storage
+        .from('room_images')
+        .getPublicUrl('$roomId/thumbnail${p.extension(file.path)}');
+    return res;
   }
 
   Future<bool> roomExists(String id) async {
     List<dynamic> ids =
         await _supabase.from('room').select('room_id').eq('room_id', id);
-    print(ids.toString());
     if (ids.isEmpty) {
       return false;
     }
@@ -42,7 +51,6 @@ class SupabaseDatabaseController {
   Future<bool> _customerExists(String id) async {
     List<dynamic> ids =
         await _supabase.from('customer').select('id').eq('id', id);
-    print(ids.toString());
     if (ids.isEmpty) {
       return false;
     }

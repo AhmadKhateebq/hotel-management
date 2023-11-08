@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/component/room_preview.dart';
 import 'package:hotel_management/controller/database_controller.dart';
 import 'package:hotel_management/controller/requests_controller.dart';
 import 'package:hotel_management/model/request.dart';
 import 'package:hotel_management/model/room.dart';
+import 'package:hotel_management/pages/component/room_preview.dart';
 import 'package:hotel_management/util/util_classes.dart';
 
 class RoomsListView extends StatefulWidget {
-  const RoomsListView({super.key, required this.startDate, required this.endDate});
+  const RoomsListView(
+      {super.key,
+      required this.startDate,
+      required this.endDate,
+      this.filters});
+
   final DateTime startDate;
   final DateTime endDate;
+  final Map<String, dynamic>? filters;
+
   @override
   State<RoomsListView> createState() => _RoomsListViewState();
 }
@@ -27,7 +34,6 @@ class _RoomsListViewState extends State<RoomsListView> {
     super.initState();
   }
 
-
   @override
   void didUpdateWidget(RoomsListView oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -37,10 +43,10 @@ class _RoomsListViewState extends State<RoomsListView> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ?const CircularProgressIndicator()
-    :ListView(
-      children: listViewBuilderOneLine(rooms),
-    );
+        ? const CircularProgressIndicator()
+        : ListView(
+            children: listViewBuilderOneLine(rooms),
+          );
   }
 
   listViewBuilderOneLine(List<Room> rooms) {
@@ -82,25 +88,65 @@ class _RoomsListViewState extends State<RoomsListView> {
     var stars = getStarts(room.stars);
     return InkWell(
       onTap: () {
-        Get.to(PreviewRoom(room: room, stars: stars, requestController: Get.find(), databaseController: Get.find(),));
+        Get.to(PreviewRoom(
+          room: room,
+          stars: stars,
+        ));
       },
       child: Card(
         child: Row(
           children: [
             SizedBox(
-                width: Get.width * (1 / 2),
-                child: Image.network(room.pictureUrl),),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(room.roomId),
-                Text(getFloorText(floor)),
-                Text('${room.price} \$'),
-                Row(
-                  children: stars,
-                ),
-              ],
+              width: Get.width * (1 / 2),
+              height: Get.height * (1 / 6),
+              child: Image.network(room.pictureUrl),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Room ${room.roomId}',
+                          style: const TextStyle(
+                            // color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            // fontStyle: FontStyle.italic,
+                            fontSize: 20,
+                          )),
+                      Text(getFloorText(floor),style: const TextStyle(
+                        // color: Colors.green,
+                        // fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 15,
+                      )),
+                      Text(room.seaView ? 'Sea View ' : '',style: const TextStyle(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 20,
+                      )),
+                      Row(
+                        children: stars,
+                      ),
+                    ],
+                  ),
+                  Align(
+                      alignment: AlignmentDirectional.bottomEnd,
+                      child: Text(
+                        '${room.price} \$',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 20,
+                        ),
+                      )),
+                ],
+              ),
             )
           ],
         ),
@@ -165,10 +211,10 @@ class _RoomsListViewState extends State<RoomsListView> {
             : '${floor}th Floor';
   }
 
-  getRooms()async {
+  getRooms() async {
     rooms = await databaseController.getEmptyRooms(
-      start : widget.startDate,
-      end : widget.endDate,
+      start: widget.startDate,
+      end: widget.endDate,
     );
     setState(() {
       loading = false;

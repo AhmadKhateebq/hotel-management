@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/component/scaffold_widget.dart';
 import 'package:hotel_management/controller/requests_controller.dart';
 
 class PreviewRequest extends StatelessWidget {
@@ -26,18 +25,16 @@ class PreviewRequest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldBuilder(
+    return Scaffold(
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
               Get.back();
             },
             icon: const Icon(Icons.close)),
-        backgroundColor: Colors.redAccent,
         title: Text('Room $roomId Requests'),
         centerTitle: true,
       ),
-      title: "$roomId request",
       body: SizedBox.expand(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

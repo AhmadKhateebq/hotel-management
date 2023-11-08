@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/component/scaffold_widget.dart';
 import 'package:hotel_management/controller/database_controller.dart';
 import 'package:hotel_management/model/room.dart';
 import 'package:hotel_management/util/const.dart';
@@ -37,8 +36,16 @@ class _AddRoomState extends State<AddRoom> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        minimum: EdgeInsets.fromLTRB(0, 0, 0, 10),
-        child: ScaffoldBuilder(
+        minimum: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+        child: Scaffold(
+          appBar: AppBar(
+            titleSpacing: 0,
+            centerTitle: true,
+            title: const Text(
+              'Add your details',
+              style: TextStyle(fontSize: 24),
+            ),
+          ),
           body: Form(
               key: _formKey,
               child: Column(
@@ -101,7 +108,6 @@ class _AddRoomState extends State<AddRoom> {
                   setSlideShow(),
                 ],
               )),
-          title: 'Add a Room',
         ));
   }
 
@@ -141,9 +147,9 @@ class _AddRoomState extends State<AddRoom> {
         } else {
           Room room = Room(
               roomId: id,
-              reserved: false,
+              seaView: false,
               stars: rating,
-              pictureUrl: noImage,
+              pictureUrl: await uploadImage(id),
               price: price,
               slideshow: [noImage, noImage]);
           await controller.saveRoom(room);
@@ -154,8 +160,10 @@ class _AddRoomState extends State<AddRoom> {
     }
   }
 
-  uploadImage() {
-    return noImage;
+  uploadImage(String roomId) async {
+    return image != null
+        ? await controller.uploadImage(File(image!.path), roomId)
+        : noImage;
   }
 
   uploadSlideShow() {
@@ -220,7 +228,6 @@ class _AddRoomState extends State<AddRoom> {
         ),
         onRatingUpdate: (r) {
           rating = r;
-          print(r);
         },
       );
 }

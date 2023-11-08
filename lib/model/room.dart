@@ -2,7 +2,7 @@
 
 class Room implements Comparable {
   String roomId;
-  bool reserved;
+  bool seaView;
   double stars;
   String pictureUrl;
   double price;
@@ -10,7 +10,7 @@ class Room implements Comparable {
 
   Room(
       {required this.roomId,
-      required this.reserved,
+      required this.seaView,
       required this.stars,
       required this.pictureUrl,
       this.slideshow,
@@ -19,7 +19,7 @@ class Room implements Comparable {
   factory Room.fromDynamicMap(Map<dynamic, dynamic> map) {
     return Room(
       roomId: map['room_id'],
-      reserved: map['reserved'],
+      seaView: map['sea_view'],
       stars: double.parse(map['stars'].toString()),
       pictureUrl: map['picture_url'],
       slideshow: _getSlideShow(map['slideshow'] ?? []),
@@ -33,7 +33,7 @@ class Room implements Comparable {
 
   Map<String, dynamic> toJson() => {
         'room_id': roomId,
-        'reserved': reserved,
+        'sea_view': seaView,
         'stars': stars,
         'picture_url': pictureUrl,
         'price': price,
@@ -42,27 +42,15 @@ class Room implements Comparable {
 
   @override
   String toString() {
-    return 'Room{roomId: $roomId, reserved: $reserved, stars: $stars, pictureUrl: $pictureUrl, price: $price, slideshow: $slideshow}';
+    return 'Room{roomId: $roomId, sea view: $seaView, stars: $stars, pictureUrl: $pictureUrl, price: $price, slideshow: $slideshow}';
   }
 
   @override
   int compareTo(other) {
-    final aFloor = roomId.replaceAll(RegExp(r'[^0-9]'), '');
-    final bFloor = other.roomId.replaceAll(RegExp(r'[^0-9]'), '');
+    final aFloor = int.parse(roomId.replaceAll(RegExp(r'[^0-9]'), ''));
+    final bFloor = int.parse(other.roomId.replaceAll(RegExp(r'[^0-9]'), ''));
     if (aFloor != bFloor) {
       return aFloor.compareTo(bFloor);
-    }
-    if (reserved) {
-      if (other.reserved) {
-        return 0;
-      }
-      return 2;
-    }
-    if (other.reserved) {
-      if (reserved) {
-        return 0;
-      }
-      return -2;
     }
     return roomId.compareTo(other.roomId);
   }

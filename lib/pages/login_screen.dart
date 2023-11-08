@@ -2,16 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/component/google_sign_in_button.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/controller/database_controller.dart';
+import 'package:hotel_management/pages/component/google_sign_in_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
   final String title = 'Registration';
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }

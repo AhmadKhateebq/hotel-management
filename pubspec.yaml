@@ -45,6 +45,7 @@ dependencies:
   flip_card: ^0.7.0
   flutter_image_slideshow: ^0.1.6
   flutter_rating_bar: ^4.0.1
+  sliding_up_panel: ^2.0.0+1
 
 
 dev_dependencies:

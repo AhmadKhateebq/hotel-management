@@ -5,22 +5,33 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hotel_management/controller/database_controller.dart';
+import 'package:hotel_management/mvvm/model/login_user_model.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthController extends GetxController {
   final _supabase = Supabase.instance.client;
-  User? user;
   Session? session;
+  LoginUser loginUser = LoginUser();
   late final StreamSubscription _authSubscription;
-  final SupabaseDatabaseController databaseController = Get.find();
   final GoogleSignIn googleSignInPlatform = GoogleSignIn(
     clientId: iosClientId,
     serverClientId: webClientId,
   );
   init() {
     // databaseController  = Get.find();
+  }
+  getUserData() {
+    loginUser.user = _supabase.auth.currentUser;
+    loginUser.profileImageUrl = loginUser.user!.userMetadata?['avatar_url'] != null
+        ?  loginUser.user!.userMetadata!['avatar_url']
+        : loginUser.currentCustomerDetails.pictureUrl ??
+        'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
+    loginUser.fullName =  loginUser.user!.userMetadata?['full_name'] != null
+        ?  loginUser.user!.userMetadata!['full_name']
+        : '${loginUser.currentCustomerDetails.firstName} ${loginUser.currentCustomerDetails.lastName}';
+    loginUser.role = loginUser.role;
   }
 
   setSubscriptionLog() {
@@ -37,6 +48,29 @@ class SupabaseAuthController extends GetxController {
       void Function(AuthState) onData) {
     // _authSubscription =
     return _supabase.auth.onAuthStateChange.listen(onData);
+  }
+   setUpSubscription() {
+    // _authSubscription =
+     _supabase.auth.onAuthStateChange.listen((data) async {
+      final event = data.event;
+      if (event == AuthChangeEvent.signedIn) {
+        session = data.session;
+        loginUser.user = data.session!.user;
+        if (Get.context!.mounted) {
+          Get.toNamed('/loading');
+          final CustomerApi api = CustomerApi();
+          try {
+            await api.getCustomerDetails(loginUser.user!.id);
+          } catch (e) {
+            rethrow;
+          }
+        }
+      }
+      // if (event == AuthChangeEvent.signedOut) {
+      //   await signOut();
+      // }
+    });
+
   }
 
   endSubscription() {
@@ -58,7 +92,7 @@ class SupabaseAuthController extends GetxController {
       password: password,
     );
     session = res.session;
-    user = res.user;
+    loginUser.user = res.user;
     return res;
   }
 
@@ -70,7 +104,7 @@ class SupabaseAuthController extends GetxController {
         password: password,
       );
       session = res.session;
-      user = res.user;
+      loginUser.user = res.user;
       return 'true';
     } catch (e, s) {
       String message = (e as AuthException).message;
@@ -86,7 +120,7 @@ class SupabaseAuthController extends GetxController {
       emailRedirectTo: kIsWeb ? null : 'io.supabase.flutter://signin-callback/',
     );
     session = _supabase.auth.currentSession;
-    user = _supabase.auth.currentUser;
+    loginUser.user = _supabase.auth.currentUser;
   }
 
   signInWithGoogle(BuildContext context) async {
@@ -99,7 +133,8 @@ class SupabaseAuthController extends GetxController {
     if(await googleSignInPlatform.isSignedIn()){
       googleSignInPlatform.signOut();
     }
-
+    loginUser.logout();
+    Get.toNamed('/login');
   }
 
   Future<AuthResponse> googleSignIn() async {
@@ -130,7 +165,11 @@ class SupabaseAuthController extends GetxController {
       accessToken: accessToken,
     );
     session = res.session;
-    user = res.user;
+    loginUser.user = res.user;
     return res;
+  }
+
+  void cancelSubscription() {
+    _authSubscription.cancel();
   }
 }

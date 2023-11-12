@@ -1,12 +1,24 @@
-import 'package:hotel_management/model/request.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hotel_management/mvvm/model/request.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class RoomRequestController {
+class RoomRequestApi {
   final _requestsSupabase = Supabase.instance.client.from('request');
   final _roomSupabase = Supabase.instance.client.from('room');
 
-  Future<bool> addRoomRequest(RoomRequest request) async {
+  addRoomRequest(RoomRequest request) async {
+    if (await requestExists(request)) {
+      Get.snackbar("You already applied for this room", '');
+    } else {
+      await _requestsSupabase.insert(request);
+      Get.offNamed('/home');
+      Get.snackbar("Room Applied", '');
+    }
+  }
+
+  Future<bool> requestExists(RoomRequest request) async {
     var a = await _requestsSupabase
         .select('*')
         .eq('customer_id', request.customerId)
@@ -16,14 +28,25 @@ class RoomRequestController {
       if (matchDates(temp.startingDate, request.startingDate, false) &&
           matchDates(temp.endingDate, request.endingDate, true) &&
           (temp.status == STATUS.denied ||
-          temp.status == STATUS.pending ||
-          temp.status == STATUS.approved)) {
-        return false;
+              temp.status == STATUS.pending ||
+              temp.status == STATUS.approved)) {
+        return true;
       }
     } catch (e) {
-      await _requestsSupabase.insert(request);
+      return false;
     }
-    return true;
+    return false;
+  }
+
+  reserveRoom(String roomId, String customerId, DateTimeRange dates) async {
+    return await addRoomRequest(RoomRequest(
+        id: 0,
+        roomId: roomId,
+        customerId: customerId,
+        time: DateTime.now(),
+        startingDate: dates.start,
+        endingDate: dates.end,
+        status: STATUS.pending));
   }
 
   bool matchDates(DateTime first, DateTime second, bool depart) {
@@ -47,7 +70,6 @@ class RoomRequestController {
 
   approve(int id, String roomId) async {
     await _requestsSupabase.update({'status': 'approved'}).eq('id', id);
-    await _roomSupabase.update({'reserved': true}).eq('room_id', roomId);
   }
 
   deny(int id, String roomId) async {
@@ -77,4 +99,5 @@ class RoomRequestController {
     }
     _updateStatus(ids);
   }
+
 }

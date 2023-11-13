@@ -45,6 +45,12 @@ class PreviewRoom extends StatelessWidget {
                   Text('Price : ${viewModel.price} \$'),
                   const SizedBox(
                     height: 20,
+                  ),Text('Beds : ${viewModel.beds} Bed${viewModel.beds>1?'s':''} '),
+                  const SizedBox(
+                    height: 20,
+                  ),Text('Size : ${viewModel.adults} Adult${viewModel.adults>1?'s':''} '),
+                  const SizedBox(
+                    height: 20,
                   ),
                   Text('Floor : ${getFloor(viewModel.roomId)}'),
                   const SizedBox(

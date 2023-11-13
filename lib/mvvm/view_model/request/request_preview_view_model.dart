@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
 import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
+import 'package:hotel_management/util/util_classes.dart';
 
 
 class RequestReviewViewModel {
@@ -24,7 +25,7 @@ class RequestReviewViewModel {
 
   get requestId => _request.id.toString();
 
-  get status => RoomRequest.getStatusString(_request.status);
+  get status => StatusUtil.getStatusString(_request.status);
 
   get onApprove =>
       () async {

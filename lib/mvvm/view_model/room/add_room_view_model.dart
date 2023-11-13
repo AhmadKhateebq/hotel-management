@@ -46,7 +46,7 @@ class AddRoomViewModel{
               stars: rating,
               pictureUrl: await uploadImage(id),
               price: price,
-              slideshow: [noImage, noImage]);
+              slideshow: [noImage, noImage], beds: 1, adults: 1);
           await roomApi.saveRoom(room);
           Get.snackbar('DONE', 'Room Added!');
           Get.offNamed('/home');

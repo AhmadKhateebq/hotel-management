@@ -1,17 +1,19 @@
-
-
 class Room implements Comparable {
   String roomId;
   bool seaView;
   double stars;
   String pictureUrl;
   double price;
+  int beds;
+  int adults;
   List<String>? slideshow;
 
   Room(
       {required this.roomId,
       required this.seaView,
+      required this.beds,
       required this.stars,
+      required this.adults,
       required this.pictureUrl,
       this.slideshow,
       required this.price});
@@ -24,6 +26,8 @@ class Room implements Comparable {
       pictureUrl: map['picture_url'],
       slideshow: _getSlideShow(map['slideshow'] ?? []),
       price: double.parse(map['price'].toString()),
+      beds: int.parse(map['beds'].toString()),
+      adults: int.parse(map['adults'].toString()),
     );
   }
 
@@ -38,11 +42,14 @@ class Room implements Comparable {
         'picture_url': pictureUrl,
         'price': price,
         'slideshow': slideshow,
+        'beds': beds,
+        'adults': adults,
       };
+
 
   @override
   String toString() {
-    return 'Room{roomId: $roomId, sea view: $seaView, stars: $stars, pictureUrl: $pictureUrl, price: $price, slideshow: $slideshow}';
+    return 'Room{roomId: $roomId, seaView: $seaView, stars: $stars, pictureUrl: $pictureUrl, price: $price, beds: $beds, adults: $adults, slideshow: $slideshow}';
   }
 
   @override

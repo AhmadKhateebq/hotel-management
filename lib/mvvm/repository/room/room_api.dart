@@ -7,8 +7,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'room_repository.dart';
 
-class RoomApi extends RoomRepository{
+class RoomApi extends RoomRepository {
   final _supabase = Supabase.instance.client;
+
   @override
   Future<List<Room>> getAllRooms() async {
     return await _supabase.from('room').select('*');
@@ -37,7 +38,7 @@ class RoomApi extends RoomRepository{
   @override
   Future<bool> roomExists(String id) async {
     List<dynamic> ids =
-    await _supabase.from('room').select('room_id').eq('room_id', id);
+        await _supabase.from('room').select('room_id').eq('room_id', id);
     if (ids.isEmpty) {
       return false;
     }
@@ -59,7 +60,8 @@ class RoomApi extends RoomRepository{
         .getPublicUrl('$roomId/thumbnail${p.extension(file.path)}');
     return res;
   }
-  bool validateData(String roomId){
+
+  bool validateData(String roomId) {
     RegExp myRegExp = RegExp(r"^[0-9]{1,2}[A-Z]{1,2}$");
     if (myRegExp.hasMatch(roomId)) {
       var match = myRegExp.matchAsPrefix(roomId)!;
@@ -71,5 +73,35 @@ class RoomApi extends RoomRepository{
     } else {
       return false;
     }
+  }
+
+  @override
+  Future<List<Room>> getEmptyRoomsFiltered(
+      {required DateTime start,
+      required DateTime end,
+      required int adult,
+      required int bed,
+      required double max,
+      required double min,
+      required int rating1,
+      required int rating2,
+      required int rating3,
+      required int rating4,
+      required int rating5}) async {
+
+    List<dynamic> a = await _supabase.rpc('get_rooms', params: {
+      "start": DateFormatter.format(start),
+      'end_date': DateFormatter.format(end),
+      'adult': adult,
+      'bed': bed,
+      'max': max,
+      'min': min,
+      'rating1': rating1,
+      'rating2': rating2,
+      'rating3': rating3,
+      'rating4': rating4,
+      'rating5': rating5,
+    });
+    return a.map((e) => Room.fromDynamicMap(e as Map)).toList()..sort();
   }
 }

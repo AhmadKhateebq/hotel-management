@@ -1,5 +1,3 @@
-
-
 enum ROLE {
   customer,
   admin,
@@ -8,7 +6,7 @@ enum ROLE {
 
 enum STATUS { pending, approved, denied, reserved }
 
-class Role {
+class RoleUtil {
   static const customer = ROLE.customer;
   static const admin = ROLE.admin;
   static const resp = ROLE.reception;
@@ -38,4 +36,20 @@ class Role {
   }
 }
 
+class StatusUtil {
+  static STATUS getStatus(String status) => status == 'reserved'
+      ? STATUS.reserved
+      : status == 'approved'
+          ? STATUS.approved
+          : status == 'denied'
+              ? STATUS.denied
+              : STATUS.pending;
 
+  static String getStatusString(STATUS status) => status == STATUS.reserved
+      ? 'reserved'
+      : status == STATUS.approved
+          ? 'approved'
+          : status == STATUS.denied
+              ? 'denied'
+              : 'pending';
+}

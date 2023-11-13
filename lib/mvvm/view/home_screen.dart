@@ -25,6 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    viewModel.getRooms();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -49,18 +55,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   homeScreen() => Stack(children: [
         Center(
-          child: RoomsListView(
-            viewModel: RoomListViewModel(
-              startDate: viewModel.startDate,
-              endDate: viewModel.endDate,
-            ),
-          ),
-        ),
+            child: Obx(
+          () => viewModel.loading.value
+              ? const CircularProgressIndicator()
+              : Obx(
+                  () => RoomsListView(
+                      viewModel: RoomListViewModel(
+                    startDate: viewModel.startDate,
+                    endDate: viewModel.endDate,
+                    rooms: viewModel.rooms.value,
+                  )),
+                ),
+        )),
         SlidingUpPanel(
           controller: viewModel.panelController,
           panel: FiltersCustomMenu(
-            viewModel:
-                FilterMenuModelView(panelController: viewModel.panelController),
+            viewModel: FilterMenuModelView(
+                panelController: viewModel.panelController,
+                search: viewModel.getRoomsFiltered),
           ),
           maxHeight: Get.height,
           minHeight: 0,

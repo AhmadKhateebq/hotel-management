@@ -39,7 +39,7 @@ class Customer {
         'id': id,
         'reserving': reserving,
         'full_name': fullName,
-        'role': Role.roleToString(role),
+        'role': RoleUtil.roleToString(role),
       };
 
 }

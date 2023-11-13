@@ -12,7 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthController extends GetxController {
   final _supabase = Supabase.instance.client;
-  Session? session;
+  // Session? session;
   LoginUser loginUser = LoginUser();
   late final StreamSubscription _authSubscription;
   final GoogleSignIn googleSignInPlatform = GoogleSignIn(
@@ -37,7 +37,7 @@ class SupabaseAuthController extends GetxController {
   setSubscriptionLog() {
     a(AuthState data) {
       final AuthChangeEvent event = data.event;
-      session = data.session;
+      // session = data.session;
       log(event.toString(), name: 'event');
     }
 
@@ -54,7 +54,7 @@ class SupabaseAuthController extends GetxController {
      _supabase.auth.onAuthStateChange.listen((data) async {
       final event = data.event;
       if (event == AuthChangeEvent.signedIn) {
-        session = data.session;
+        // session = data.session;
         loginUser.user = data.session!.user;
         if (Get.context!.mounted) {
           Get.toNamed('/loading');
@@ -91,7 +91,7 @@ class SupabaseAuthController extends GetxController {
       email: email,
       password: password,
     );
-    session = res.session;
+    // session = res.session;
     loginUser.user = res.user;
     return res;
   }
@@ -103,7 +103,7 @@ class SupabaseAuthController extends GetxController {
         email: email,
         password: password,
       );
-      session = res.session;
+      // session = res.session;
       loginUser.user = res.user;
       return 'true';
     } catch (e, s) {
@@ -119,7 +119,7 @@ class SupabaseAuthController extends GetxController {
       email: email,
       emailRedirectTo: kIsWeb ? null : 'io.supabase.flutter://signin-callback/',
     );
-    session = _supabase.auth.currentSession;
+    // session = _supabase.auth.currentSession;
     loginUser.user = _supabase.auth.currentUser;
   }
 
@@ -164,7 +164,7 @@ class SupabaseAuthController extends GetxController {
       idToken: idToken,
       accessToken: accessToken,
     );
-    session = res.session;
+    // session = res.session;
     loginUser.user = res.user;
     return res;
   }

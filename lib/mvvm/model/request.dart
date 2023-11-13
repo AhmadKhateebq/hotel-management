@@ -40,7 +40,7 @@ class RoomRequest {
         time: DateTime.parse(data['time']),
         startingDate: DateTime.parse(data['starting_date']),
         endingDate: DateTime.parse(data['ending_date']),
-        status: getStatus(data['status']),
+        status: StatusUtil.getStatus(data['status']),
         customerId: data['customer_id'],
         roomId: data['room_id']);
   }
@@ -51,7 +51,7 @@ class RoomRequest {
         'customer_id': customerId,
         'starting_date': DateFormatter.formatWithTime(startingDate),
         'ending_date': DateFormatter.formatWithTime(endingDate),
-        'status': getStatusString(status)
+        'status': StatusUtil.getStatusString(status)
       };
 
 
@@ -65,23 +65,9 @@ class RoomRequest {
       time: DateTime.parse(data['time']),
       startingDate: DateTime.parse(data['starting_date']),
       endingDate: DateTime.parse(data['ending_date']),
-      status: getStatus(data['status']),
+      status: StatusUtil.getStatus(data['status']),
       customerId: data['customer_id'],
       roomId: data['room_id']);
 
-  static STATUS getStatus(String status) => status == 'reserved'
-      ? STATUS.reserved
-      : status == 'approved'
-          ? STATUS.approved
-          : status == 'denied'
-              ? STATUS.denied
-              : STATUS.pending;
 
-  static String getStatusString(STATUS status) => status == STATUS.reserved
-      ? 'reserved'
-      : status == STATUS.approved
-          ? 'approved'
-          : status == STATUS.denied
-              ? 'denied'
-              : 'pending';
 }

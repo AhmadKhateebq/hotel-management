@@ -21,6 +21,9 @@ class RoomPreviewViewModel {
 
   get slideshow => _room.slideshow ?? [];
 
+  get beds => _room.beds;
+  get adults => _room.adults;
+
   Future<void> reserveRoom() async {
     DateTimeRange dates = await _dateRangePicker() ??
         DateTimeRange(

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
-import 'package:hotel_management/mvvm/repository/room/room_api.dart';
 
 class RoomListViewModel {
   final DateTime startDate;
   final DateTime endDate;
-  var loading = true.obs;
+
   int currentFloor = 0;
-  List<Room> rooms = [];
+  final List<Room> rooms;
 
   RoomListViewModel({
+    required this.rooms,
     required this.startDate,
     required this.endDate,
   });
@@ -35,13 +34,5 @@ class RoomListViewModel {
         : floor == 2
             ? 'Second Floor'
             : '${floor}th Floor';
-  }
-
-  getRooms() async {
-    rooms = await RoomApi().getEmptyRooms(
-      start: startDate,
-      end: endDate,
-    );
-    loading.value = false;
   }
 }

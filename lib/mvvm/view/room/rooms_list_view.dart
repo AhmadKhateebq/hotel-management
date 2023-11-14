@@ -23,6 +23,7 @@ class RoomsListView extends StatelessWidget {
     }
     return RefreshIndicator(
       onRefresh: viewModel.onRefresh,
+      strokeWidth: 4.0,
       child: ListView(
         shrinkWrap: shrink,
         children: a,

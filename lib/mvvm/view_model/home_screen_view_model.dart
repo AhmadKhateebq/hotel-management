@@ -72,6 +72,7 @@ class HomeScreenViewModel {
       start: startDate,
       end: endDate,
     );
+    await Future.delayed(const Duration(milliseconds: 250));
     loading.value = false;
   }
 

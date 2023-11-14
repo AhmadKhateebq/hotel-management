@@ -87,4 +87,31 @@ class LoginViewModel {
   }
 
   get initialized => authController.initUser;
+
+  bool validEmail(String value) {
+    return
+    RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(value);
+  }
+
+  String? validateEmail(String? value) {
+      if (value == null || value.isEmpty ) {
+        return 'Please enter a some textl';
+      }
+      if( !validEmail(value)){
+        return 'Please enter a valid email';
+      }
+      return null;
+
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a some text';
+    }
+    if(value.length <8) {
+      return 'Please Enter a Valid Password';
+    }
+    return null;
+  }
 }

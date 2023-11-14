@@ -97,12 +97,12 @@ class LoginUser {
             const SizedBox(
               height: 10,
             ),
-            getAddTile(),
             getNavTile(),
+            getAddTile(),
             getMyRoomsTile(),
             ListTile(
               leading: const Icon(Icons.my_library_books_rounded),
-              title: const Text('To My Requests'),
+              title: const Text('My Requests'),
               onTap: () async {
                 Get.to(() => const MyRequests());
               },
@@ -124,40 +124,50 @@ class LoginUser {
       : Column(
           children: [
             Get.currentRoute == '/home'
-                ? ListTile(
-                    leading: const Icon(Icons.request_page),
-                    title: const Text('To Requests'),
-                    onTap: () async {
-                      Get.offAllNamed('/recep_home');
-                    },
-                  )
-                : Column(
+                ? Column(
                   children: [
-                    const Text('Admin Menu'),
+                    const Align(alignment:AlignmentDirectional.topStart ,child: Text('Admin Menu')),
+                    const SizedBox(height: 10,),
                     ListTile(
                         leading: const Icon(Icons.request_page),
-                        title: const Text('To Rooms'),
+                        title: const Text('Requests'),
+                        onTap: () async {
+                          Get.offAllNamed('/recep_home');
+                        },
+                      ),
+                  ],
+                )
+                : Column(
+                  children: [
+                    const Align(alignment:AlignmentDirectional.topStart ,child: Text('Admin Menu')),
+                    const SizedBox(height: 10,),
+                    ListTile(
+                        leading: const Icon(Icons.hotel),
+                        title: const Text('Rooms'),
                         onTap: () async {
                           Get.offAllNamed('/home');
                         },
                       ),
+                    const Divider(
+                      thickness: 1,
+                    ),
                   ],
                 ),
-            const Divider(
-              thickness: 1,
-            ),
           ],
         );
 
   getAddTile() => _role == ROLE.admin && Get.currentRoute == '/home'
       ? Column(
-        children: [const Text('Admin Menu'),
+        children: [
           ListTile(
             leading: const Icon(Icons.add),
             title: const Text('Add Room'),
             onTap: () async {
               Get.offAllNamed('/add_room');
             },
+          ),
+          const Divider(
+            thickness: 1,
           ),
         ],
       )

@@ -11,6 +11,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final LoginViewModel viewModel = LoginViewModel();
+
   @override
   void initState() {
     viewModel.init();
@@ -31,54 +32,55 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                ClipRect(
-                    child: Image.asset(
-                      'assets/st_barth.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
-                ClipRect(
-                    child: Image.asset(
-                      'assets/maldives.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
-                ClipRect(
-                    child: Image.asset(
-                      'assets/thailand.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
-                ClipRect(
-                    child: Image.asset(
-                      'assets/thailand.jpg',
-                      fit: BoxFit.fill,
-                      height: Get.height / 4,
-                      width: Get.width,
-                    )),
-              ],
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              ClipRect(
+                  child: Image.asset(
+                'assets/st_barth.jpg',
+                fit: BoxFit.fill,
+                height: Get.height / 4,
+                width: Get.width,
+              )),
+              ClipRect(
+                  child: Image.asset(
+                'assets/maldives.jpg',
+                fit: BoxFit.fill,
+                height: Get.height / 4,
+                width: Get.width,
+              )),
+              ClipRect(
+                  child: Image.asset(
+                'assets/thailand.jpg',
+                fit: BoxFit.fill,
+                height: Get.height / 4,
+                width: Get.width,
+              )),
+              ClipRect(
+                  child: Image.asset(
+                'assets/thailand.jpg',
+                fit: BoxFit.fill,
+                height: Get.height / 4,
+                width: Get.width,
+              )),
+            ],
+          ),
+          Center(
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black26, width: 2),
+                  color: Colors.redAccent,
+                  borderRadius: const BorderRadius.all(Radius.circular(20))),
+              height: Get.height * (2 / 3) + 10,
+              width: Get.width * (7 / 8),
+              child: Obx(() =>
+                  viewModel.loading.value ? loadingWidget() : loginForm()),
             ),
-            Center(
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black26, width: 2),
-                    color: Colors.redAccent,
-                    borderRadius: const BorderRadius.all(Radius.circular(20))),
-                height: Get.height * (2 / 3),
-                width: Get.width * (7 / 8),
-                child: Obx(() => viewModel.loading.value ? loadingWidget() : loginForm()),
-              ),
-            ),
-          ],
-        ));
+          ),
+        ],
+      ));
 
   Form loginForm() => Form(
         key: viewModel.formKey,
@@ -92,25 +94,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 'assets/image/hotel_logo.png',
                 scale: 3,
               )),
+               Divider(
+                thickness: 1,
+                color: Theme.of(context).primaryColor,
+              ),
+              const SizedBox(
+                height: 5,
+              ),
               TextFormField(
                 controller: viewModel.emailController,
-                decoration: const InputDecoration(
-                    floatingLabelStyle:
-                        TextStyle(color: Colors.black, fontSize: 18),
+                decoration:  const InputDecoration(
+                    floatingLabelStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                     labelText: 'Email',
                     filled: true,
                     fillColor: Colors.white60,
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)))),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
+                validator:viewModel.validateEmail
+
               ),
               const SizedBox(
-                height: 5,
+                height: 10,
               ),
               Obx(() => TextFormField(
                     obscureText: !viewModel.eyeClicked.value,
@@ -118,8 +125,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     autocorrect: false,
                     controller: viewModel.passwordController,
                     decoration: InputDecoration(
-                        floatingLabelStyle:
-                            const TextStyle(color: Colors.black, fontSize: 18),
+                        floatingLabelStyle: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
                         suffixIcon: IconButton(
                             onPressed: viewModel.clickEye,
                             icon: viewModel.eyeClicked.value
@@ -131,15 +140,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         border: const OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)))),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
+                    validator: viewModel.validatePassword,
                   )),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
                 alignment: Alignment.center,
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(

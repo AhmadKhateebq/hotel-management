@@ -7,16 +7,20 @@ import 'package:hotel_management/mvvm/repository/room/room_api.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddRoomViewModel{
+class AddRoomViewModel {
   double rating = 3.5;
   XFile? image;
+  RxBool seaView = false.obs;
   List<XFile>? slideShow;
   TextEditingController idController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  TextEditingController bedsController = TextEditingController();
+  TextEditingController sizeController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final roomApi = RoomApi();
   var imagePicked = false.obs;
   var slideshowPicked = false.obs;
+
   imagePicker() async {
     image = await ImagePicker().pickImage(source: ImageSource.gallery);
     imagePicked.value = true;
@@ -29,31 +33,35 @@ class AddRoomViewModel{
 
   saveRoom() async {
     if (formKey.currentState!.validate()) {
-      String id = idController.text;
+      String floor = idController.text;
       double price = double.parse(priceController.text);
-      bool validRoomId = roomApi.validateData(id);
+      int beds = int.parse(bedsController.text);
+      int size = int.parse(sizeController.text);
+      bool validRoomId = roomApi.validateData(floor);
       if (!validRoomId) {
-        Get.snackbar('Please enter a valid ID',
-            'the valid IDs are like [1A,1AA,11A,11AA]');
+        Get.snackbar('Please enter a valid Room Floor',
+            'a valid Floor is One Number Only');
       } else {
-        if (await roomApi.roomExists(id)) {
-          Get.snackbar('A Room with this ID Exists',
-              'there is a room with this id,please change the id');
-        } else {
-          Room room = Room(
-              roomId: id,
-              seaView: false,
-              stars: rating,
-              pictureUrl: await uploadImage(id),
-              price: price,
-              slideshow: [noImage, noImage], beds: 1, adults: 1);
-          await roomApi.saveRoom(room);
-          Get.snackbar('DONE', 'Room Added!');
-          Get.offNamed('/home');
-        }
+        String id = await roomApi.getNextID(floor);
+        id = '$floor$id';
+        Room room = Room(
+            roomId: id,
+            seaView: true,
+            stars: rating,
+            pictureUrl: await uploadImage(id),
+            price: price,
+            slideshow: [noImage, noImage],
+            beds: beds,
+            adults: size);
+        await roomApi.saveRoom(room);
+        print(room.toString());
+        Get.snackbar('DONE', 'Room Added!');
+        Get.offNamed('/home');
       }
     }
   }
+
+
 
   uploadImage(String roomId) async {
     return image != null
@@ -67,5 +75,9 @@ class AddRoomViewModel{
       noImage,
       noImage,
     ];
+  }
+
+  void setSeaView(bool value) {
+    seaView.value = !seaView.value;
   }
 }

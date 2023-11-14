@@ -19,7 +19,8 @@ class RequestsList extends StatelessWidget {
             itemBuilder: (context, index) {
               return RoomRequestDetails(
                   viewModel: RoomRequestDetailsViewModel(
-                      request: viewModel.request(index)));
+                      request: viewModel.request(index)
+                  ));
             },
           );
         });

@@ -6,7 +6,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RoomRequestApi {
   final _requestsSupabase = Supabase.instance.client.from('request');
-  final _roomSupabase = Supabase.instance.client.from('room');
 
   addRoomRequest(RoomRequest request) async {
     if (await requestExists(request)) {
@@ -16,6 +15,11 @@ class RoomRequestApi {
       Get.offNamed('/home');
       Get.snackbar("Room Applied", '');
     }
+  }
+  @Deprecated('legacy with local filtering,')
+   getUserRequests(String userId) async {
+    List<dynamic> res = await _requestsSupabase.select('room_id').eq('customer_id', userId);
+    return  res.map((e) => e['room_id']);
   }
 
   Future<bool> requestExists(RoomRequest request) async {
@@ -43,7 +47,7 @@ class RoomRequestApi {
         id: 0,
         roomId: roomId,
         customerId: customerId,
-        time: DateTime.now(),
+        time: DateTime.now().toUtc(),
         startingDate: dates.start,
         endingDate: dates.end,
         status: STATUS.pending));
@@ -67,6 +71,9 @@ class RoomRequestApi {
   Stream<List<Map<String, dynamic>>> getRequestsStream() {
     return _requestsSupabase.stream(primaryKey: ['id']);
   }
+  Stream<List<Map<String, dynamic>>> getRequestsStreamByUserId(String userId) {
+    return _requestsSupabase.stream(primaryKey: ['id']).eq('customer_id', userId);
+  }
 
   approve(int id, String roomId) async {
     await _requestsSupabase.update({'status': 'approved'}).eq('id', id);
@@ -89,7 +96,6 @@ class RoomRequestApi {
         value.status = STATUS.approved;
         await _requestsSupabase
             .update({'status': 'approved'}).eq('id', value.id);
-        await _roomSupabase.update({'reserved': true}).eq('room_id', roomId);
         continue;
       }
       if (!value.startingDate.isAfter(reservedEnd) ||

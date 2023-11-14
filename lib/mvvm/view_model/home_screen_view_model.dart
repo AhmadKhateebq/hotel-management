@@ -22,10 +22,10 @@ class HomeScreenViewModel {
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
   List<bool> stars = [true, true, true, true, true];
   bool seaView = false;
-  RxList<Room> rooms = <Room>[].obs;
+  var rooms = <Room>[].obs;
   bool isSearching = false;
   var loading = true.obs;
-
+  var isFilterShowing = false.obs;
 
   void init() {
     bedsController.text = '$beds';
@@ -42,6 +42,7 @@ class HomeScreenViewModel {
     panelController.isPanelOpen
         ? panelController.close()
         : panelController.open();
+    isFilterShowing.value = !isFilterShowing.value;
   }
 
   get getDrawer =>
@@ -58,13 +59,14 @@ class HomeScreenViewModel {
           ? FloatingActionButton(
         // title: Text("add".tr),
         onPressed: () {
-          Get.toNamed('/add_room');
+          Get.offAllNamed('/add_room');
         },
         child: const Icon(Icons.add, color: Colors.black),
       )
           : const SizedBox();
 
-  getRooms() async {
+  Future<void>getRooms() async {
+    isFilterShowing.value = false;
     loading.value = true;
     rooms.value = await RoomApi().getEmptyRooms(
       start: startDate,
@@ -72,6 +74,7 @@ class HomeScreenViewModel {
     );
     loading.value = false;
   }
+
 
   getRoomsFiltered(Map<String, dynamic> filters, bool seaView) async {
     filters.forEach((key, value) {
@@ -81,6 +84,7 @@ class HomeScreenViewModel {
       return;
     }
     loading.value = true;
+    isFilterShowing.value = false;
     int adult = filters['adult'] ?? 0;
     int bed = filters['bed'] ?? 0;
     double max = filters['max'] ?? 10000;

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/view/components/rating_bar.dart';
-import 'package:hotel_management/mvvm/view/room/room_preview.dart';
 import 'package:hotel_management/mvvm/view_model/room/room_card_view_model.dart';
-import 'package:hotel_management/mvvm/view_model/room/room_preview_view_model.dart';
 
 class RoomCard extends StatelessWidget {
   const RoomCard({super.key, required this.viewModel});
@@ -11,11 +9,7 @@ class RoomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Get.to(PreviewRoom(
-          viewModel: RoomPreviewViewModel(room: viewModel.room),
-        ));
-      },
+      onTap:viewModel.isHistory?null:viewModel.onTap,
       child: Card(
         child: Row(
           children: [
@@ -38,6 +32,7 @@ class RoomCard extends StatelessWidget {
                             // color: Colors.green,
                             fontWeight: FontWeight.bold,
                             // fontStyle: FontStyle.italic,
+
                             fontSize: 20,
                           )),
                       Text(viewModel.floorText,

@@ -10,7 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginViewModel {
   final SupabaseAuthController authController = Get.find();
-  final GoogleSignInButton button = GoogleSignInButton();
+  GoogleSignInButton button = const GoogleSignInButton();
   final CustomerApi api = CustomerApi();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
@@ -27,9 +27,9 @@ class LoginViewModel {
   void setupAuthListener() {
     try {
       authController.setUpSubscription();
-    } catch (e,s) {
-      log('error',error: e,stackTrace: s);
-      button.rebuild();
+    } catch (e, s) {
+      log('error', error: e, stackTrace: s);
+      button = const GoogleSignInButton();
       authController.signOut();
       rethrow;
     }
@@ -51,6 +51,8 @@ class LoginViewModel {
         .then((value) {
       if (value != 'true') {
         Get.snackbar(value, 'login failed');
+        authController.signOut();
+        loading.value = false;
       }
     });
   }
@@ -78,4 +80,11 @@ class LoginViewModel {
     emailController.dispose();
     passwordController.dispose();
   }
+
+  init() {
+    loading.value = false;
+    setupAuthListener();
+  }
+
+  get initialized => authController.initUser;
 }

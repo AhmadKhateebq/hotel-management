@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
+import 'package:hotel_management/mvvm/view/requests/requests_list_page.dart';
 import 'package:hotel_management/mvvm/view_model/reciptionest_home_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/request/request_list_view_model.dart';
-import 'package:hotel_management/mvvm/view/requests/requests_list_page.dart';
 import 'package:provider/provider.dart';
 
 class ReceptionHome extends StatefulWidget {
@@ -54,6 +54,19 @@ class _ReceptionHomeState extends State<ReceptionHome>
 
   getTabBar(context) => TabBar(
         controller: Provider.of<ReceptionHomeViewModel>(context).tabController,
+        // isScrollable: true,
+        // labelPadding:  EdgeInsets.symmetric(horizontal: Get.width/15),
+        labelPadding:  const EdgeInsets.symmetric(horizontal: 0),
+        unselectedLabelStyle: const TextStyle(
+            // fontStyle: FontStyle.italic,
+          fontWeight: FontWeight.bold,
+            fontFamily: 'RobotoCondensed'
+        ),
+        labelStyle: const TextStyle(
+          // fontWeight: FontWeight.bold,
+          // fontStyle: FontStyle.italic,
+          fontFamily: 'Lobster'
+        ),
         tabs: const <Tab>[
           Tab(
             icon: Icon(Icons.home),
@@ -69,7 +82,7 @@ class _ReceptionHomeState extends State<ReceptionHome>
           ),
           Tab(
             icon: Icon(Icons.compare_arrows),
-            text: 'intertwined',
+            text: 'Overlap',
           ),
           Tab(
             icon: Icon(Icons.close),

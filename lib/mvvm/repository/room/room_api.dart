@@ -12,7 +12,23 @@ class RoomApi extends RoomRepository {
 
   @override
   Future<List<Room>> getAllRooms() async {
-    return await _supabase.from('room').select('*');
+    return (await _supabase
+            .from('room')
+            .select<List<Map<String, dynamic>>>('*'))
+        .map((e) => Room.fromDynamicMap(e))
+        .toList();
+  }
+
+  Future<String> getNextID(String floor) async {
+    var localFloor = floor.replaceAll(RegExp(r'[^1-9]'), '');
+    String roomID = ((await getAllRooms())
+            .where((element) =>
+                element.roomId.replaceAll(RegExp(r'[^1-9]'), '') == localFloor)
+            .map((e) => e.roomId.replaceAll(RegExp(r'[^A-Z]'), ''))
+            .toList()
+          ..sort())
+        .last;
+    return (String.fromCharCode(roomID.codeUnitAt(0) + 1));
   }
 
   @override
@@ -21,6 +37,14 @@ class RoomApi extends RoomRepository {
     List<dynamic> a = await _supabase.rpc('get_rooms', params: {
       "start": DateFormatter.format(start),
       'end_date': DateFormatter.format(end)
+    });
+    return a.map((e) => Room.fromDynamicMap(e as Map)).toList()..sort();
+  }
+
+  Future<List<Room>> getMyRooms({required String userId}) async {
+    List<dynamic> a = await _supabase.rpc('get_my_rooms', params: {
+      "now": DateFormatter.format(DateTime.now()),
+      'user_id': userId
     });
     return a.map((e) => Room.fromDynamicMap(e as Map)).toList()..sort();
   }
@@ -62,7 +86,7 @@ class RoomApi extends RoomRepository {
   }
 
   bool validateData(String roomId) {
-    RegExp myRegExp = RegExp(r"^[0-9]{1,2}[A-Z]{1,2}$");
+    RegExp myRegExp = RegExp(r"^[0-9]{1}$");
     if (myRegExp.hasMatch(roomId)) {
       var match = myRegExp.matchAsPrefix(roomId)!;
       if (roomId.length == match.end) {
@@ -88,7 +112,6 @@ class RoomApi extends RoomRepository {
       required int rating3,
       required int rating4,
       required int rating5}) async {
-
     List<dynamic> a = await _supabase.rpc('get_rooms', params: {
       "start": DateFormatter.format(start),
       'end_date': DateFormatter.format(end),

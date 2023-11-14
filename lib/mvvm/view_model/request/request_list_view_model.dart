@@ -10,6 +10,7 @@ class RequestsListViewModel {
   final Stream<List<Map<String, dynamic>>> dataStream;
   final RoomRequest Function(Map<String, dynamic> data) mapper;
   List<RoomRequest> requests = [];
+
   RequestsListViewModel(
       {required this.pending,
       required this.approved,
@@ -39,6 +40,7 @@ class RequestsListViewModel {
 
   void handleSnapshot(AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
     requests = snapshot.data?.map(mapper).where(filterRequests).toList() ?? [];
+    requests.sort();
   }
 
   request(int index) => requests[index];

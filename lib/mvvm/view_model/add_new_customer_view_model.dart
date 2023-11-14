@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
@@ -67,6 +68,6 @@ class AddNewCustomerViewModel {
   }
 
   skip() async {
-    Get.back();
+    Get.find<SupabaseAuthController>().signOut();
   }
 }

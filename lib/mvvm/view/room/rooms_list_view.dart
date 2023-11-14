@@ -14,8 +14,19 @@ class RoomsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: listViewBuilderOneLine,
+    List<Widget> a = listViewBuilderOneLine;
+    bool shrink = false;
+    if (a.length == 1) {
+      if (a.first.runtimeType == Center) {
+        shrink = true;
+      }
+    }
+    return RefreshIndicator(
+      onRefresh: viewModel.onRefresh,
+      child: ListView(
+        shrinkWrap: shrink,
+        children: a,
+      ),
     );
   }
 
@@ -26,6 +37,11 @@ class RoomsListView extends StatelessWidget {
       Room room = viewModel.rooms[index];
       list.add(viewModel.divider(room.roomId));
       list.add(RoomCard(viewModel: RoomCardViewModel(room: room)));
+    }
+    if (list.isEmpty) {
+      list.add(const Center(
+        child: Text('No Rooms Available'),
+      ));
     }
     return list;
   }

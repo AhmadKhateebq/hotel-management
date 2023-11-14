@@ -3,13 +3,10 @@ import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 
 class GoogleSignInButton extends StatefulWidget {
-  GoogleSignInButton({super.key});
-  final _GoogleSignInButtonState _state = _GoogleSignInButtonState();
-  rebuild(){
-    _state.rebuild();
-  }
+  const GoogleSignInButton({super.key});
+
   @override
-  createState() => _state;
+  createState() => _GoogleSignInButtonState();
 }
 
 class _GoogleSignInButtonState extends State<GoogleSignInButton> {
@@ -32,10 +29,16 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20))),
         onPressed: () async {
-          Get.find<SupabaseAuthController>().googleSignIn();
-          setState(() {
-            _isSigningIn = true;
-          });
+          try{
+            setState(() {
+              _isSigningIn = true;
+            });
+            await Get.find<SupabaseAuthController>().googleSignIn();
+          }catch(e){
+            setState(() {
+              _isSigningIn = false;
+            });
+          }
         },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),

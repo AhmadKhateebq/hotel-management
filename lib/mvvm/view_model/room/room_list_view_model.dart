@@ -4,7 +4,7 @@ import 'package:hotel_management/mvvm/model/room.dart';
 class RoomListViewModel {
   final DateTime startDate;
   final DateTime endDate;
-
+  Future<void> Function() onRefresh;
   int currentFloor = 0;
   final List<Room> rooms;
 
@@ -12,6 +12,7 @@ class RoomListViewModel {
     required this.rooms,
     required this.startDate,
     required this.endDate,
+    required this.onRefresh,
   });
 
   Widget divider(roomId) {

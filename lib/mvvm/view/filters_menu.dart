@@ -5,6 +5,7 @@ import 'package:hotel_management/mvvm/view_model/filters_menu_model_view.dart';
 
 class FiltersCustomMenu extends StatefulWidget {
   const FiltersCustomMenu({super.key, required this.viewModel});
+
   final FilterMenuModelView viewModel;
   final int count = 5;
 
@@ -13,12 +14,14 @@ class FiltersCustomMenu extends StatefulWidget {
 }
 
 class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
-  late final FilterMenuModelView viewModel ;
+  late final FilterMenuModelView viewModel;
+
   @override
   void initState() {
     viewModel = widget.viewModel;
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -79,7 +82,6 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black)),
-
                                 Text(viewModel.end.value,
                                     style: const TextStyle(
                                         fontSize: 20,
@@ -179,10 +181,9 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),
-                  Obx(
-                     () => Switch(
-                          value: viewModel.seaView.value, onChanged: viewModel.setSeaView)
-                  )
+                  Obx(() => Switch(
+                      value: viewModel.seaView.value,
+                      onChanged: viewModel.setSeaView))
                 ],
               ),
             ),
@@ -199,8 +200,7 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),
-                  Obx(
-                          () => RangeSlider(
+                  Obx(() => RangeSlider(
                         inactiveColor: Colors.redAccent[100],
                         activeColor: Colors.redAccent,
                         divisions: 50,
@@ -210,8 +210,7 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                         onChanged: viewModel.changePriceRange,
                         max: FilterMenuModelView.maxPriceCanChoose,
                         min: FilterMenuModelView.minPriceCanChoose,
-                      )
-                  ),
+                      )),
                 ],
               ),
             ),
@@ -238,12 +237,24 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                       ],
                     ),
                     Expanded(
-                      child: FilledButton(
-                        onPressed: viewModel.applyFilters,
-                        style: FilledButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5))),
-                        child: const Text('Search'),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          FilledButton(
+                            onPressed: viewModel.resetFilters,
+                            style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5))),
+                            child: const Text('Reset'),
+                          ),
+                          FilledButton(
+                            onPressed: viewModel.applyFilters,
+                            style: FilledButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5))),
+                            child: const Text('Search'),
+                          ),
+                        ],
                       ),
                     )
                   ],

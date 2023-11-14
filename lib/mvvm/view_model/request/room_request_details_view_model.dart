@@ -7,7 +7,6 @@ import 'request_preview_view_model.dart';
 
 class RoomRequestDetailsViewModel{
   final RoomRequest _request;
-
   RoomRequestDetailsViewModel({required RoomRequest request}) : _request = request;
   get roomId => _request.roomId;
 
@@ -19,7 +18,6 @@ class RoomRequestDetailsViewModel{
 
 
   cardOnTap()  {
-    print('onTap');
     Get.to(() => PreviewRequest(
       viewModel: RequestReviewViewModel(request: _request),
     ));

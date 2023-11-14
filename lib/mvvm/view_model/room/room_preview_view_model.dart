@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
+import 'package:hotel_management/mvvm/repository/my_rooms_facade.dart';
 import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 
 class RoomPreviewViewModel {
   final Room _room;
-
+  RxDouble avg = RxDouble(0);
   RoomPreviewViewModel({required Room room}) : _room = room;
 
   get room => _room;
@@ -38,5 +39,8 @@ class RoomPreviewViewModel {
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(const Duration(days: 1461)),
         context: Get.context!);
+  }
+  getAvg()async{
+    avg.value =  await MyRoomsFacade().getAvgReview(_room.roomId);
   }
 }

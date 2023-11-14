@@ -110,4 +110,7 @@ class CustomerApi extends CustomerRepository {
     }
     await _saveCustomerDetails(details);
   }
+  Future<String> getCustomerName(String customerId) async {
+    return (await _supabase.from('customer').select('full_name').eq("id", customerId))[0]['full_name'];
+  }
 }

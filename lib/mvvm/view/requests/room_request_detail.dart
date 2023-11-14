@@ -8,7 +8,10 @@ class RoomRequestDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text('Room ${viewModel.roomId}'),
+        title: Text('Room ${viewModel.roomId}',style: const TextStyle(
+          fontFamily: 'RobotoCondensed',
+          fontWeight: FontWeight.bold,
+        ),),
         subtitle: Text('Made On:${viewModel.madeOn}'),
         trailing: Text(
             '${viewModel.startingDate} - ${viewModel.endingDate}'),

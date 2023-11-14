@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:hotel_management/util/util_classes.dart';
 
-class RoomRequest {
+class RoomRequest implements Comparable {
   int id;
   String roomId;
   String customerId;
@@ -68,6 +68,11 @@ class RoomRequest {
       status: StatusUtil.getStatus(data['status']),
       customerId: data['customer_id'],
       roomId: data['room_id']);
+
+  @override
+  int compareTo(other) {
+    return other.time.compareTo((time));
+  }
 
 
 }

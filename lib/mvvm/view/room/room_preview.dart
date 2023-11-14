@@ -6,11 +6,22 @@ import 'package:get/get.dart';
 import '../../view_model/room/room_preview_view_model.dart';
 import '../components/rating_bar.dart';
 
-class PreviewRoom extends StatelessWidget {
+class PreviewRoom extends StatefulWidget {
   const PreviewRoom({
     super.key, required this.viewModel,
   });
  final RoomPreviewViewModel viewModel;
+
+  @override
+  State<PreviewRoom> createState() => _PreviewRoomState();
+}
+
+class _PreviewRoomState extends State<PreviewRoom> {
+  @override
+  void initState() {
+    widget.viewModel.getAvg();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +31,7 @@ class PreviewRoom extends StatelessWidget {
               Get.back();
             },
             icon: const Icon(Icons.close)),
-        title: Text('Room ${viewModel.roomId}'),
+        title: Text('Room ${widget.viewModel.roomId}'),
         centerTitle: true,
       ),
       body: Container(
@@ -31,8 +42,16 @@ class PreviewRoom extends StatelessWidget {
             Expanded(
               child: FlipCard(
                   front: setSlideShow(),
-                  back: CustomRatingBar(
-                    rating: viewModel.stars,
+                  back: Obx(
+                    ()=> Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomRatingBar(
+                          rating: widget.viewModel.avg.value,
+                        ),
+                        Text(widget.viewModel.avg.value.toStringAsFixed(2)),
+                      ],
+                    ),
                   )),
             ),
             Expanded(
@@ -42,22 +61,22 @@ class PreviewRoom extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  Text('Price : ${viewModel.price} \$'),
+                  Text('Price : ${widget.viewModel.price} \$'),
                   const SizedBox(
                     height: 20,
-                  ),Text('Beds : ${viewModel.beds} Bed${viewModel.beds>1?'s':''} '),
+                  ),Text('Beds : ${widget.viewModel.beds} Bed${widget.viewModel.beds>1?'s':''} '),
                   const SizedBox(
                     height: 20,
-                  ),Text('Size : ${viewModel.adults} Adult${viewModel.adults>1?'s':''} '),
+                  ),Text('Size : ${widget.viewModel.adults} Adult${widget.viewModel.adults>1?'s':''} '),
                   const SizedBox(
                     height: 20,
                   ),
-                  Text('Floor : ${getFloor(viewModel.roomId)}'),
+                  Text('Floor : ${getFloor(widget.viewModel.roomId)}'),
                   const SizedBox(
                     height: 20,
                   ),
                   TextButton(
-                    onPressed: viewModel.reserveRoom,
+                    onPressed: widget.viewModel.reserveRoom,
                     child: const Text(
                       'Apply Now',
                     ),
@@ -72,8 +91,8 @@ class PreviewRoom extends StatelessWidget {
   }
 
   Widget setSlideShow() {
-    List<Widget> images = [getImage(viewModel.pictureUrl)];
-    for (var value in viewModel.slideshow) {
+    List<Widget> images = [getImage(widget.viewModel.pictureUrl)];
+    for (var value in widget.viewModel.slideshow) {
       images.add(getImage(value));
     }
     return ImageSlideshow(

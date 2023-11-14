@@ -34,22 +34,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          body: homeScreen(),
-          appBar: AppBar(
-            title: const Text(
-              'Available Rooms',
-              style: TextStyle(fontSize: 24),
-            ),
-            titleSpacing: 0,
-            centerTitle: true,
-            actions: [
-              IconButton(
-                  onPressed: viewModel.openFilters,
-                  icon: const Icon(Icons.filter_alt)),
-            ],
+        body: homeScreen(),
+        appBar: AppBar(
+          title: const Text(
+            'Available Rooms',
+            style: TextStyle(fontSize: 24),
           ),
-          drawer: viewModel.getDrawer,
-          floatingActionButton: viewModel.addRoom),
+          titleSpacing: 0,
+          centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: viewModel.openFilters,
+                icon: const Icon(Icons.filter_alt)),
+          ],
+        ),
+        drawer: viewModel.getDrawer,
+        // floatingActionButton: viewModel.addRoom
+      ),
     );
   }
 
@@ -61,10 +62,11 @@ class _HomeScreenState extends State<HomeScreen> {
               : Obx(
                   () => RoomsListView(
                       viewModel: RoomListViewModel(
-                    startDate: viewModel.startDate,
-                    endDate: viewModel.endDate,
-                    rooms: viewModel.rooms.value,
-                  )),
+                          startDate: viewModel.startDate,
+                          endDate: viewModel.endDate,
+                          // ignore: invalid_use_of_protected_member
+                          rooms: viewModel.rooms.value,
+                          onRefresh: viewModel.getRooms)),
                 ),
         )),
         SlidingUpPanel(
@@ -72,7 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
           panel: FiltersCustomMenu(
             viewModel: FilterMenuModelView(
                 panelController: viewModel.panelController,
-                search: viewModel.getRoomsFiltered),
+                search: viewModel.getRoomsFiltered,
+                reset: viewModel.getRooms),
           ),
           maxHeight: Get.height,
           minHeight: 0,

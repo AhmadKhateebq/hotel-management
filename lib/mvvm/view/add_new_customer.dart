@@ -16,8 +16,10 @@ class AddCustomer extends StatelessWidget {
     }
     return SafeArea(
         child: Scaffold(
+
             body: getForm(),
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               titleSpacing: 0,
               centerTitle: true,
               title: const Text(
@@ -103,7 +105,7 @@ class AddCustomer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 FilledButton(
-                    onPressed: viewModel.skip, child: const Text('skip')),
+                    onPressed: viewModel.skip, child: const Text('Sign Out')),
                 FilledButton(
                     onPressed: viewModel.save, child: const Text('save'))
               ],

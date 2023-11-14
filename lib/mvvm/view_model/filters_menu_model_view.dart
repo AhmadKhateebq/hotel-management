@@ -20,8 +20,9 @@ class FilterMenuModelView {
   double minPrice = 0;
   RxList<bool> stars = [false, false, false, false, false].obs;
   Function(Map<String, dynamic> filters, bool seaView) search;
+  Function() reset;
 
-  FilterMenuModelView({required this.panelController, required this.search});
+  FilterMenuModelView({required this.panelController, required this.search,required this.reset});
 
   Future<DateTimeRange> dateRangePicker() async {
     return await showDateRangePicker(
@@ -81,6 +82,15 @@ class FilterMenuModelView {
       'rating4': list[3],
       'rating5': list[4],
     }, seaView.value);
+  }
+  resetFilters() {
+     seaView.value = false;
+     priceRange.value = const RangeValues(minPriceCanChoose, maxPriceCanChoose);
+     stars.value = [false, false, false, false, false];
+    if (panelController.isPanelOpen) {
+      panelController.close();
+    }
+    reset();
   }
 
   List<int> getRating() {

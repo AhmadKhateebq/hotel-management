@@ -12,6 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthController extends GetxController {
   final _supabase = Supabase.instance.client;
+  var initUser = false.obs;
   // Session? session;
   LoginUser loginUser = LoginUser();
   late final StreamSubscription _authSubscription;
@@ -19,17 +20,22 @@ class SupabaseAuthController extends GetxController {
     clientId: iosClientId,
     serverClientId: webClientId,
   );
+  User? currentUser(){
+    return _supabase.auth.currentUser;
+  }
   init() {
     // databaseController  = Get.find();
   }
+
   getUserData() {
     loginUser.user = _supabase.auth.currentUser;
-    loginUser.profileImageUrl = loginUser.user!.userMetadata?['avatar_url'] != null
-        ?  loginUser.user!.userMetadata!['avatar_url']
+    loginUser.profileImageUrl = loginUser.user!.userMetadata?['avatar_url'] !=
+            null
+        ? loginUser.user!.userMetadata!['avatar_url']
         : loginUser.currentCustomerDetails.pictureUrl ??
-        'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
-    loginUser.fullName =  loginUser.user!.userMetadata?['full_name'] != null
-        ?  loginUser.user!.userMetadata!['full_name']
+            'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
+    loginUser.fullName = loginUser.user!.userMetadata?['full_name'] != null
+        ? loginUser.user!.userMetadata!['full_name']
         : '${loginUser.currentCustomerDetails.firstName} ${loginUser.currentCustomerDetails.lastName}';
     loginUser.role = loginUser.role;
   }
@@ -49,7 +55,11 @@ class SupabaseAuthController extends GetxController {
     // _authSubscription =
     return _supabase.auth.onAuthStateChange.listen(onData);
   }
-   setUpSubscription() {
+
+  setUpSubscription() {
+    if(_supabase.auth.currentUser!=null){
+      initUser.value = true;
+    }
     // _authSubscription =
      _supabase.auth.onAuthStateChange.listen((data) async {
       final event = data.event;
@@ -57,7 +67,6 @@ class SupabaseAuthController extends GetxController {
         // session = data.session;
         loginUser.user = data.session!.user;
         if (Get.context!.mounted) {
-          Get.toNamed('/loading');
           final CustomerApi api = CustomerApi();
           try {
             await api.getCustomerDetails(loginUser.user!.id);
@@ -66,11 +75,10 @@ class SupabaseAuthController extends GetxController {
           }
         }
       }
-      // if (event == AuthChangeEvent.signedOut) {
-      //   await signOut();
-      // }
+    }, onError: (error, stackTrace) {
+      log('error', error: error, stackTrace: stackTrace);
+      signOut();
     });
-
   }
 
   endSubscription() {
@@ -87,13 +95,18 @@ class SupabaseAuthController extends GetxController {
 
   Future<AuthResponse> signUp(
       {required String email, required String password}) async {
-    final AuthResponse res = await _supabase.auth.signUp(
-      email: email,
-      password: password,
-    );
-    // session = res.session;
-    loginUser.user = res.user;
-    return res;
+    try {
+      final AuthResponse res = await _supabase.auth.signUp(
+        email: email,
+        password: password,
+      );
+      // session = res.session;
+      loginUser.user = res.user;
+      return res;
+    } catch (e, s) {
+      log(e.toString(), name: s.toString());
+      rethrow;
+    }
   }
 
   Future<String> signIn(
@@ -106,10 +119,9 @@ class SupabaseAuthController extends GetxController {
       // session = res.session;
       loginUser.user = res.user;
       return 'true';
-    } catch (e, s) {
+    } catch (e) {
       String message = (e as AuthException).message;
-      log(message);
-      printError(info: s.toString());
+      log('', error: message);
       return message;
     }
   }
@@ -130,29 +142,37 @@ class SupabaseAuthController extends GetxController {
 
   signOut() async {
     await _supabase.auth.signOut();
-    if(await googleSignInPlatform.isSignedIn()){
+    if (await googleSignInPlatform.isSignedIn()) {
       googleSignInPlatform.signOut();
     }
     loginUser.logout();
-    Get.toNamed('/login');
+    initUser = false.obs;
+    Get.offAllNamed('/login');
   }
 
   Future<AuthResponse> googleSignIn() async {
-    final googleUser = await googleSignInPlatform.signIn();
-    final googleAuth = await googleUser!.authentication;
-    final accessToken = googleAuth.accessToken;
-    final idToken = googleAuth.idToken;
-    if (accessToken == null) {
-      throw 'No Access Token found.';
+    try {
+      final googleUser = await googleSignInPlatform.signIn();
+      if (googleUser == null) {
+        throw 'Login Canceled';
+      }
+      final googleAuth = await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
+      if (accessToken == null) {
+        throw 'No Access Token found.';
+      }
+      if (idToken == null) {
+        throw 'No ID Token found.';
+      }
+      return signInWithIdToken(
+        provider: Provider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+    } catch (e) {
+      rethrow;
     }
-    if (idToken == null) {
-      throw 'No ID Token found.';
-    }
-    return signInWithIdToken(
-      provider: Provider.google,
-      idToken: idToken,
-      accessToken: accessToken,
-    );
   }
 
   Future<AuthResponse> signInWithIdToken(

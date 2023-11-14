@@ -3,9 +3,12 @@ import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
 import 'package:hotel_management/mvvm/view/add_new_customer.dart';
+import 'package:hotel_management/mvvm/view/first_screen.dart';
 import 'package:hotel_management/mvvm/view/login_screen.dart';
 import 'package:hotel_management/mvvm/view/reciptionest_home.dart';
+import 'package:hotel_management/mvvm/view/requests/my_requests.dart';
 import 'package:hotel_management/mvvm/view/room/add_room.dart';
+import 'package:hotel_management/mvvm/view/room/my_rooms.dart';
 import 'package:hotel_management/mvvm/view/splash_screen.dart';
 import 'package:hotel_management/mvvm/view_model/add_new_customer_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
@@ -28,6 +31,7 @@ void main() async {
   runApp(GetMaterialApp(
     color: primaryColor,
     theme: ThemeData(
+        fontFamily: 'RobotoCondensed',
         useMaterial3: true,
         cardColor: secondaryColor,
         colorScheme: ColorScheme.fromSeed(
@@ -77,8 +81,11 @@ void main() async {
                 viewModel: AddNewCustomerViewModel(),
               )),
       GetPage(name: '/add_room', page: () => const AddRoom()),
+      GetPage(name: '/my_rooms', page: () => const MyRoomsView()),
+      GetPage(name: '/my_request', page: () => const MyRequests()),
+      GetPage(name: '/first', page: () => const FirstScreen()),
     ],
-    initialRoute: '/login',
+    initialRoute: '/first',
   ));
 }
 

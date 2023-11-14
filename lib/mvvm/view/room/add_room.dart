@@ -30,61 +30,155 @@ class _AddRoomState extends State<AddRoom> {
     return SafeArea(
         minimum: const EdgeInsets.fromLTRB(0, 0, 0, 10),
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             titleSpacing: 0,
             centerTitle: true,
             title: const Text(
-              'Add your details',
+              'Add Room Details',
               style: TextStyle(fontSize: 24),
             ),
           ),
           body: Form(
               key: viewModel.formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   getImageButton(),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the room id';
-                      }
-                      return null;
-                    },
-                    controller: viewModel.idController,
-                    decoration: const InputDecoration(
-                        floatingLabelStyle:
-                            TextStyle(color: Colors.black, fontSize: 18),
-                        labelText: 'Room ID',
-                        filled: true,
-                        fillColor: Colors.white60,
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)))),
-                  ),
-                  TextFormField(
-                    controller: viewModel.priceController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the price';
-                      }
-                      return null;
-                    },
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^(\d+)?\.?\d{0,2}'))
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: Get.width/2,
+                        child:  TextField(
+                          enabled: false,
+                          decoration: InputDecoration(
+                              floatingLabelStyle:
+                              const TextStyle(color: Colors.black, fontSize: 18),
+                              label: Obx(()=>Text('Has Sea View? ${viewModel.seaView.value?'Yes':'No'}')),
+                              filled: true,
+                              fillColor: Colors.white60,
+                              border: InputBorder.none,
+                          )
+                        ),
+                      ),
+                      SizedBox(width:Get.width/2,child: Obx(()=> Switch(value: viewModel.seaView.value, onChanged: viewModel.setSeaView))),
                     ],
-                    decoration: const InputDecoration(
-                        floatingLabelStyle:
-                            TextStyle(color: Colors.black, fontSize: 18),
-                        labelText: 'Room Price',
-                        filled: true,
-                        fillColor: Colors.white60,
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)))),
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: Get.width/2,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter the room id';
+                            }
+                            return null;
+                          },
+                          keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                          controller: viewModel.idController,
+                          decoration: const InputDecoration(
+                              floatingLabelStyle:
+                                  TextStyle(color: Colors.black, fontSize: 18),
+                              labelText: 'Room Floor',
+                              filled: true,
+                              fillColor: Colors.white60,
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)))),
+                        ),
+                      ),
+                      SizedBox(
+                        width: Get.width/2,
+                        child: TextFormField(
+                          controller: viewModel.priceController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter the price';
+                            }
+                            return null;
+                          },
+                          keyboardType:
+                              const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                          decoration: const InputDecoration(
+                              floatingLabelStyle:
+                                  TextStyle(color: Colors.black, fontSize: 18),
+                              labelText: 'Room Price',
+                              filled: true,
+                              fillColor: Colors.white60,
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)))),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: Get.width/2,
+                        child: TextFormField(
+                          controller: viewModel.bedsController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter the number of beds';
+                            }
+                            return null;
+                          },
+                          keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                          decoration: const InputDecoration(
+                              floatingLabelStyle:
+                              TextStyle(color: Colors.black, fontSize: 18),
+                              labelText: 'Room Beds',
+                              filled: true,
+                              fillColor: Colors.white60,
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)))),
+                        ),
+                      ),
+                      SizedBox(
+                        width: Get.width/2,
+                        child: TextFormField(
+                          controller: viewModel.sizeController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter the room size';
+                            }
+                            return null;
+                          },
+                          keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                          decoration: const InputDecoration(
+                              floatingLabelStyle:
+                              TextStyle(color: Colors.black, fontSize: 18),
+                              labelText: 'Room Size',
+                              filled: true,
+                              fillColor: Colors.white60,
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)))),
+                        ),
+                      ),
+                    ],
                   ),
                   getRatingWidget(),
                   Row(
@@ -131,19 +225,21 @@ class _AddRoomState extends State<AddRoom> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))),
       onPressed: viewModel.imagePicker,
-      child: ClipRRect(
-        child: !viewModel.imagePicked.value
-            ? Image.network(
-                noImage,
-                width: Get.width,
-                height: Get.height / 3,
-              )
-            : Image.file(
-                File(viewModel.image!.path),
-                width: Get.width,
-                height: Get.height / 3,
-                fit: BoxFit.cover,
-              ),
+      child: Obx(
+        ()=> ClipRRect(
+          child: !viewModel.imagePicked.value
+              ? Image.network(
+                  noImage,
+                  width: Get.width,
+                  height: Get.height / 4,
+                )
+              : Image.file(
+                  File(viewModel.image!.path),
+                  width: Get.width,
+                  height: Get.height / 4,
+                  fit: BoxFit.cover,
+                ),
+        ),
       ));
 
   getRatingWidget() => RatingBar.builder(

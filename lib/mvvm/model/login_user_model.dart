@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
+import 'package:hotel_management/mvvm/view/requests/my_requests.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -27,7 +28,6 @@ class LoginUser {
     _fullName = null;
     _profileImageUrl = null;
     _role = null;
-
   }
 
   set fullName(String value) {
@@ -37,51 +37,53 @@ class LoginUser {
   set role(ROLE value) {
     _role = value;
   }
+
   Widget _profile() => SizedBox(
-    height: (Get.height) * (1 / 4),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(10, 10, 10, 15),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: ClipOval(
-              child: Image.network(
-                _profileImageUrl!,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
+        height: (Get.height) * (1 / 4),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: ClipOval(
+                  child: Image.network(
+                    _profileImageUrl!,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  _fullName!,
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  _role == ROLE.reception
+                      ? 'reception'
+                      : _role == ROLE.admin
+                          ? 'Admin'
+                          : 'Customer',
+                  style: const TextStyle(
+                      fontSize: 15, fontStyle: FontStyle.italic),
+                ),
+              ),
+            ],
           ),
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: Text(
-              _fullName!,
-              style: const TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: Text(
-              _role == ROLE.reception
-                  ? 'reception'
-                  : _role == ROLE.admin
-                  ? 'Admin'
-                  : 'Customer',
-              style: const TextStyle(
-                  fontSize: 15, fontStyle: FontStyle.italic),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
+
   Widget getDrawer() {
     return Drawer(
         elevation: 10,
@@ -95,7 +97,16 @@ class LoginUser {
             const SizedBox(
               height: 10,
             ),
+            getAddTile(),
             getNavTile(),
+            getMyRoomsTile(),
+            ListTile(
+              leading: const Icon(Icons.my_library_books_rounded),
+              title: const Text('To My Requests'),
+              onTap: () async {
+                Get.to(() => const MyRequests());
+              },
+            ),
             ListTile(
               leading: const Icon(
                 Icons.logout,
@@ -107,21 +118,56 @@ class LoginUser {
           ],
         ));
   }
+
   getNavTile() => _role == ROLE.customer
       ? const SizedBox()
-      : Get.currentRoute == '/home'
-      ? ListTile(
-    leading: const Icon(Icons.request_page),
-    title: const Text('To Requests'),
-    onTap: () async {
-      Get.offAllNamed('/recep_home');
-    },
-  )
-      : ListTile(
-    leading: const Icon(Icons.request_page),
-    title: const Text('To Rooms'),
-    onTap: () async {
-      Get.offAllNamed('/home');
-    },
-  );
+      : Column(
+          children: [
+            Get.currentRoute == '/home'
+                ? ListTile(
+                    leading: const Icon(Icons.request_page),
+                    title: const Text('To Requests'),
+                    onTap: () async {
+                      Get.offAllNamed('/recep_home');
+                    },
+                  )
+                : Column(
+                  children: [
+                    const Text('Admin Menu'),
+                    ListTile(
+                        leading: const Icon(Icons.request_page),
+                        title: const Text('To Rooms'),
+                        onTap: () async {
+                          Get.offAllNamed('/home');
+                        },
+                      ),
+                  ],
+                ),
+            const Divider(
+              thickness: 1,
+            ),
+          ],
+        );
+
+  getAddTile() => _role == ROLE.admin && Get.currentRoute == '/home'
+      ? Column(
+        children: [const Text('Admin Menu'),
+          ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text('Add Room'),
+            onTap: () async {
+              Get.offAllNamed('/add_room');
+            },
+          ),
+        ],
+      )
+      : const SizedBox();
+
+  getMyRoomsTile() => ListTile(
+        leading: const Icon(Icons.history),
+        title: const Text('My Rooms'),
+        onTap: () async {
+          Get.toNamed('/my_rooms');
+        },
+      );
 }

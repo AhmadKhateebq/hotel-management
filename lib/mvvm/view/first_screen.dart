@@ -17,7 +17,6 @@ class FirstScreen extends StatefulWidget {
 
 class _FirstScreenState extends State<FirstScreen> {
   final FirstScreenViewModel viewModel = FirstScreenViewModel();
-  late AppLifecycleReactor _appLifecycleReactor;
   @override
   void initState() {
 

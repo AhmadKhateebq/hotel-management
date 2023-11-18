@@ -12,12 +12,7 @@ import 'package:hotel_management/mvvm/view/room/my_rooms.dart';
 import 'package:hotel_management/mvvm/view/splash_screen.dart';
 import 'package:hotel_management/mvvm/view_model/add_new_customer_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
-import 'package:hotel_management/util/const.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'controller/firebase_analytics_controller.dart';
-import 'controller/google_adds_controller.dart';
-import 'firebase_options.dart';
 import 'mvvm/view/home_screen.dart';
 
 const primaryColor = Colors.redAccent;
@@ -28,9 +23,6 @@ void main() async {
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: publicAnonKey,
-  );
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
   );
   Get.put(RoomRequestApi());
   Get.put(SupabaseAuthController());

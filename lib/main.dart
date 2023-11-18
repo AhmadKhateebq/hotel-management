@@ -12,6 +12,8 @@ import 'package:hotel_management/mvvm/view/room/my_rooms.dart';
 import 'package:hotel_management/mvvm/view/splash_screen.dart';
 import 'package:hotel_management/mvvm/view_model/add_new_customer_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
+import 'package:hotel_management/util/const.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'mvvm/view/home_screen.dart';
 

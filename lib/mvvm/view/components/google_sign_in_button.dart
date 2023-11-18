@@ -49,7 +49,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
               _isSigningIn
                   ? const CircularProgressIndicator()
                   : const Image(
-                      image: AssetImage("assets/google_logo.png"),
+                      image: AssetImage("assets/image/google_logo.png"),
                       height: 35.0,
                     ),
               const Padding(

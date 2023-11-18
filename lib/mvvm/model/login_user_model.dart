@@ -125,53 +125,60 @@ class LoginUser {
           children: [
             Get.currentRoute == '/home'
                 ? Column(
-                  children: [
-                    const Align(alignment:AlignmentDirectional.topStart ,child: Text('Admin Menu')),
-                    const SizedBox(height: 10,),
-                    ListTile(
+                    children: [
+                      const Align(
+                          alignment: AlignmentDirectional.topStart,
+                          child: Text('Admin Menu')),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ListTile(
                         leading: const Icon(Icons.request_page),
                         title: const Text('Requests'),
                         onTap: () async {
                           Get.offAllNamed('/recep_home');
                         },
                       ),
-                  ],
-                )
+                    ],
+                  )
                 : Column(
-                  children: [
-                    const Align(alignment:AlignmentDirectional.topStart ,child: Text('Admin Menu')),
-                    const SizedBox(height: 10,),
-                    ListTile(
+                    children: [
+                      const Align(
+                          alignment: AlignmentDirectional.topStart,
+                          child: Text('Admin Menu')),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ListTile(
                         leading: const Icon(Icons.hotel),
                         title: const Text('Rooms'),
                         onTap: () async {
                           Get.offAllNamed('/home');
                         },
                       ),
-                    const Divider(
-                      thickness: 1,
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
           ],
         );
 
   getAddTile() => _role == ROLE.admin && Get.currentRoute == '/home'
       ? Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.add),
-            title: const Text('Add Room'),
-            onTap: () async {
-              Get.offAllNamed('/add_room');
-            },
-          ),
-          const Divider(
-            thickness: 1,
-          ),
-        ],
-      )
-      : const SizedBox();
+          children: [
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Add Room'),
+              onTap: () async {
+                Get.offAllNamed('/add_room');
+              },
+            ),
+            const Divider(
+              thickness: 1,
+            ),
+          ],
+        )
+      : const Divider(
+          thickness: 1,
+        );
 
   getMyRoomsTile() => ListTile(
         leading: const Icon(Icons.history),

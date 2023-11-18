@@ -37,6 +37,7 @@ class CustomerApi extends CustomerRepository {
 
     _auth.loginUser.currentCustomerDetails =
         CustomerDetails.fromDynamicMap(a[0]);
+    _auth.loginUser.user = _auth.currentUser();
     _auth.loginUser.role = RoleUtil.fromString(ids[0]['role']);
     _auth.loginUser.profileImageUrl = _auth
                 .loginUser.user!.userMetadata?['avatar_url'] !=

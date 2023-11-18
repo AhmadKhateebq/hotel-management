@@ -5,6 +5,9 @@ import 'package:hotel_management/mvvm/view/splash_screen.dart';
 import 'package:hotel_management/mvvm/view_model/first_screen_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
 
+import '../../controller/app_lifecycle_reactor.dart';
+import '../../controller/google_adds_controller.dart';
+
 class FirstScreen extends StatefulWidget {
   const FirstScreen({super.key});
 
@@ -14,10 +17,12 @@ class FirstScreen extends StatefulWidget {
 
 class _FirstScreenState extends State<FirstScreen> {
   final FirstScreenViewModel viewModel = FirstScreenViewModel();
-
+  late AppLifecycleReactor _appLifecycleReactor;
   @override
   void initState() {
+
     viewModel.init();
+
     super.initState();
   }
 

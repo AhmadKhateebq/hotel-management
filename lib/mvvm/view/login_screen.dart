@@ -39,28 +39,28 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               ClipRect(
                   child: Image.asset(
-                'assets/st_barth.jpg',
+                'assets/image/st_barth.jpg',
                 fit: BoxFit.fill,
                 height: Get.height / 4,
                 width: Get.width,
               )),
               ClipRect(
                   child: Image.asset(
-                'assets/maldives.jpg',
+                'assets/image/maldives.jpg',
                 fit: BoxFit.fill,
                 height: Get.height / 4,
                 width: Get.width,
               )),
               ClipRect(
                   child: Image.asset(
-                'assets/thailand.jpg',
+                'assets/image/thailand.jpg',
                 fit: BoxFit.fill,
                 height: Get.height / 4,
                 width: Get.width,
               )),
               ClipRect(
                   child: Image.asset(
-                'assets/thailand.jpg',
+                'assets/image/thailand.jpg',
                 fit: BoxFit.fill,
                 height: Get.height / 4,
                 width: Get.width,

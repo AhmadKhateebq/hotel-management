@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/model/customer.dart';
@@ -51,6 +52,8 @@ class CustomerApi extends CustomerRepository {
         ? _auth.loginUser.user!.userMetadata!['full_name']
         : '${_auth.loginUser.currentCustomerDetails.firstName} ${_auth.loginUser.currentCustomerDetails.lastName}';
     _auth.loginUser.role = _auth.loginUser.role;
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    await analytics.setUserProperty(name: 'full_name', value: _auth.loginUser.fullName);
     if (_auth.loginUser.role == ROLE.customer) {
       Get.offAllNamed('/home');
     } else {

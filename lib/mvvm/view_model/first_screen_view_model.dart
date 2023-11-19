@@ -15,5 +15,6 @@ class FirstScreenViewModel{
     else{
       isLoading.value = false;
     }
+
   }
 }

@@ -6,6 +6,8 @@ import 'package:hotel_management/mvvm/view/requests/my_requests.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../view/components/ads/banner_ads.dart';
+
 class LoginUser {
   late CustomerDetails currentCustomerDetails;
   User? user;
@@ -114,7 +116,7 @@ class LoginUser {
               ),
               title: const Text("logout"),
               onTap: Get.find<SupabaseAuthController>().signOut,
-            ),
+            ),const BannerAdWidget(withClose: false,),
           ],
         ));
   }

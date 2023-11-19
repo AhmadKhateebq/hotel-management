@@ -6,6 +6,7 @@ import 'package:hotel_management/mvvm/view_model/first_screen_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
 
 
+
 class FirstScreen extends StatefulWidget {
   const FirstScreen({super.key});
 
@@ -17,9 +18,7 @@ class _FirstScreenState extends State<FirstScreen> {
   final FirstScreenViewModel viewModel = FirstScreenViewModel();
   @override
   void initState() {
-
     viewModel.init();
-
     super.initState();
   }
 

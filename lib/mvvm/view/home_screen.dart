@@ -7,6 +7,8 @@ import 'package:hotel_management/mvvm/view_model/home_screen_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/room/room_list_view_model.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'components/ads/banner_ads.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -16,7 +18,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeScreenViewModel viewModel = HomeScreenViewModel();
-
   @override
   void initState() {
     viewModel.getUserData();
@@ -80,5 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
           maxHeight: Get.height,
           minHeight: 0,
         ),
+        const BannerAdWidget(withClose: true),
       ]);
 }

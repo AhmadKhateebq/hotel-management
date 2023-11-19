@@ -1,5 +1,8 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
 import 'package:hotel_management/mvvm/view/add_new_customer.dart';
@@ -15,6 +18,7 @@ import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'firebase_options.dart';
 import 'mvvm/view/home_screen.dart';
 
 const primaryColor = Colors.redAccent;
@@ -29,6 +33,16 @@ void main() async {
   Get.put(RoomRequestApi());
   Get.put(SupabaseAuthController());
   // Get.put(FirebaseAnalyticsController());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  await analytics.setAnalyticsCollectionEnabled(true);
+  await analytics.logAppOpen();
+  await MobileAds.instance.initialize();
+  MobileAds.instance.updateRequestConfiguration(
+      RequestConfiguration(testDeviceIds: ["36503A67BE05B5A6A4AC1DC738CAB9FC"])
+  );
   runApp(GetMaterialApp(
     color: primaryColor,
     theme: ThemeData(

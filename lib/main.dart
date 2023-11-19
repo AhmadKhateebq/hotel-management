@@ -18,12 +18,11 @@ import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+
 import 'firebase_options.dart';
 import 'mvvm/view/home_screen.dart';
 
-const primaryColor = Colors.redAccent;
-final secondaryColor = Colors.red.shade50;
-
+final primaryColor = Colors.primaries[3];
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
@@ -48,15 +47,12 @@ void main() async {
     theme: ThemeData(
         fontFamily: 'RobotoCondensed',
         useMaterial3: true,
-        cardColor: secondaryColor,
         colorScheme: ColorScheme.fromSeed(
           seedColor: primaryColor,
         ),
-        drawerTheme: DrawerThemeData(
-          backgroundColor: secondaryColor,
-        ),
+
         floatingActionButtonTheme:
-            const FloatingActionButtonThemeData(backgroundColor: primaryColor),
+             FloatingActionButtonThemeData(backgroundColor: primaryColor),
         filledButtonTheme: FilledButtonThemeData(
             style: FilledButton.styleFrom(backgroundColor: primaryColor)),
         switchTheme: SwitchThemeData(
@@ -67,7 +63,8 @@ void main() async {
                     : Colors.grey[350])),
         checkboxTheme: CheckboxThemeData(
           fillColor: MaterialStateColor.resolveWith(getColor),
-        )),
+        )
+    ),
     getPages: [
       GetPage(
           name: '/',

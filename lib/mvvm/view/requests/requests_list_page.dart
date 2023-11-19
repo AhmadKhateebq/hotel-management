@@ -5,9 +5,7 @@ import 'package:hotel_management/mvvm/view_model/request/room_request_details_vi
 
 class RequestsList extends StatelessWidget {
   const RequestsList({super.key, required this.viewModel});
-
   final RequestsListViewModel viewModel;
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -19,8 +17,7 @@ class RequestsList extends StatelessWidget {
             itemBuilder: (context, index) {
               return RoomRequestDetails(
                   viewModel: RoomRequestDetailsViewModel(
-                      request: viewModel.request(index)
-                  ));
+                      request: viewModel.request(index)));
             },
           );
         });

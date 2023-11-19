@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeScreenViewModel viewModel = HomeScreenViewModel();
+
   @override
   void initState() {
     viewModel.getUserData();

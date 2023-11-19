@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_management/mvvm/model/request.dart';
-import 'package:hotel_management/mvvm/view/requests/requests_list_page.dart';
 import 'package:hotel_management/mvvm/view_model/reciptionest_home_view_model.dart';
-import 'package:hotel_management/mvvm/view_model/request/request_list_view_model.dart';
 import 'package:provider/provider.dart';
+
+import 'components/flow/floating_action_button_flow.dart';
 
 class ReceptionHome extends StatefulWidget {
   const ReceptionHome({super.key});
@@ -15,11 +14,6 @@ class ReceptionHome extends StatefulWidget {
 class _ReceptionHomeState extends State<ReceptionHome>
     with TickerProviderStateMixin {
   late final ReceptionHomeViewModel viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,17 +30,14 @@ class _ReceptionHomeState extends State<ReceptionHome>
             title: const Text('Requests'),
             bottom: getTabBar(context),
           ),
-          body: RequestsList(
-            viewModel: RequestsListViewModel(
-              pending: viewModel.pending,
-              approved: viewModel.approved,
-              intertwined: viewModel.intertwined,
-              denied: viewModel.denied,
-              dataStream: viewModel.getRequestsStream(),
-              mapper: RoomRequest.fromDynamicMap,
-            ),
-          ),
+          body: getBody(),
           drawer: viewModel.getDrawer(),
+          floatingActionButton: FloatingActionButtonFlow(
+            icons:viewModel.icons,
+            functions: viewModel.functions,
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
         ),
       ),
     );
@@ -56,17 +47,15 @@ class _ReceptionHomeState extends State<ReceptionHome>
         controller: Provider.of<ReceptionHomeViewModel>(context).tabController,
         // isScrollable: true,
         // labelPadding:  EdgeInsets.symmetric(horizontal: Get.width/15),
-        labelPadding:  const EdgeInsets.symmetric(horizontal: 0),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 0),
         unselectedLabelStyle: const TextStyle(
             // fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.bold,
-            fontFamily: 'RobotoCondensed'
-        ),
+            fontWeight: FontWeight.bold,
+            fontFamily: 'RobotoCondensed'),
         labelStyle: const TextStyle(
-          // fontWeight: FontWeight.bold,
-          // fontStyle: FontStyle.italic,
-          fontFamily: 'Lobster'
-        ),
+            // fontWeight: FontWeight.bold,
+            // fontStyle: FontStyle.italic,
+            fontFamily: 'Lobster'),
         tabs: const <Tab>[
           Tab(
             icon: Icon(Icons.home),
@@ -90,5 +79,11 @@ class _ReceptionHomeState extends State<ReceptionHome>
           ),
         ],
         onTap: Provider.of<ReceptionHomeViewModel>(context).onTapItem,
+      );
+
+  getBody() => PageView(
+        controller: viewModel.controller,
+        onPageChanged: viewModel.onPageChange,
+        children: viewModel.requests,
       );
 }

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
+import 'package:hotel_management/parallax_test/data_container.dart';
 import 'package:hotel_management/mvvm/view/requests/my_requests.dart';
+import 'package:hotel_management/parallax_test/parallax_recipe.dart';
+import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -107,6 +110,20 @@ class LoginUser {
               title: const Text('My Requests'),
               onTap: () async {
                 Get.to(() => const MyRequests());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.my_library_books_rounded),
+              title: const Text('Parallax Test'),
+              onTap: () async {
+                Get.to(() =>  ParallaxRecipe(list: [
+                  ParallaxContainer(imageUrl: noImage, title: '', subtitle: ''),
+                  ParallaxContainer(imageUrl: noImage, title: 'title 2', subtitle: 'subtitle 2'),
+                  ParallaxContainer(imageUrl: noImage, title: 'title 3', subtitle: 'subtitle 3'),
+                  ParallaxContainer(imageUrl: noImage, title: 'title 4', subtitle: 'subtitle 4'),
+                  ParallaxContainer(imageUrl: noImage, title: 'title 5', subtitle: 'subtitle 5'),
+                  ParallaxContainer(imageUrl: noImage, title: 'title 6', subtitle: 'subtitle 6'),
+                ]));
               },
             ),
             ListTile(

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>390986779944-2a9r6sajv63esl5t5lg93uuel34tgskc.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDIZg66WESOGkmHL9zJMwSNM-rfCwTSOPs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>390986779944</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.hotelManagment</string>
+	<key>PROJECT_ID</key>
+	<string>hotel-management-quizplus</string>
+	<key>STORAGE_BUCKET</key>
+	<string>hotel-management-quizplus.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:390986779944:ios:626551cabfa504674e141d</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-1457270885871597~3315617412</string>
+</dict>
+</plist>

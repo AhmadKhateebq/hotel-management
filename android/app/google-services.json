@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "390986779944",
+    "project_id": "hotel-management-quizplus",
+    "storage_bucket": "hotel-management-quizplus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390986779944:android:07cf2966a186fb5c4e141d",
+        "android_client_info": {
+          "package_name": "com.example.hotel_management"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390986779944-2a9r6sajv63esl5t5lg93uuel34tgskc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hotel_management",
+            "certificate_hash": "e89a812a38f438b94e43d5c5217bddf1e28fbe9a"
+          }
+        },
+        {
+          "client_id": "390986779944-9f4g02k64cksob8t003e722fhmodnjf8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXRI15bra8b3NK_ipPJqF_Mbi2QgWVH3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390986779944-9f4g02k64cksob8t003e722fhmodnjf8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "390986779944-9d6an0drc87etrsd35u5kf3scoils0gj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "hotel_management"
+              }
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-1457270885871597~1483112251"
+    }
+  ],
+  "configuration_version": "1"
+}

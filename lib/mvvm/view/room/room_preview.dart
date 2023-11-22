@@ -2,15 +2,18 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:get/get.dart';
+import 'package:hotel_management/controller/connectivity_controller.dart';
 
 import '../../view_model/room/room_preview_view_model.dart';
 import '../components/rating_bar.dart';
 
 class PreviewRoom extends StatefulWidget {
   const PreviewRoom({
-    super.key, required this.viewModel,
+    super.key,
+    required this.viewModel,
   });
- final RoomPreviewViewModel viewModel;
+
+  final RoomPreviewViewModel viewModel;
 
   @override
   State<PreviewRoom> createState() => _PreviewRoomState();
@@ -22,6 +25,7 @@ class _PreviewRoomState extends State<PreviewRoom> {
     widget.viewModel.getAvg();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +47,7 @@ class _PreviewRoomState extends State<PreviewRoom> {
               child: FlipCard(
                   front: setSlideShow(),
                   back: Obx(
-                    ()=> Column(
+                    () => Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CustomRatingBar(
@@ -64,10 +68,14 @@ class _PreviewRoomState extends State<PreviewRoom> {
                   Text('Price : ${widget.viewModel.price} \$'),
                   const SizedBox(
                     height: 20,
-                  ),Text('Beds : ${widget.viewModel.beds} Bed${widget.viewModel.beds>1?'s':''} '),
+                  ),
+                  Text(
+                      'Beds : ${widget.viewModel.beds} Bed${widget.viewModel.beds > 1 ? 's' : ''} '),
                   const SizedBox(
                     height: 20,
-                  ),Text('Size : ${widget.viewModel.adults} Adult${widget.viewModel.adults>1?'s':''} '),
+                  ),
+                  Text(
+                      'Size : ${widget.viewModel.adults} Adult${widget.viewModel.adults > 1 ? 's' : ''} '),
                   const SizedBox(
                     height: 20,
                   ),
@@ -107,10 +115,15 @@ class _PreviewRoomState extends State<PreviewRoom> {
         height: 250,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          child: Image.network(
-            url,
-            fit: BoxFit.cover,
-          ),
+          child: Get.find<ConnectivityController>().connected.value
+              ? Image.network(
+                  url,
+                  fit: BoxFit.cover,
+                )
+              : Image.asset(
+                  'assets/image/noImage.png',
+                  fit: BoxFit.cover,
+                ),
         ));
   }
 

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/view/components/delegate/parallax_delegate.dart';
 
 class ParallaxImage extends StatelessWidget {
-  const ParallaxImage({super.key, required this.imageUrl,});
+  const ParallaxImage({
+    super.key,
+    required this.imageUrl,
+  });
+
   final String imageUrl;
 
   @override
@@ -34,11 +40,19 @@ class ParallaxImage extends StatelessWidget {
         backgroundImageKey: backgroundImageKey,
       ),
       children: [
-        Image.network(
-          imageUrl,
-          key: backgroundImageKey,
-          fit: BoxFit.cover,
-        ),
+        Obx(
+          () => Get.find<ConnectivityController>().connected.value
+              ? Image.network(
+                  imageUrl,
+                  key: backgroundImageKey,
+                  fit: BoxFit.cover,
+                )
+              : Image.asset(
+                  'assets/image/noImage.png',
+                  key: backgroundImageKey,
+                  fit: BoxFit.cover,
+                ),
+        )
       ],
     );
   }
@@ -57,5 +71,4 @@ class ParallaxImage extends StatelessWidget {
       ),
     );
   }
-
 }

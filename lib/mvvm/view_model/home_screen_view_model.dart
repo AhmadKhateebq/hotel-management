@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
-import 'package:hotel_management/mvvm/repository/room/room_api.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
+import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -14,6 +15,9 @@ import 'package:rate_my_app/rate_my_app.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class HomeScreenViewModel {
+  final RoomRepository roomApi= Get.find();
+  final CustomerRepository customerApi= Get.find();
+  final SupabaseAuthController _authController = Get.find();
   PanelController panelController = PanelController();
   TextEditingController adultController = TextEditingController();
   TextEditingController bedsController = TextEditingController();
@@ -42,6 +46,7 @@ class HomeScreenViewModel {
     // appStoreIdentifier: '0000000',
   );
 
+
   void init() {
     bedsController.text = '$beds';
     adultController.text = '$adults';
@@ -58,7 +63,9 @@ class HomeScreenViewModel {
       try {
         rateMyApp.launchNativeReviewDialog();
       } catch (e) {
-        print(e);
+        if (kDebugMode) {
+          print(e);
+        }
       }
       // openRateUsDialog();
       if (Get.context!.mounted && rateMyApp.shouldOpenDialog) {
@@ -72,7 +79,7 @@ class HomeScreenViewModel {
   }
 
   void getUserData() {
-    Get.find<SupabaseAuthController>().getUserData();
+    _authController.getUserData();
   }
 
   openFilters() {
@@ -82,10 +89,10 @@ class HomeScreenViewModel {
     isFilterShowing.value = !isFilterShowing.value;
   }
 
-  get getDrawer => Get.find<SupabaseAuthController>().loginUser.getDrawer();
+  get getDrawer => _authController.loginUser.getDrawer();
 
   get addRoom =>
-      (Get.find<SupabaseAuthController>().loginUser.role == ROLE.admin)
+      (customerApi.getRole() == ROLE.admin)
           ? FloatingActionButton(
               // title: Text("add".tr),
               onPressed: () {
@@ -98,7 +105,7 @@ class HomeScreenViewModel {
   Future<void> getRooms() async {
     isFilterShowing.value = false;
     loading.value = true;
-    rooms.value = await RoomApi().getEmptyRooms(
+    rooms.value = await roomApi.getEmptyRooms(
       start: startDate,
       end: endDate,
     );
@@ -125,7 +132,7 @@ class HomeScreenViewModel {
     int rating4 = filters['rating4'] ?? 4;
     int rating5 = filters['rating5'] ?? 5;
     isSearching = true;
-    rooms.value = await RoomApi().getEmptyRoomsFiltered(
+    rooms.value = await roomApi.getEmptyRoomsFiltered(
       start: startDate,
       end: endDate,
       adult: adult,

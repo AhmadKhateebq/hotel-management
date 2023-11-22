@@ -31,4 +31,9 @@ abstract class RoomRepository {
   Future<String> uploadImage(File file, String roomId);
 
   Future<bool> roomExists(String id);
+  getMyRooms({required String userId});
+
+  validateData(String floor) ;
+
+  getNextID(String floor) ;
 }

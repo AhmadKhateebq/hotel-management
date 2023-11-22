@@ -33,7 +33,9 @@ class RoomCardViewModel {
   void onTap() {
     if (!isHistory) {
       Get.to(() => PreviewRoom(
-            viewModel: RoomPreviewViewModel(room: room),
+            viewModel: RoomPreviewViewModel(
+                room: room,
+                ),
           ));
     }
   }

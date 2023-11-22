@@ -5,7 +5,9 @@ import 'package:hotel_management/mvvm/view_model/request/request_preview_view_mo
 
 class RequestsPageView extends StatelessWidget {
   const RequestsPageView({super.key, required this.modelView});
+
   final RequestsPageViewModelView modelView;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -21,7 +23,8 @@ class RequestsPageView extends StatelessWidget {
   List<PreviewRequest> _buildPreviewRequests() {
     return modelView.list.map((value) {
       return PreviewRequest(
-        viewModel: RequestReviewViewModel(request: value),
+        viewModel: RequestReviewViewModel(
+            request: value,),
       );
     }).toList();
   }

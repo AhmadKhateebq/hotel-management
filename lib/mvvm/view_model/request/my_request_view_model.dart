@@ -1,23 +1,18 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
 
 class MyRequestsViewModel with ChangeNotifier{
   late TabController tabController;
-  final RoomRequestApi _requestApi = RoomRequestApi();
-  final SupabaseAuthController _auth = Get.find();
   bool pending = false;
   bool approved = false;
   bool intertwined = false;
   bool denied = false;
 
+
   void init(TickerProvider val) {
     tabController = TabController(length: 5, vsync: val);
   }
-
-  getRequestsStream() => _requestApi.getRequestsStreamByUserId(_auth.loginUser.user!.id);
 
 
   onTapItem(int index) {

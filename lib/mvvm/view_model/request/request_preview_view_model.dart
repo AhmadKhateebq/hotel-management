@@ -1,23 +1,24 @@
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
-import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
+import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:hotel_management/util/util_classes.dart';
 
-
 class RequestReviewViewModel {
-  final RoomRequest _request;
+  RequestReviewViewModel({
+    required RoomRequest request,
+  }) : _request = request;
 
-  RequestReviewViewModel({required RoomRequest request}) : _request = request;
-  final RoomRequestApi requestApi = RoomRequestApi();
-  final CustomerApi customerApi = CustomerApi();
-  final SupabaseAuthController _authController = Get.find();
+  final RoomRequest _request;
+  final RoomRequestRepository requestApi = Get.find();
+  final CustomerRepository customerApi  = Get.find();
   var customerName = ''.obs;
+
   get request => _request;
 
-  get getButtons => (_request.status == STATUS.pending && _authController.loginUser.role != ROLE.customer);
+  get getButtons => (_request.status == STATUS.pending &&
+      customerApi.getRole() != ROLE.customer);
 
   getCustomerName() async {
     customerName.value = await customerApi.getCustomerName(_request.customerId);
@@ -35,19 +36,18 @@ class RequestReviewViewModel {
 
   get status => StatusUtil.getStatusString(_request.status);
 
-  get onApprove =>
-      () async {
+  get onApprove => () async {
         await requestApi.approve(_request.id, _request.roomId);
         Get.back();
       };
 
   get onAutoApprove => () async {
-    await requestApi.autoApprove(_request.roomId);
-    Get.back();
-  };
+        await requestApi.autoApprove(_request.roomId);
+        Get.back();
+      };
 
   get onDeny => () async {
-    await requestApi.deny(_request.id, _request.roomId);
-    Get.back();
-  };
+        await requestApi.deny(_request.id, _request.roomId);
+        Get.back();
+      };
 }

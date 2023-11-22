@@ -3,14 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/model/request.dart';
-import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
 import 'package:hotel_management/mvvm/view/requests/requests_list_page.dart';
 import 'package:hotel_management/mvvm/view_model/request/request_list_view_model.dart';
 
 class ReceptionHomeViewModel with ChangeNotifier {
   late TabController tabController;
-  final RoomRequestApi _requestApi = RoomRequestApi();
   final SupabaseAuthController _auth = Get.find();
   final PageController controller = PageController();
   Timer? _timer;
@@ -22,8 +19,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: false,
             denied: false,
-            dataStream: getRequestsStream(),
-            mapper: RoomRequest.fromDynamicMap,
+            // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
         RequestsList(
@@ -32,8 +28,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: false,
             denied: false,
-            dataStream: getRequestsStream(),
-            mapper: RoomRequest.fromDynamicMap,
+            // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
         RequestsList(
@@ -42,8 +37,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: true,
             intertwined: false,
             denied: false,
-            dataStream: getRequestsStream(),
-            mapper: RoomRequest.fromDynamicMap,
+            // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
         RequestsList(
@@ -52,8 +46,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: true,
             denied: false,
-            dataStream: getRequestsStream(),
-            mapper: RoomRequest.fromDynamicMap,
+            // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
         RequestsList(
@@ -62,8 +55,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: false,
             denied: true,
-            dataStream: getRequestsStream(),
-            mapper: RoomRequest.fromDynamicMap,
+            // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
       ];
@@ -111,12 +103,12 @@ class ReceptionHomeViewModel with ChangeNotifier {
     if (_timer != null) {
       _timer!.cancel();
     }
-    _timer = Timer(const Duration(milliseconds: 120), () {
+    _timer = Timer(const Duration(milliseconds: 200), () {
       tabController.animateTo(index);
     });
   }
 
-  getRequestsStream() => _requestApi.getRequestsStream();
+  // getRequestsStream() => _requestApi.getRequestsStream();
 
   getDrawer() => _auth.loginUser.getDrawer();
 

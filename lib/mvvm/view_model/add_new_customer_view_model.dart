@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddNewCustomerViewModel {
   late DateTime dateOfBirth;
+
+
+  final CustomerRepository customerApi = Get.find();
   final firstNameController = TextEditingController();
 
   final lastNameController = TextEditingController();
@@ -59,7 +61,7 @@ class AddNewCustomerViewModel {
     String firstName = firstNameController.text;
     String lastName = lastNameController.text;
     DateTime dateOfBirth = DateFormatter.parse(dateController.text);
-    await CustomerApi().saveCustomer(
+    await customerApi.saveCustomer(
         firstName: firstName,
         lastName: lastName,
         dateOfBirth: dateOfBirth,
@@ -68,6 +70,6 @@ class AddNewCustomerViewModel {
   }
 
   skip() async {
-    Get.find<SupabaseAuthController>().signOut();
+    customerApi.signOut();
   }
 }

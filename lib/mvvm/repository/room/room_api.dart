@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
+import 'package:hotel_management/mvvm/repository/room/room_local.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,13 +14,15 @@ class RoomApi extends RoomRepository {
 
   @override
   Future<List<Room>> getAllRooms() async {
-    return (await _supabase
+    List<Room>rooms =  (await _supabase
             .from('room')
             .select<List<Map<String, dynamic>>>('*'))
         .map((e) => Room.fromDynamicMap(e))
         .toList();
+    return rooms;
   }
 
+  @override
   Future<String> getNextID(String floor) async {
     var localFloor = floor.replaceAll(RegExp(r'[^1-9]'), '');
     String roomID = ((await getAllRooms())
@@ -38,9 +42,11 @@ class RoomApi extends RoomRepository {
       "start": DateFormatter.format(start),
       'end_date': DateFormatter.format(end)
     });
+    await Get.find<RoomLocal>().saveRoomsToPref(await getAllRooms());
     return a.map((e) => Room.fromDynamicMap(e as Map)).toList()..sort();
   }
 
+  @override
   Future<List<Room>> getMyRooms({required String userId}) async {
     List<dynamic> a = await _supabase.rpc('get_my_rooms', params: {
       "now": DateFormatter.format(DateTime.now()),
@@ -85,11 +91,12 @@ class RoomApi extends RoomRepository {
     return res;
   }
 
-  bool validateData(String roomId) {
+  @override
+  bool validateData(String floor) {
     RegExp myRegExp = RegExp(r"^[0-9]{1}$");
-    if (myRegExp.hasMatch(roomId)) {
-      var match = myRegExp.matchAsPrefix(roomId)!;
-      if (roomId.length == match.end) {
+    if (myRegExp.hasMatch(floor)) {
+      var match = myRegExp.matchAsPrefix(floor)!;
+      if (floor.length == match.end) {
         return true;
       } else {
         return false;

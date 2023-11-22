@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 import 'package:hotel_management/mvvm/repository/my_rooms_facade.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -40,7 +41,12 @@ class MyRoomsViewModel {
   }
 
   void submit() {
-    facade.submitReview(currentRoom.value.roomId,stars);
+    if(Get.find<ConnectivityController>().connected.value){
+      facade.submitReview(currentRoom.value.roomId,stars);
+    }
+   else{
+     Get.snackbar('No Internet Connection', 'try again later');
+    }
     panelController.close();
   }
 

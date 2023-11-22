@@ -1,14 +1,34 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
+import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
+import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class RoomRequestApi {
-  final _requestsSupabase = Supabase.instance.client.from('request');
+class RoomRequestApi extends RoomRequestRepository {
+  late final SupabaseQueryBuilder _requestsSupabase;
 
+  RxList<RoomRequest> requests = <RoomRequest>[].obs;
+
+  init() async {
+    try {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: publicAnonKey,
+      );
+      _requestsSupabase = Supabase.instance.client.from('request');
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  @override
   addRoomRequest(RoomRequest request) async {
-    if (await requestExists(request)) {
+    if (await _requestExists(request)) {
       Get.snackbar("You already applied for this room", '');
     } else {
       await _requestsSupabase.insert(request);
@@ -16,21 +36,16 @@ class RoomRequestApi {
       Get.snackbar("Room Applied", '');
     }
   }
-  @Deprecated('legacy with local filtering,')
-   getUserRequests(String userId) async {
-    List<dynamic> res = await _requestsSupabase.select('room_id').eq('customer_id', userId);
-    return  res.map((e) => e['room_id']);
-  }
 
-  Future<bool> requestExists(RoomRequest request) async {
+  Future<bool> _requestExists(RoomRequest request) async {
     var a = await _requestsSupabase
         .select('*')
         .eq('customer_id', request.customerId)
         .eq('room_id', request.roomId);
     try {
       var temp = RoomRequest.fromDynamic(a[0]);
-      if (matchDates(temp.startingDate, request.startingDate, false) &&
-          matchDates(temp.endingDate, request.endingDate, true) &&
+      if (_matchDates(temp.startingDate, request.startingDate, false) &&
+          _matchDates(temp.endingDate, request.endingDate, true) &&
           (temp.status == STATUS.denied ||
               temp.status == STATUS.pending ||
               temp.status == STATUS.approved)) {
@@ -42,6 +57,7 @@ class RoomRequestApi {
     return false;
   }
 
+  @override
   reserveRoom(String roomId, String customerId, DateTimeRange dates) async {
     return await addRoomRequest(RoomRequest(
         id: 0,
@@ -53,7 +69,8 @@ class RoomRequestApi {
         status: STATUS.pending));
   }
 
-  bool matchDates(DateTime first, DateTime second, bool depart) {
+
+  bool _matchDates(DateTime first, DateTime second, bool depart) {
     return true;
   }
 
@@ -68,21 +85,18 @@ class RoomRequestApi {
     return await _requestsSupabase.select('*').eq('room_id', roomId);
   }
 
-  Stream<List<Map<String, dynamic>>> getRequestsStream() {
-    return _requestsSupabase.stream(primaryKey: ['id']);
-  }
-  Stream<List<Map<String, dynamic>>> getRequestsStreamByUserId(String userId) {
-    return _requestsSupabase.stream(primaryKey: ['id']).eq('customer_id', userId);
-  }
 
+  @override
   approve(int id, String roomId) async {
     await _requestsSupabase.update({'status': 'approved'}).eq('id', id);
   }
 
+  @override
   deny(int id, String roomId) async {
     await _requestsSupabase.update({'status': 'denied'}).eq('id', id);
   }
 
+  @override
   autoApprove(String roomId) async {
     List<RoomRequest> requests = (await _getAllRequestsWithRoomId(roomId))
         .map((e) => RoomRequest.fromDynamic(e))
@@ -106,4 +120,18 @@ class RoomRequestApi {
     _updateStatus(ids);
   }
 
+  @override
+  Future<List<RoomRequest>> getRoomRequests() async {
+    var requests = await _requestsSupabase.select<List<dynamic>>('*');
+    return requests.map(RoomRequest.fromDynamic).toList();
+  }
+
+  Stream<List<Map<String, dynamic>>> getStream() {
+    return _requestsSupabase.stream(primaryKey: ['id']);
+  }
+
+  @override
+  setUpListener(void Function() func) {
+    throw UnimplementedError();
+  }
 }

@@ -1,26 +1,37 @@
-import 'package:flutter/src/widgets/async.dart';
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+// ignore: unused_import
+import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
+import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:hotel_management/util/util_classes.dart';
 
-class RequestsListViewModel {
+class RequestsListViewModel with ChangeNotifier {
   final bool? pending;
   final bool? approved;
   final bool? intertwined;
   final bool? denied;
-  final Stream<List<Map<String, dynamic>>> dataStream;
-  final RoomRequest Function(Map<String, dynamic> data) mapper;
-  List<RoomRequest> requests = [];
 
-  RequestsListViewModel(
-      {required this.pending,
-      required this.approved,
-      required this.intertwined,
-      required this.denied,
-      required this.dataStream,
-      required this.mapper});
+  // final RoomRequest Function(Map<String, dynamic> data) mapper;
+  final RoomRequestRepository requestRepository = Get.find();
+  List<RoomRequest> requests = <RoomRequest>[];
+
+  RequestsListViewModel({
+    required this.pending,
+    required this.approved,
+    required this.intertwined,
+    required this.denied,
+    // required this.mapper
+  }) {
+    requestRepository.setUpListener(updateRequests);
+
+  }
 
   get length => requests.length;
 
+  // Stream<List<Map<String, dynamic>>> get dataStream => Get.find<RoomRequestRepository>().getRequestsStream();
   bool filterRequests(RoomRequest request) {
     bool a = true;
     if (approved ?? false) {
@@ -38,10 +49,18 @@ class RequestsListViewModel {
     return a;
   }
 
-  void handleSnapshot(AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-    requests = snapshot.data?.map(mapper).where(filterRequests).toList() ?? [];
-    requests.sort();
-  }
-
   request(int index) => requests[index];
+
+  Future<void> updateRequests() async {
+    var temp =
+        (await requestRepository.getRoomRequests()).where(filterRequests).toList();
+    if (requests != temp) {
+      requests = temp;
+      try {
+        notifyListeners();
+      } catch (e) {
+        if (kDebugMode) {}
+      }
+    }
+  }
 }

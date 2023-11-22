@@ -4,14 +4,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/view/components/google_sign_in_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginViewModel {
   final SupabaseAuthController authController = Get.find();
   GoogleSignInButton button = const GoogleSignInButton();
-  final CustomerApi api = CustomerApi();
+  final CustomerRepository api= Get.find();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -19,12 +19,14 @@ class LoginViewModel {
   var eyeClicked = false.obs;
   var isLogin = true.obs;
 
+
   StreamSubscription<AuthState> setSubscription(
       void Function(AuthState) onData) {
     return authController.setSubscription(onData);
   }
 
   void setupAuthListener() {
+
     try {
       authController.setUpSubscription();
     } catch (e, s) {

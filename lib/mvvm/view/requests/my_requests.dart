@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_management/mvvm/model/request.dart';
 import 'package:hotel_management/mvvm/view/requests/requests_list_page.dart';
 import 'package:hotel_management/mvvm/view_model/request/my_request_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/request/request_list_view_model.dart';
@@ -42,8 +41,7 @@ class _MyRequestsState extends State<MyRequests>
               approved: viewModel.approved,
               intertwined: viewModel.intertwined,
               denied: viewModel.denied,
-              dataStream: viewModel.getRequestsStream(),
-              mapper: RoomRequest.fromDynamicMap,
+              // mapper: RoomRequest.fromDynamicMap,
             ),
           ),
         ),

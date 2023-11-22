@@ -6,38 +6,63 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hotel_management/mvvm/model/login_user_model.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthController extends GetxController {
-  final _supabase = Supabase.instance.client;
+  late final SupabaseClient _supabase;
+  User? _currentUser;
   var initUser = false.obs;
+  bool _online = true;
+
   // Session? session;
   LoginUser loginUser = LoginUser();
+
+  SupabaseAuthController.online() {
+    _supabase = Supabase.instance.client;
+    _currentUser = _supabase.auth.currentUser;
+    _online = true;
+  }
+
+  SupabaseAuthController.offline() {
+    // _supabase = Supabase.instance.client;
+    _online = false;
+  }
+
   late final StreamSubscription _authSubscription;
   final GoogleSignIn googleSignInPlatform = GoogleSignIn(
     clientId: iosClientId,
     serverClientId: webClientId,
   );
-  User? currentUser(){
-    return _supabase.auth.currentUser;
+
+  User? currentUser() {
+    return _currentUser;
   }
+
   init() {
     // databaseController  = Get.find();
   }
 
   getUserData() {
-    loginUser.user = _supabase.auth.currentUser;
-    loginUser.profileImageUrl = loginUser.user!.userMetadata?['avatar_url'] !=
-            null
-        ? loginUser.user!.userMetadata!['avatar_url']
-        : loginUser.currentCustomerDetails.pictureUrl ??
-            'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
-    loginUser.fullName = loginUser.user!.userMetadata?['full_name'] != null
-        ? loginUser.user!.userMetadata!['full_name']
-        : '${loginUser.currentCustomerDetails.firstName} ${loginUser.currentCustomerDetails.lastName}';
-    loginUser.role = loginUser.role;
+    if (kDebugMode) {
+      print(_online);
+    }
+    if (_online) {
+      loginUser.user = _supabase.auth.currentUser;
+      loginUser.profileImageUrl = loginUser.user!.userMetadata?['avatar_url'] !=
+              null
+          ? loginUser.user!.userMetadata!['avatar_url']
+          : loginUser.currentCustomerDetails.pictureUrl ??
+              'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
+      loginUser.fullName = loginUser.user!.userMetadata?['full_name'] != null
+          ? loginUser.user!.userMetadata!['full_name']
+          : '${loginUser.currentCustomerDetails.firstName} ${loginUser.currentCustomerDetails.lastName}';
+      loginUser.role = loginUser.role;
+      _currentUser = _supabase.auth.currentUser;
+    } else {
+      _currentUser = null;
+    }
   }
 
   setSubscriptionLog() {
@@ -57,28 +82,33 @@ class SupabaseAuthController extends GetxController {
   }
 
   setUpSubscription() {
-    if(_supabase.auth.currentUser!=null){
-      initUser.value = true;
-    }
-    // _authSubscription =
-     _supabase.auth.onAuthStateChange.listen((data) async {
-      final event = data.event;
-      if (event == AuthChangeEvent.signedIn) {
-        // session = data.session;
-        loginUser.user = data.session!.user;
-        if (Get.context!.mounted) {
-          final CustomerApi api = CustomerApi();
-          try {
-            await api.getCustomerDetails(loginUser.user!.id);
-          } catch (e) {
-            rethrow;
+    if (_online) {
+      if (_supabase.auth.currentUser != null) {
+        initUser.value = true;
+      }
+      // _authSubscription =
+      _supabase.auth.onAuthStateChange.listen((data) async {
+        if (kDebugMode) {
+          print(data.toString());
+        }
+        final event = data.event;
+        if (event == AuthChangeEvent.signedIn) {
+          // session = data.session;
+          loginUser.user = data.session!.user;
+          if (Get.context!.mounted) {
+            try {
+              await Get.find<CustomerRepository>()
+                  .getCustomerDetails(loginUser.user!.id);
+            } catch (e) {
+              rethrow;
+            }
           }
         }
-      }
-    }, onError: (error, stackTrace) {
-      log('error', error: error, stackTrace: stackTrace);
-      signOut();
-    });
+      }, onError: (error, stackTrace) {
+        log('error', error: error, stackTrace: stackTrace);
+        signOut();
+      });
+    }
   }
 
   endSubscription() {
@@ -141,13 +171,22 @@ class SupabaseAuthController extends GetxController {
   }
 
   signOut() async {
-    await _supabase.auth.signOut();
-    if (await googleSignInPlatform.isSignedIn()) {
-      googleSignInPlatform.signOut();
+    if (_online) {
+      await _supabase.auth.signOut();
+      if (await googleSignInPlatform.isSignedIn()) {
+        googleSignInPlatform.signOut();
+      }
+      loginUser.logout();
+      initUser = false.obs;
+      Get.offAllNamed('/login');
+    } else {
+      if (await googleSignInPlatform.isSignedIn()) {
+        googleSignInPlatform.signOut();
+      }
+      loginUser.logout();
+      initUser = false.obs;
+      Get.find<CustomerRepository>().signOut();
     }
-    loginUser.logout();
-    initUser = false.obs;
-    Get.offAllNamed('/login');
   }
 
   Future<AuthResponse> googleSignIn() async {

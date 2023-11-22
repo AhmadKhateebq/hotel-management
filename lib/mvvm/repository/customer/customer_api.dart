@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/model/customer.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
@@ -13,15 +14,25 @@ class CustomerApi extends CustomerRepository {
   final _auth = Get.find<SupabaseAuthController>();
 
   @override
+  getRole() => _auth.loginUser.role;
+
+  @override
+  getId() => _auth.loginUser.user!.id;
+
+  @override
   getCustomerDetails(String id) async {
     List<dynamic> ids =
-        await _supabase.from('customer').select('*').eq('id', id);
+    await _supabase.from('customer').select('*').eq('id', id);
     if (ids.isEmpty || !await _customerDetailsExists(id)) {
       if (await _auth.googleSignInPlatform.isSignedIn()) {
         var metadata = _auth.loginUser.user!.userMetadata!;
         await Get.offNamed('/add_customer', arguments: {
-          'firstName': metadata['full_name'].split(' ').first,
-          'lastName': metadata['full_name'].split(' ').last,
+          'firstName': metadata['full_name']
+              .split(' ')
+              .first,
+          'lastName': metadata['full_name']
+              .split(' ')
+              .last,
           'imageUrl': metadata['avatar_url'],
         });
       } else {
@@ -41,19 +52,25 @@ class CustomerApi extends CustomerRepository {
     _auth.loginUser.user = _auth.currentUser();
     _auth.loginUser.role = RoleUtil.fromString(ids[0]['role']);
     _auth.loginUser.profileImageUrl = _auth
-                .loginUser.user!.userMetadata?['avatar_url'] !=
-            null
+        .loginUser.user!.userMetadata?['avatar_url'] !=
+        null
         ? _auth.loginUser.user!.userMetadata!['avatar_url']
         : _auth.loginUser.currentCustomerDetails.pictureUrl ??
-            'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
+        'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
     _auth.loginUser.fullName = _auth
-                .loginUser.user!.userMetadata?['full_name'] !=
-            null
+        .loginUser.user!.userMetadata?['full_name'] !=
+        null
         ? _auth.loginUser.user!.userMetadata!['full_name']
-        : '${_auth.loginUser.currentCustomerDetails.firstName} ${_auth.loginUser.currentCustomerDetails.lastName}';
+        : '${_auth.loginUser.currentCustomerDetails.firstName} ${_auth.loginUser
+        .currentCustomerDetails.lastName}';
     _auth.loginUser.role = _auth.loginUser.role;
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-    await analytics.setUserProperty(name: 'full_name', value: _auth.loginUser.fullName);
+    await analytics.setUserProperty(
+        name: 'full_name', value: _auth.loginUser.fullName);
+    CustomerLocal().saveCustomerInPref(
+        _auth.loginUser.currentCustomerDetails.firstName,
+        _auth.loginUser.currentCustomerDetails.lastName,
+        _auth.loginUser.role);
     if (_auth.loginUser.role == ROLE.customer) {
       Get.offAllNamed('/home');
     } else {
@@ -82,19 +99,22 @@ class CustomerApi extends CustomerRepository {
 
   Future<bool> _customerExists(String id) async {
     List<dynamic> ids =
-        await _supabase.from('customer').select('id').eq('id', id);
+    await _supabase.from('customer').select('id').eq('id', id);
     if (ids.isEmpty) {
       return false;
     }
     return true;
   }
 
-  saveCustomer(
-      {required String firstName,
-      required String lastName,
-      required DateTime dateOfBirth,
-      String? imageUrl}) async {
-    var user = Get.find<SupabaseAuthController>().loginUser.user;
+  @override
+  saveCustomer({required String firstName,
+    required String lastName,
+    required DateTime dateOfBirth,
+    String? imageUrl}) async {
+    var user = Get
+        .find<SupabaseAuthController>()
+        .loginUser
+        .user;
     var customerId = user!.id;
     String email = user.email!;
     CustomerDetails details = CustomerDetails(
@@ -114,7 +134,15 @@ class CustomerApi extends CustomerRepository {
     }
     await _saveCustomerDetails(details);
   }
+
+  @override
   Future<String> getCustomerName(String customerId) async {
-    return (await _supabase.from('customer').select('full_name').eq("id", customerId))[0]['full_name'];
+    return (await _supabase.from('customer').select('full_name').eq(
+        "id", customerId))[0]['full_name'];
+  }
+
+  @override
+  void signOut() {
+    _auth.signOut();
   }
 }

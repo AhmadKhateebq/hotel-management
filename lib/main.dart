@@ -1,10 +1,7 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/repository/request/requests_api.dart';
+import 'package:hotel_management/controller/connectivity_controller.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/view/add_new_customer.dart';
 import 'package:hotel_management/mvvm/view/first_screen.dart';
 import 'package:hotel_management/mvvm/view/login_screen.dart';
@@ -15,33 +12,17 @@ import 'package:hotel_management/mvvm/view/room/my_rooms.dart';
 import 'package:hotel_management/mvvm/view/splash_screen.dart';
 import 'package:hotel_management/mvvm/view_model/add_new_customer_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
-import 'package:hotel_management/util/const.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-
-import 'firebase_options.dart';
 import 'mvvm/view/home_screen.dart';
 
 final primaryColor = Colors.primaries[3];
+bool internet = false;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: publicAnonKey,
-  );
-  Get.put(RoomRequestApi());
-  Get.put(SupabaseAuthController());
-  // Get.put(FirebaseAnalyticsController());
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  await analytics.setAnalyticsCollectionEnabled(true);
-  await analytics.logAppOpen();
-  await MobileAds.instance.initialize();
-  MobileAds.instance.updateRequestConfiguration(
-      RequestConfiguration(testDeviceIds: ["36503A67BE05B5A6A4AC1DC738CAB9FC"])
-  );
+  await SharedPrefController.init();
+  Get.put(ConnectivityController(), permanent: true);
+  await Get.find<ConnectivityController>().init();
   runApp(GetMaterialApp(
     color: primaryColor,
     theme: ThemeData(
@@ -50,9 +31,8 @@ void main() async {
         colorScheme: ColorScheme.fromSeed(
           seedColor: primaryColor,
         ),
-
         floatingActionButtonTheme:
-             FloatingActionButtonThemeData(backgroundColor: primaryColor),
+            FloatingActionButtonThemeData(backgroundColor: primaryColor),
         filledButtonTheme: FilledButtonThemeData(
             style: FilledButton.styleFrom(backgroundColor: primaryColor)),
         switchTheme: SwitchThemeData(
@@ -63,8 +43,7 @@ void main() async {
                     : Colors.grey[350])),
         checkboxTheme: CheckboxThemeData(
           fillColor: MaterialStateColor.resolveWith(getColor),
-        )
-    ),
+        )),
     getPages: [
       GetPage(
           name: '/',

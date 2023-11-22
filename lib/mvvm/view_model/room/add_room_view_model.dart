@@ -3,11 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
+// ignore: unused_import
 import 'package:hotel_management/mvvm/repository/room/room_api.dart';
+import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddRoomViewModel {
+
   double rating = 3.5;
   XFile? image;
   RxBool seaView = false.obs;
@@ -17,7 +20,7 @@ class AddRoomViewModel {
   TextEditingController bedsController = TextEditingController();
   TextEditingController sizeController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  final roomApi = RoomApi();
+  final RoomRepository roomApi = Get.find();
   var imagePicked = false.obs;
   var slideshowPicked = false.obs;
 
@@ -54,7 +57,6 @@ class AddRoomViewModel {
             beds: beds,
             adults: size);
         await roomApi.saveRoom(room);
-        print(room.toString());
         Get.snackbar('DONE', 'Room Added!');
         Get.offNamed('/home');
       }
@@ -80,4 +82,5 @@ class AddRoomViewModel {
   void setSeaView(bool value) {
     seaView.value = !seaView.value;
   }
+
 }

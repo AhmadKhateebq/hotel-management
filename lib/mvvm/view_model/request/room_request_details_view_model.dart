@@ -5,9 +5,11 @@ import 'package:hotel_management/util/date_formatter_util.dart';
 
 import 'request_preview_view_model.dart';
 
-class RoomRequestDetailsViewModel{
+class RoomRequestDetailsViewModel {
+  RoomRequestDetailsViewModel({required RoomRequest request})
+      : _request = request;
   final RoomRequest _request;
-  RoomRequestDetailsViewModel({required RoomRequest request}) : _request = request;
+
   get roomId => _request.roomId;
 
   get madeOn => DateFormatter.formatWithTime(_request.time);
@@ -16,12 +18,10 @@ class RoomRequestDetailsViewModel{
 
   get endingDate => DateFormatter.format(_request.endingDate);
 
-
-  cardOnTap()  {
+  cardOnTap() {
     Get.to(() => PreviewRequest(
-      viewModel: RequestReviewViewModel(request: _request),
-    ));
-
+          viewModel: RequestReviewViewModel(
+              request: _request,),
+        ));
   }
-
 }

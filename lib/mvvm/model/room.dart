@@ -30,6 +30,18 @@ class Room implements Comparable {
       adults: int.parse(map['adults'].toString()),
     );
   }
+  factory Room.fromDynamic(dynamic map) {
+    return Room(
+      roomId: map['room_id'],
+      seaView: map['sea_view']??false,
+      stars: double.parse(map['stars'].toString()),
+      pictureUrl: map['picture_url'],
+      slideshow: _getSlideShow(map['slideshow'] ?? []),
+      price: double.parse(map['price'].toString()),
+      beds: int.parse(map['beds'].toString()),
+      adults: int.parse(map['adults'].toString()),
+    );
+  }
 
   static List<String> _getSlideShow(List<dynamic> values) {
     return values.map((e) => e.toString()).toList();

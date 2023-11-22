@@ -54,6 +54,10 @@ dependencies:
   firebase_analytics: ^10.7.0
   google_mobile_ads: ^3.1.0
   parallax: ^1.0.3
+  firebase_performance: ^0.9.3+4
+  shared_preferences: ^2.2.2
+  connectivity_plus: ^5.0.1
+#  restart_app: ^1.2.1
 
 
 dev_dependencies:

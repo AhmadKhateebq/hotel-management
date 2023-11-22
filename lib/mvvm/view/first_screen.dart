@@ -18,13 +18,15 @@ class _FirstScreenState extends State<FirstScreen> {
   final FirstScreenViewModel viewModel = FirstScreenViewModel();
   @override
   void initState() {
-    viewModel.init();
+    viewModel.initControllers();
+    // viewModel.init();
     super.initState();
   }
 
   @override
   void didUpdateWidget(covariant FirstScreen oldWidget) {
-    viewModel.init();
+    viewModel.initControllers();
+    // viewModel.init();
     super.didUpdateWidget(oldWidget);
   }
 

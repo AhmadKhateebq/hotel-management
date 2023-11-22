@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
@@ -63,15 +64,26 @@ class LoginUser {
               alignment: AlignmentDirectional.centerEnd,
               child: ClipOval(
                   child: Obx(
-                () => Get.find<ConnectivityController>().connected.value && _profileImageUrl != ''
-                    ? Image.network(
-                        _profileImageUrl!,
-                        width: 100,
-                        height: 100,
+                () => Get.find<ConnectivityController>().connected.value &&
+                        _profileImageUrl != ''
+                    ? CachedNetworkImage(
+                        imageUrl: _profileImageUrl!,
                         fit: BoxFit.cover,
+                        placeholder: (_, u) => Image.asset(
+                          'assets/image/noImage.png',
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
+                        ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/image/noProfile.png',
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
+                        ),
                       )
                     : Image.asset(
-                        'assets/image/noImage.png',
+                        'assets/image/noProfile.png',
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,

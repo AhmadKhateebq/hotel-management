@@ -158,11 +158,9 @@ class RoomRequestCache extends RoomRequestRepository {
 
   Future<void> refreshData() async {
     List<RoomRequest> temp = await api.getRoomRequests();
-    if (temp != await getRoomRequests()) {
-      await local.saveRoomRequestToPref(temp);
-      if (_function != null) {
-        _function!.call();
-      }
+    await local.saveRoomRequestToPref(temp);
+    if (_function != null) {
+      _function!.call();
     }
   }
 }

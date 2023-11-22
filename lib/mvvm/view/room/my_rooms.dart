@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:hotel_management/mvvm/view/room/room_card.dart';
 import 'package:hotel_management/mvvm/view_model/room/my_rooms_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/room/room_card_view_model.dart';

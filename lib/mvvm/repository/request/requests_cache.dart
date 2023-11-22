@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
@@ -12,11 +14,22 @@ import 'package:hotel_management/mvvm/repository/request/room_request_repository
 class RoomRequestCache extends RoomRequestRepository {
   RoomRequestLocal local = RoomRequestLocal();
   late RoomRequestApi api;
-  late void Function() _function;
+  void Function()? _function;
   late StreamSubscription subscription;
   bool _init = false;
 
   RoomRequestCache() {
+    _isOnline().then((value) async {
+      if (value) {
+        if (!_init) {
+          api = RoomRequestApi();
+          await api.init();
+          subscription = _setUpListener();
+          _init = true;
+        }
+        await _emptyCache();
+      }
+    });
     Get.find<ConnectivityController>().subscription.onData((data) async {
       if (data == ConnectivityResult.wifi ||
           data == ConnectivityResult.mobile) {
@@ -27,7 +40,8 @@ class RoomRequestCache extends RoomRequestRepository {
           _init = true;
         }
         subscription.resume();
-        _emptyCache();
+        await _emptyCache();
+        refreshData();
       } else {
         subscription.pause();
       }
@@ -35,8 +49,8 @@ class RoomRequestCache extends RoomRequestRepository {
   }
 
   @override
-  addRoomRequest(RoomRequest request) {
-    if (_isOnline) {
+  addRoomRequest(RoomRequest request) async {
+    if (await _isOnline()) {
       api.addRoomRequest(request);
     } else {
       local.addRoomRequest(request);
@@ -44,29 +58,29 @@ class RoomRequestCache extends RoomRequestRepository {
   }
 
   @override
-  approve(int id, String roomId) {
-    if (_isOnline) {
-      api.approve(id, roomId);
+  approve(int id, String roomId) async {
+    if (await _isOnline()) {
+      await api.approve(id, roomId);
     } else {
-      local.approve(id, roomId);
+      await local.approve(id, roomId);
     }
   }
 
   @override
-  autoApprove(String roomId) {
-    if (_isOnline) {
-      api.autoApprove(roomId);
+  autoApprove(String roomId) async {
+    if (await _isOnline()) {
+      await api.autoApprove(roomId);
     } else {
-      local.autoApprove(roomId);
+      await local.autoApprove(roomId);
     }
   }
 
   @override
-  deny(int id, String roomId) {
-    if (_isOnline) {
-      api.deny(id, roomId);
+  deny(int id, String roomId) async {
+    if (await _isOnline()) {
+      await api.deny(id, roomId);
     } else {
-      local.deny(id, roomId);
+      await local.deny(id, roomId);
     }
   }
 
@@ -76,9 +90,9 @@ class RoomRequestCache extends RoomRequestRepository {
   }
 
   @override
-  reserveRoom(String roomId, String customerId, DateTimeRange dates) {
-    if (_isOnline) {
-      api.reserveRoom(roomId, customerId, dates);
+  reserveRoom(String roomId, String customerId, DateTimeRange dates) async {
+    if (await _isOnline()) {
+      await api.reserveRoom(roomId, customerId, dates);
     }
   }
 
@@ -87,37 +101,67 @@ class RoomRequestCache extends RoomRequestRepository {
     _function = func;
   }
 
-  bool get _isOnline => Get.find<ConnectivityController>().isOnline;
+  final Connectivity _connectivity = Connectivity();
+
+  Future<bool> _isOnline() async {
+    late ConnectivityResult result;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+      return result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile;
+    } on PlatformException catch (e) {
+      log('Couldn\'t check connectivity status', error: e);
+      return false;
+    }
+  }
 
   _setUpListener() {
     var listener = api.getStream().listen((event) async {
       List<RoomRequest> temp = event.map(RoomRequest.fromDynamicMap).toList();
       if (temp != await getRoomRequests()) {
         await local.saveRoomRequestToPref(temp);
-        _function.call();
+        if (_function != null) {
+          _function!.call();
+        }
       }
     });
     return listener;
   }
 
-  _emptyCache() {
+  _emptyCache() async {
     var approved = local.getCachedApprove();
     var denied = local.getCachedDeny();
     var reserve = local.getCachedReserveRoom();
     if (approved.isNotEmpty) {
       for (var value in approved) {
-        approve(value.id, value.roomId);
+        await approve(value.id, value.roomId);
       }
     }
     if (denied.isNotEmpty) {
       for (var value in denied) {
-        deny(value.id, value.roomId);
+        await deny(value.id, value.roomId);
       }
     }
     if (reserve.isNotEmpty) {
       for (var value in reserve) {
-        reserveRoom(value.roomId, value.customerId,
+        await reserveRoom(value.roomId, value.customerId,
             DateTimeRange(start: value.startingDate, end: value.endingDate));
+      }
+    }
+    await local.emptyCachedRequests();
+
+    if (_function != null) {
+      _function!.call();
+    }
+  }
+
+  Future<void> refreshData() async {
+    List<RoomRequest> temp = await api.getRoomRequests();
+    if (temp != await getRoomRequests()) {
+      await local.saveRoomRequestToPref(temp);
+      if (_function != null) {
+        _function!.call();
       }
     }
   }

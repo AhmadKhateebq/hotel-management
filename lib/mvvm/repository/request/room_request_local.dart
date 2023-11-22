@@ -27,6 +27,10 @@ class RoomRequestLocal extends RoomRequestRepository {
       approved = _prefs
           .getStringList('approve')!
           .map(jsonDecode)
+      .map((e){
+        print(e);
+        return e;
+      })
           .map(Request.fromDynamic)
           .toList();
     }
@@ -117,6 +121,12 @@ class RoomRequestLocal extends RoomRequestRepository {
   setUpListener(void Function() func) {
     throw UnimplementedError();
   }
+
+  Future<void> emptyCachedRequests() async {
+    await _prefs.remove('approve');
+    await _prefs.remove('deny');
+    await _prefs.remove('reserve');
+  }
 }
 
 class Request {
@@ -126,7 +136,7 @@ class Request {
   Request({required this.id, required this.roomId});
 
   factory Request.fromDynamic(dynamic data) =>
-      Request(id: data['id'], roomId: data['roomId']);
+      Request(id: data['id'], roomId: data['room_id']);
 
   Map<String, dynamic> toJson() => {
         'room_id': roomId,
@@ -147,15 +157,15 @@ class ReserveRequest {
       required this.endingDate});
 
   factory ReserveRequest.fromDynamic(dynamic data) => ReserveRequest(
-      roomId: data['roomId'],
-      customerId: data['customerId'],
-      startingDate: DateTime.parse(data['startingDate']),
-      endingDate: DateTime.parse(data['endingDate']));
+      roomId: data['room_id'],
+      customerId: data['customer_id'],
+      startingDate: DateTime.parse(data['starting_date']),
+      endingDate: DateTime.parse(data['ending_date']));
 
   Map<String, dynamic> toJson() => {
         'room_id': roomId,
         'customer_id': customerId,
-        'startingDate': (startingDate).toString(),
-        'endingDate': (endingDate).toString(),
+        'starting_date': (startingDate).toString(),
+        'ending_date': (endingDate).toString(),
       };
 }

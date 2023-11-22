@@ -12,18 +12,18 @@ class RoomRequestApi extends RoomRequestRepository {
 
   RxList<RoomRequest> requests = <RoomRequest>[].obs;
 
-  init() async {
+  Future<void> init() async {
     try {
       await Supabase.initialize(
         url: supabaseUrl,
         anonKey: publicAnonKey,
       );
-      _requestsSupabase = Supabase.instance.client.from('request');
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+    _requestsSupabase = Supabase.instance.client.from('request');
   }
 
   @override

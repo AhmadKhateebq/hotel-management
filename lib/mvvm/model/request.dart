@@ -24,18 +24,18 @@ class RoomRequest implements Comparable {
   factory RoomRequest.fromJson(String json) {
     final data = jsonDecode(json);
     return RoomRequest(
-        id: data['id']??0,
+        id: data['id'] ?? 0,
         time: DateTime.parse(data['time']),
         startingDate: DateTime.parse(data['starting_date']),
         endingDate: DateTime.parse(data['ending_date']),
-        status:StatusUtil.getStatus( data['status']),
+        status: StatusUtil.getStatus(data['status']),
         customerId: data['customer_id'],
         roomId: data['room_id']);
   }
 
   factory RoomRequest.fromDynamic(dynamic data) {
     return RoomRequest(
-        id: data['id']??0,
+        id: data['id'] ?? 0,
         time: DateTime.parse(data['time']),
         startingDate: DateTime.parse(data['starting_date']),
         endingDate: DateTime.parse(data['ending_date']),
@@ -45,6 +45,7 @@ class RoomRequest implements Comparable {
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'time': (time).toString(),
         'room_id': roomId,
         'customer_id': customerId,
@@ -53,14 +54,13 @@ class RoomRequest implements Comparable {
         'status': StatusUtil.getStatusString(status)
       };
 
-
   @override
   String toString() {
     return 'RoomRequest{id: $id, roomId: $roomId, customerId: $customerId, time: $time, startingDate: $startingDate, endingDate: $endingDate, status: $status}';
   }
 
   factory RoomRequest.fromDynamicMap(Map<String, dynamic> data) => RoomRequest(
-      id: data['id']??0,
+      id: data['id'] ?? 0,
       time: DateTime.parse(data['time']),
       startingDate: DateTime.parse(data['starting_date']),
       endingDate: DateTime.parse(data['ending_date']),
@@ -72,6 +72,4 @@ class RoomRequest implements Comparable {
   int compareTo(other) {
     return other.time.compareTo((time));
   }
-
-
 }

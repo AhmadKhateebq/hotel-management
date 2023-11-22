@@ -57,6 +57,7 @@ dependencies:
   firebase_performance: ^0.9.3+4
   shared_preferences: ^2.2.2
   connectivity_plus: ^5.0.1
+  cached_network_image: ^3.3.0
 #  restart_app: ^1.2.1
 
 

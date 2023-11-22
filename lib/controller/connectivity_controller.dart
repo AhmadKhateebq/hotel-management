@@ -10,7 +10,6 @@ import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/util/const.dart';
-// import 'package:restart_app/restart_app.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ConnectivityController extends GetxController {
@@ -22,7 +21,6 @@ class ConnectivityController extends GetxController {
   bool _offline = false;
   late StreamSubscription requestsStreamListener;
   ConnectivityResult get connectedStatus => _connectionStatus;
-
   StreamSubscription<ConnectivityResult> get subscription =>
       _connectivitySubscription;
 
@@ -31,9 +29,7 @@ class ConnectivityController extends GetxController {
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
-  getConnectivityStream(){
 
-  }
   Future<void> initConnectivity() async {
     late ConnectivityResult result;
     // Platform messages may fail, so we use a try/catch PlatformException.

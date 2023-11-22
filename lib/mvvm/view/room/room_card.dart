@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/connectivity_controller.dart';
+import 'package:hotel_management/mvvm/view/components/flow/parallax_image.dart';
 import 'package:hotel_management/mvvm/view/components/rating_bar.dart';
 import 'package:hotel_management/mvvm/view_model/room/room_card_view_model.dart';
-import 'package:hotel_management/mvvm/view/components/flow/parallax_image.dart';
 
 class RoomCard extends StatelessWidget {
   const RoomCard({super.key, required this.viewModel});
@@ -21,16 +20,9 @@ class RoomCard extends StatelessWidget {
               width: Get.width * (1.1 / 2),
               height: Get.height * (1.1 / 6),
               // child: Image.network(viewModel.pictureUrl),
-              child: Obx(
-                () => Get.find<ConnectivityController>().connected.value
-                    ? ParallaxImage(
-                        imageUrl: viewModel.pictureUrl,
-                      )
-                    : Image.asset(
-                        'assets/image/noImage.png',
-                        fit: BoxFit.cover,
-                      ),
-              ),
+              child:ParallaxImage(
+                imageUrl: viewModel.pictureUrl,
+              )
             ),
             const SizedBox(
               width: 10,

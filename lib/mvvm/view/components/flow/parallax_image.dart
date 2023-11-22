@@ -1,9 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/view/components/delegate/parallax_delegate.dart';
 
 class ParallaxImage extends StatelessWidget {
+
   const ParallaxImage({
     super.key,
     required this.imageUrl,
@@ -40,19 +40,19 @@ class ParallaxImage extends StatelessWidget {
         backgroundImageKey: backgroundImageKey,
       ),
       children: [
-        Obx(
-          () => Get.find<ConnectivityController>().connected.value
-              ? Image.network(
-                  imageUrl,
-                  key: backgroundImageKey,
-                  fit: BoxFit.cover,
-                )
-              : Image.asset(
-                  'assets/image/noImage.png',
-                  key: backgroundImageKey,
-                  fit: BoxFit.cover,
-                ),
-        )
+        CachedNetworkImage(
+          imageUrl:   imageUrl,
+          key: backgroundImageKey,
+          fit: BoxFit.cover,
+         placeholder: (_,u) => Image.asset(
+           'assets/image/noImage.png',
+           fit: BoxFit.cover,
+         ),
+          errorWidget: (context, url, error) => Image.asset(
+            'assets/image/noImage.png',
+            fit: BoxFit.cover,
+          ),
+        ),
       ],
     );
   }

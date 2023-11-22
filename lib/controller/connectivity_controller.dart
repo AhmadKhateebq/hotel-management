@@ -60,6 +60,7 @@ class ConnectivityController extends GetxController {
     if (result == ConnectivityResult.ethernet ||
         result == ConnectivityResult.wifi ||
         result == ConnectivityResult.mobile) {
+      connected.value = true;
       if (_offline) {
         _offline = false;
         _online = true;
@@ -87,6 +88,7 @@ class ConnectivityController extends GetxController {
       }
     }
     if (result == ConnectivityResult.none) {
+      connected.value = false;
       if (_online) {
         _online = false;
         _offline = true;

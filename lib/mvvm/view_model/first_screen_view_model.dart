@@ -11,8 +11,7 @@ import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/repository/request/requests_cache.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
-import 'package:hotel_management/mvvm/repository/room/room_api.dart';
-import 'package:hotel_management/mvvm/repository/room/room_local.dart';
+import 'package:hotel_management/mvvm/repository/room/room_cache.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -54,14 +53,11 @@ class FirstScreenViewModel {
         if (kDebugMode) {
           print(error);
         }
-
       }
       try {
         Get.put(SupabaseAuthController.online(), permanent: true);
         Get.put<CustomerLocal>(CustomerLocal(), permanent: true);
-        Get.put<RoomLocal>(RoomLocal(), permanent: true);
         Get.put<CustomerRepository>(CustomerApi(), permanent: true);
-        Get.put<RoomRepository>(RoomApi(), permanent: true);
       } catch (error) {
         if (kDebugMode) {
           print(error);
@@ -70,9 +66,9 @@ class FirstScreenViewModel {
     } else {
       Get.put(SupabaseAuthController.offline(), permanent: true);
       Get.put<CustomerRepository>(CustomerLocal(), permanent: true);
-      Get.put<RoomRepository>(RoomLocal(), permanent: true);
     }
     Get.put<RoomRequestRepository>(RoomRequestCache(), permanent: true);
+    Get.put<RoomRepository>(RoomCache(), permanent: true);
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     await analytics.setAnalyticsCollectionEnabled(true);
     await analytics.logAppOpen();

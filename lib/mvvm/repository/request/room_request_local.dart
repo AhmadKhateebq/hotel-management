@@ -27,10 +27,6 @@ class RoomRequestLocal extends RoomRequestRepository {
       approved = _prefs
           .getStringList('approve')!
           .map(jsonDecode)
-      .map((e){
-        print(e);
-        return e;
-      })
           .map(Request.fromDynamic)
           .toList();
     }

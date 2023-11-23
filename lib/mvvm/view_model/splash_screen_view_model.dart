@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +18,7 @@ import 'package:hotel_management/mvvm/repository/room/room_cache.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:hotel_management/mvvm/view/login_screen.dart';
 import 'package:hotel_management/util/const.dart';
+import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreenViewModel {
@@ -31,8 +34,13 @@ class SplashScreenViewModel {
       isLoading.value = true;
       if(_pref.containsKey('role')){
         if (_authController.currentUser() != null ) {
-          await _customerApi
+          var role = await _customerApi
               .getCustomerDetails(_authController.currentUser()!.id);
+          if (role == ROLE.customer) {
+            Get.offAllNamed('/home');
+          } else {
+            Get.offAllNamed('/recep_home');
+          }
         } else {
           isLoading.value = false;
           Get.find<SupabaseAuthController>().signOut();
@@ -59,6 +67,8 @@ class SplashScreenViewModel {
           url: supabaseUrl,
           anonKey: publicAnonKey,
         );
+        var res = await Supabase.instance.client.from('logged_in').select('*');
+        log(res.toString(),name: 'LOGGED IN TABLE');
       } catch (error) {
         if (kDebugMode) {
           print(error);

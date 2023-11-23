@@ -70,7 +70,6 @@ class ConnectivityController extends GetxController {
         Get.put(SupabaseAuthController.online(), permanent: true);
         Get.put<CustomerLocal>(CustomerLocal(), permanent: true);
         Get.put<CustomerRepository>(CustomerApi(), permanent: true);
-        initUser();
         try{
           requestsStreamListener.resume();
         }catch(e){
@@ -90,7 +89,6 @@ class ConnectivityController extends GetxController {
         Get.delete<CustomerLocal>();
         Get.put(SupabaseAuthController.offline(), permanent: true);
         Get.put<CustomerRepository>(CustomerLocal(), permanent: true);
-        initUser();
         try{
           requestsStreamListener.pause();
         }catch(e){
@@ -99,18 +97,6 @@ class ConnectivityController extends GetxController {
           }
         }
       }
-    }
-  }
-
-  initUser() async {
-    var authController = Get.find<SupabaseAuthController>();
-    var customerApi = Get.find<CustomerRepository>();
-    if (_online) {
-      await customerApi.getCustomerDetails(authController.currentUser()!.id);
-      // authController.getUserData();
-    } else {
-      // authController.getUserData();
-      Get.find<CustomerRepository>().getCustomerDetails('');
     }
   }
 }

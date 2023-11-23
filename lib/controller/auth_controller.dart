@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
@@ -10,6 +9,8 @@ import 'package:hotel_management/mvvm/repository/customer/customer_repository.da
 import 'package:hotel_management/mvvm/view/login_screen.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../util/util_classes.dart';
 
 class SupabaseAuthController extends GetxController {
   late final SupabaseClient _supabase;
@@ -56,33 +57,23 @@ class SupabaseAuthController extends GetxController {
   //   }
   // }
 
-  setUpSubscription() {
+  tryLoggingIn(AuthResponse res) async {
     if (_online) {
-      if (_supabase.auth.currentUser != null) {
+      if (res.user != null) {
         initUser.value = true;
-      }
-      // _authSubscription =
-      _supabase.auth.onAuthStateChange.listen((data) async {
-        if (kDebugMode) {
-          print(data.toString());
-        }
-        final event = data.event;
-        if (event == AuthChangeEvent.signedIn) {
-          // session = data.session;
-          loginUser.user = data.session!.user;
-          if (Get.context!.mounted) {
-            try {
-              await Get.find<CustomerRepository>()
-                  .getCustomerDetails(loginUser.user!.id);
-            } catch (e) {
-              rethrow;
-            }
+        try {
+          var role = await Get.find<CustomerRepository>()
+              .getCustomerDetails(loginUser.user!.id);
+          if (role == ROLE.customer) {
+            Get.offAllNamed('/home');
+          } else {
+            Get.offAllNamed('/recep_home');
           }
+        } catch (e,s) {
+          log('error', error: e, stackTrace: s);
+          signOut();
         }
-      }, onError: (error, stackTrace) {
-        log('error', error: error, stackTrace: stackTrace);
-        signOut();
-      });
+      }
     }
   }
   Future<AuthResponse> signUp(
@@ -94,6 +85,7 @@ class SupabaseAuthController extends GetxController {
       );
       // session = res.session;
       loginUser.user = res.user;
+      tryLoggingIn(res);
       return res;
     } catch (e, s) {
       log(e.toString(), name: s.toString());
@@ -110,6 +102,7 @@ class SupabaseAuthController extends GetxController {
       );
       // session = res.session;
       loginUser.user = res.user;
+      tryLoggingIn(res);
       return 'true';
     } catch (e) {
       String message = (e as AuthException).message;
@@ -174,6 +167,7 @@ class SupabaseAuthController extends GetxController {
     );
     // session = res.session;
     loginUser.user = res.user;
+    tryLoggingIn(res);
     return res;
   }
 

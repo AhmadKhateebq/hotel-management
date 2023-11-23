@@ -124,6 +124,7 @@ class RoomApi extends RoomRepository {
       'rating4': rating4,
       'rating5': rating5,
     });
+
     return a.map((e) => Room.fromDynamicMap(e as Map)).toList()..sort();
   }
 }

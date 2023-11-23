@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
@@ -16,17 +14,6 @@ class LoginViewModel {
   var loading = false.obs;
   var eyeClicked = false.obs;
   var isLogin = true.obs;
-
-  void setupAuthListener() {
-    try {
-      authController.setUpSubscription();
-    } catch (e, s) {
-      log('error', error: e, stackTrace: s);
-      button = const GoogleSignInButton();
-      authController.signOut();
-      rethrow;
-    }
-  }
 
   void register() async {
     await authController.signUp(
@@ -76,7 +63,6 @@ class LoginViewModel {
 
   init() {
     loading.value = false;
-    setupAuthListener();
   }
 
   bool validEmail(String value) {

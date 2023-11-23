@@ -36,16 +36,12 @@ class CustomerLocal extends CustomerRepository {
       _auth.loginUser.role = role;
       _auth.loginUser.profileImageUrl = '';
       _auth.loginUser.fullName = '$firstName $lastName';
-      if (role == ROLE.customer) {
-        Get.offAllNamed('/home');
-      } else {
-        Get.offAllNamed('/recep_home');
-      }
+
     }catch(e){
       _auth.loginUser.user = null;
       Get.offAll(()=>const LoginScreen());
     }
-
+    return _auth.loginUser.role;
   }
 
   @override

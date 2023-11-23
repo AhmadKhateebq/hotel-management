@@ -1,7 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/customer.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
 import 'package:hotel_management/mvvm/model/login_user_model.dart';
@@ -16,7 +15,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class CustomerApi extends CustomerRepository {
   final _supabase = Supabase.instance.client;
   final _auth = Get.find<SupabaseAuthController>();
-  final _pref = SharedPrefController.reference;
 
   @override
   getRole() => _auth.loginUser.role;
@@ -78,11 +76,7 @@ class CustomerApi extends CustomerRepository {
         name: 'full_name', value: _auth.loginUser.fullName);
     await CustomerLocal()
         .saveCustomerInPref(details.firstName, details.lastName, role);
-    if (_auth.loginUser.role == ROLE.customer) {
-      Get.offAllNamed('/home');
-    } else {
-      Get.offAllNamed('/recep_home');
-    }
+    return role;
   }
 
   Future<void> _saveCustomerDetails(CustomerDetails details) async {

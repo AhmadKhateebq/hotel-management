@@ -1,5 +1,7 @@
+import 'package:hotel_management/util/util_classes.dart';
+
 abstract class CustomerRepository{
-  getCustomerDetails(String id);
+  Future<ROLE> getCustomerDetails(String id);
   getCustomerName(String customerId);
   saveCustomer(
       {required String firstName,

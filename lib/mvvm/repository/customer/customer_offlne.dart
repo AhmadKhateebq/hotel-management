@@ -3,6 +3,7 @@ import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
+import 'package:hotel_management/mvvm/view/login_screen.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -42,7 +43,7 @@ class CustomerLocal extends CustomerRepository {
       }
     }catch(e){
       _auth.loginUser.user = null;
-      Get.offNamed('/login');
+      Get.offAll(()=>const LoginScreen());
     }
 
   }
@@ -81,6 +82,6 @@ class CustomerLocal extends CustomerRepository {
     _prefs.remove('first_name');
     _prefs.remove('last_name');
     _prefs.remove('role');
-    Get.offAllNamed('/login');
+    Get.offAll(()=>const LoginScreen());
   }
 }

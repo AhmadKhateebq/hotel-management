@@ -4,8 +4,11 @@ import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/customer.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
+import 'package:hotel_management/mvvm/model/login_user_model.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
+import 'package:hotel_management/mvvm/view/add_new_customer.dart';
+import 'package:hotel_management/mvvm/view_model/add_new_customer_view_model.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -25,66 +28,61 @@ class CustomerApi extends CustomerRepository {
   getCustomerDetails(String id) async {
     List<dynamic> ids =
         await _supabase.from('customer').select('*').eq('id', id);
-    if (ids.isEmpty || !await _customerDetailsExists(id)) {
+    if (ids.isEmpty) {
       if (await _auth.googleSignInPlatform.isSignedIn()) {
         var metadata = _auth.loginUser.user!.userMetadata!;
-        await Get.offNamed('/add_customer', arguments: {
-          'firstName': metadata['full_name'].split(' ').first,
-          'lastName': metadata['full_name'].split(' ').last,
-          'imageUrl': metadata['avatar_url'],
-        });
+        await Get.off(() => AddCustomer(viewModel: AddNewCustomerViewModel()),
+            arguments: {
+              'firstName': metadata['full_name'].split(' ').first,
+              'lastName': metadata['full_name'].split(' ').last,
+              'imageUrl': metadata['avatar_url'],
+            });
       } else {
-        await Get.offNamed('/add_customer');
+        await Get.off(AddCustomer(viewModel: AddNewCustomerViewModel()));
       }
       ids = await _supabase.from('customer').select('*').eq('id', id);
       if (ids.isEmpty) {}
     }
     String customerId = ids[0]['id'];
-    var a = await _supabase
+    var customerDetailsFromApi = await _supabase
         .from('customer_details')
         .select('*')
         .eq('customer_id', customerId);
-
-    _auth.loginUser.currentCustomerDetails =
-        CustomerDetails.fromDynamicMap(a[0]);
-    _auth.loginUser.user = _auth.currentUser();
-    _auth.loginUser.role = RoleUtil.fromString(ids[0]['role']);
-    await _pref.setString('role', ids[0]['role']);
-    _auth.loginUser.profileImageUrl = _auth
-                .loginUser.user!.userMetadata?['avatar_url'] !=
-            null
-        ? _auth.loginUser.user!.userMetadata!['avatar_url']
-        : _auth.loginUser.currentCustomerDetails.pictureUrl ??
+    var details = CustomerDetails.fromDynamicMap(customerDetailsFromApi[0]);
+    var user = _auth.currentUser();
+    var role = RoleUtil.fromString(ids[0]['role']);
+    late String imageUrl;
+    late String fullName;
+    if (user!.userMetadata?['avatar_url'] != null) {
+      imageUrl = user.userMetadata!['avatar_url'];
+    } else {
+      if (details.pictureUrl != null) {
+        imageUrl = details.pictureUrl!;
+      } else {
+        imageUrl =
             'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
-    _auth.loginUser.fullName = _auth
-                .loginUser.user!.userMetadata?['full_name'] !=
-            null
-        ? _auth.loginUser.user!.userMetadata!['full_name']
-        : '${_auth.loginUser.currentCustomerDetails.firstName} ${_auth.loginUser.currentCustomerDetails.lastName}';
-    _auth.loginUser.role = _auth.loginUser.role;
+      }
+    }
+    if (user.userMetadata?['full_name'] != null) {
+      fullName = user.userMetadata!['full_name'];
+    } else {
+      fullName = '${details.firstName} ${details.lastName}';
+    }
+    _auth.loginUser = LoginUser.initialized(
+        currentCustomerDetails: details,
+        imageUrl: imageUrl,
+        fullName: fullName,
+        role: role, user: user);
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     await analytics.setUserProperty(
         name: 'full_name', value: _auth.loginUser.fullName);
-    CustomerLocal().saveCustomerInPref(
-        _auth.loginUser.currentCustomerDetails.firstName,
-        _auth.loginUser.currentCustomerDetails.lastName,
-        _auth.loginUser.role);
+    await CustomerLocal()
+        .saveCustomerInPref(details.firstName, details.lastName, role);
     if (_auth.loginUser.role == ROLE.customer) {
       Get.offAllNamed('/home');
     } else {
       Get.offAllNamed('/recep_home');
     }
-  }
-
-  Future<bool> _customerDetailsExists(String id) async {
-    List<dynamic> ids = await _supabase
-        .from('customer_details')
-        .select('customer_id')
-        .eq('customer_id', id);
-    if (ids.isEmpty) {
-      return false;
-    }
-    return true;
   }
 
   Future<void> _saveCustomerDetails(CustomerDetails details) async {

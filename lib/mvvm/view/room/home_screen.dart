@@ -21,15 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    viewModel.getUserData();
     viewModel.init();
     super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant HomeScreen oldWidget) {
-    viewModel.getRooms();
-    super.didUpdateWidget(oldWidget);
   }
 
   @override

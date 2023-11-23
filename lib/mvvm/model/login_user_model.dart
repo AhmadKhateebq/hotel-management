@@ -5,6 +5,8 @@ import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/view/requests/my_requests.dart';
+import 'package:hotel_management/mvvm/view/room/add_room.dart';
+import 'package:hotel_management/mvvm/view/room/my_rooms.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -16,12 +18,22 @@ class LoginUser {
   String? _profileImageUrl;
   String? _fullName;
   ROLE? _role;
-  bool _isInit = false;
-  late final CustomerRepository customerApi;
 
   set profileImageUrl(String value) {
     _profileImageUrl = value;
   }
+
+  LoginUser();
+
+  LoginUser.initialized(
+      {required this.currentCustomerDetails,
+      required this.user,
+      required String imageUrl,
+      required String fullName,
+      required ROLE role})
+      : _profileImageUrl = imageUrl,
+        _fullName = fullName,
+        _role = role;
 
   String get profileImageUrl => _profileImageUrl ?? "";
 
@@ -44,15 +56,7 @@ class LoginUser {
     _role = value;
   }
 
-  init() {
-    if (!_isInit) {
-      customerApi = Get.find();
-      _isInit = true;
-    }
-  }
-
   Widget _profile() {
-    init();
     return SizedBox(
       height: (Get.height) * (1 / 4),
       child: Padding(
@@ -85,13 +89,13 @@ class LoginUser {
                         ),
                       )
                     : ClipOval(
-                      child: Image.asset(
+                        child: Image.asset(
                           'assets/image/noProfile.png',
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
                         ),
-                    ),
+                      ),
               )),
             ),
             Align(
@@ -143,53 +147,25 @@ class LoginUser {
               leading: const Icon(Icons.my_library_books_rounded),
               title: const Text('My Requests'),
               onTap: () async {
-                if(Get.find<ConnectivityController>().connected.value){
-                  Get.to(() => const MyRequests(),  duration: const Duration(milliseconds: 500),
+                if (Get.find<ConnectivityController>().connected.value) {
+                  Get.to(
+                    () => const MyRequests(),
+                    duration: const Duration(milliseconds: 500),
                     transition: Transition.cupertino,
-                    curve: Curves.easeInExpo,);
-                }
-                else{
+                    curve: Curves.easeInExpo,
+                  );
+                } else {
                   Get.snackbar('No Internet Connection', 'try again later');
                 }
               },
             ),
-            // ListTile(
-            //   leading: const Icon(Icons.my_library_books_rounded),
-            //   title: const Text('Parallax Test'),
-            //   onTap: () async {
-            //     Get.to(() => ParallaxRecipe(list: [
-            //           ParallaxContainer(
-            //               imageUrl: noImage, title: '', subtitle: ''),
-            //           ParallaxContainer(
-            //               imageUrl: noImage,
-            //               title: 'title 2',
-            //               subtitle: 'subtitle 2'),
-            //           ParallaxContainer(
-            //               imageUrl: noImage,
-            //               title: 'title 3',
-            //               subtitle: 'subtitle 3'),
-            //           ParallaxContainer(
-            //               imageUrl: noImage,
-            //               title: 'title 4',
-            //               subtitle: 'subtitle 4'),
-            //           ParallaxContainer(
-            //               imageUrl: noImage,
-            //               title: 'title 5',
-            //               subtitle: 'subtitle 5'),
-            //           ParallaxContainer(
-            //               imageUrl: noImage,
-            //               title: 'title 6',
-            //               subtitle: 'subtitle 6'),
-            //         ]));
-            //   },
-            // ),
             ListTile(
               leading: const Icon(
                 Icons.logout,
                 color: Colors.red,
               ),
               title: const Text("logout"),
-              onTap: customerApi.signOut,
+              onTap: Get.find<CustomerRepository>().signOut,
             ),
             const BannerAdWidget(
               withClose: false,
@@ -247,7 +223,7 @@ class LoginUser {
               leading: const Icon(Icons.add),
               title: const Text('Add Room'),
               onTap: () async {
-                Get.offAllNamed('/add_room');
+                Get.offAll(() => const AddRoom());
               },
             ),
             const Divider(
@@ -263,7 +239,7 @@ class LoginUser {
         leading: const Icon(Icons.history),
         title: const Text('My Rooms'),
         onTap: () async {
-          Get.toNamed('/my_rooms');
+          Get.to(() => const MyRoomsView());
         },
       );
 }

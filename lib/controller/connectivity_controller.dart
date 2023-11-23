@@ -107,9 +107,9 @@ class ConnectivityController extends GetxController {
     var customerApi = Get.find<CustomerRepository>();
     if (_online) {
       await customerApi.getCustomerDetails(authController.currentUser()!.id);
-      authController.getUserData();
+      // authController.getUserData();
     } else {
-      authController.getUserData();
+      // authController.getUserData();
       Get.find<CustomerRepository>().getCustomerDetails('');
     }
   }

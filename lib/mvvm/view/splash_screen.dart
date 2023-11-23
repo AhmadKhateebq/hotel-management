@@ -1,31 +1,31 @@
-import 'package:flutter/material.dart';
-import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key, required this.modelView});
-  final SplashScreenModelView modelView;
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:hotel_management/mvvm/view/login_screen.dart';
+import 'package:hotel_management/mvvm/view/components/loading_widget.dart';
+import 'package:hotel_management/mvvm/view_model/splash_screen_view_model.dart';
+import 'package:hotel_management/mvvm/view_model/loading_screen_view_model.dart';
+
+
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  final SplashScreenViewModel viewModel = SplashScreenViewModel();
+  @override
+  void initState() {
+    viewModel.initControllers();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return  loadingScreen();
+    return Obx(() => viewModel.isLoading.value
+        ? LoadingWidget(modelView: LoadingWidgetViewModel())
+        : const LoginScreen());
   }
-  loadingScreen() => Scaffold(
-    backgroundColor: modelView.backgroundColor,
-    body: Center(
-      child: Stack(alignment: modelView.alignment, children: [
-        LoadingIndicator(
-          indicatorType: modelView.indicatorType,
-          colors: modelView.indicatorColors,
-        ),
-        Text(
-         modelView.loadingText,
-          style: const TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic,
-              color: Colors.white),
-        )
-      ]),
-    ),
-  );
-
 }

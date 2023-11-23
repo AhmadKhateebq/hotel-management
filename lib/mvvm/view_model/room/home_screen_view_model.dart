@@ -8,6 +8,7 @@ import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
+import 'package:hotel_management/mvvm/view/room/add_room.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -46,39 +47,24 @@ class HomeScreenViewModel {
     // appStoreIdentifier: '0000000',
   );
 
-  void init() {
-    bedsController.text = '$beds';
-    adultController.text = '$adults';
+  void init()  {
     priceRange = RangeValues(minPriceCanChoose, maxPriceCanChoose);
-    getRooms().then((_) async {
-      await rateMyApp.init();
-      if (checkOpens()) {
-        if (await inAppReview.isAvailable()) {
-          inAppReview.requestReview();
-        }
-      }
-
-      openRateUsStarsDialog();
-      try {
-        rateMyApp.launchNativeReviewDialog();
-      } catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
-      }
-      // openRateUsDialog();
-      if (Get.context!.mounted && rateMyApp.shouldOpenDialog) {
-        rateMyApp.showRateDialog(Get.context!);
-      }
-    });
+    getRooms();
+    rateMyApp.init().then((value) => {
+          if (checkOpens())
+            {
+              inAppReview.isAvailable().then((value) => {
+                    if (value)
+                      {inAppReview.requestReview()}
+                    else
+                      {openRateUsStarsDialog()}
+                  })
+            }
+        });
   }
 
   bool checkOpens() {
     return rateMyApp.shouldOpenDialog;
-  }
-
-  void getUserData() {
-    _authController.getUserData();
   }
 
   openFilters() {
@@ -100,7 +86,7 @@ class HomeScreenViewModel {
       ? FloatingActionButton(
           // title: Text("add".tr),
           onPressed: () {
-            Get.offAllNamed('/add_room');
+            Get.offAll(() => const AddRoom());
           },
           child: const Icon(Icons.add, color: Colors.black),
         )
@@ -113,7 +99,6 @@ class HomeScreenViewModel {
       start: startDate,
       end: endDate,
     );
-    await Future.delayed(const Duration(milliseconds: 250));
     loading.value = false;
   }
 

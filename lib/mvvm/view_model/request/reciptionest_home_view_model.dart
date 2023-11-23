@@ -86,12 +86,9 @@ class ReceptionHomeViewModel with ChangeNotifier {
         }
       ];
 
-  void getUserData() {
-    _auth.getUserData();
-  }
 
   void init(TickerProvider val) {
-    getUserData();
+    // getUserData();
     tabController = TabController(length: 5, vsync: val);
   }
 

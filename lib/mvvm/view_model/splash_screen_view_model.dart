@@ -14,10 +14,11 @@ import 'package:hotel_management/mvvm/repository/request/requests_cache.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:hotel_management/mvvm/repository/room/room_cache.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
+import 'package:hotel_management/mvvm/view/login_screen.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class FirstScreenViewModel {
+class SplashScreenViewModel {
   late SupabaseAuthController _authController;
   late CustomerRepository _customerApi;
   final _pref = SharedPrefController.reference;
@@ -32,17 +33,16 @@ class FirstScreenViewModel {
         if (_authController.currentUser() != null ) {
           await _customerApi
               .getCustomerDetails(_authController.currentUser()!.id);
-          _authController.getUserData();
         } else {
-          _authController.getUserData();
-          Get.find<CustomerRepository>().getCustomerDetails('');
           isLoading.value = false;
+          Get.find<SupabaseAuthController>().signOut();
+          Get.off(()=>const LoginScreen());
         }
       }else{
-        Get.offNamed('/login');
+        Get.off(()=>const LoginScreen());
       }
-
-    } catch (e) {
+    }
+    catch (e) {
       Get.find<SupabaseAuthController>().signOut();
     }
   }

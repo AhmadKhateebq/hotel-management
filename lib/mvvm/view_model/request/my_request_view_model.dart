@@ -6,7 +6,7 @@ class MyRequestsViewModel with ChangeNotifier{
   bool approved = false;
   bool intertwined = false;
   bool denied = false;
-
+  int index = 0;
 
   void init(TickerProvider val) {
     tabController = TabController(length: 5, vsync: val);
@@ -14,6 +14,7 @@ class MyRequestsViewModel with ChangeNotifier{
 
 
   onTapItem(int index) {
+    this.index = index;
     if (index == 0) {
       pending = false;
       approved = false;

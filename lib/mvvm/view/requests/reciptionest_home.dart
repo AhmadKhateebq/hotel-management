@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_management/mvvm/view/components/custom_drawer.dart';
 import 'package:hotel_management/mvvm/view_model/request/reciptionest_home_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,7 @@ class _ReceptionHomeState extends State<ReceptionHome>
             bottom: getTabBar(context),
           ),
           body: getBody(),
-          drawer: viewModel.getDrawer(),
+          drawer: CustomDrawer(user: viewModel.getUser),
           floatingActionButton: FloatingActionButtonFlow(
             icons:viewModel.icons,
             functions: viewModel.functions,
@@ -45,16 +46,11 @@ class _ReceptionHomeState extends State<ReceptionHome>
 
   getTabBar(context) => TabBar(
         controller: Provider.of<ReceptionHomeViewModel>(context).tabController,
-        // isScrollable: true,
-        // labelPadding:  EdgeInsets.symmetric(horizontal: Get.width/15),
         labelPadding: const EdgeInsets.symmetric(horizontal: 0),
         unselectedLabelStyle: const TextStyle(
-            // fontStyle: FontStyle.italic,
             fontWeight: FontWeight.bold,
             fontFamily: 'RobotoCondensed'),
         labelStyle: const TextStyle(
-            // fontWeight: FontWeight.bold,
-            // fontStyle: FontStyle.italic,
             fontFamily: 'Lobster'),
         tabs: const <Tab>[
           Tab(

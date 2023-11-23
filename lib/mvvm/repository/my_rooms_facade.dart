@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 import 'package:hotel_management/mvvm/model/room_review.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
@@ -35,25 +34,7 @@ class MyRoomsFacade {
     }
   }
 
-  Future<double> getAvgReview(String roomId) async {
-    double avg = 0;
-    if(!Get.find<ConnectivityController>().connected.value){
-      return avg;
-    }
-    var ratings = await _supabase
-        .from('review')
-        .select<List>('rating')
-        .eq('room_id', roomId);
-    void addAvg(dynamic value) {
-      avg += double.parse(value['rating'].toString());
-    }
 
-    if (ratings.isNotEmpty) {
-      ratings.forEach(addAvg);
-      avg /= ratings.length;
-    }
-    return avg;
-  }
 
   reviewExist(String roomId) async {
     var res = await _supabase

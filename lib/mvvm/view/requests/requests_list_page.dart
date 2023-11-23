@@ -5,20 +5,26 @@ import 'package:hotel_management/mvvm/view_model/request/request_list_view_model
 import 'package:hotel_management/mvvm/view_model/request/room_request_details_view_model.dart';
 import 'package:provider/provider.dart';
 
-class RequestsList extends StatelessWidget {
+class RequestsList extends StatefulWidget {
   const RequestsList({super.key, required this.viewModel});
 
   final RequestsListViewModel viewModel;
 
   @override
+  State<RequestsList> createState() => _RequestsListState();
+}
+
+class _RequestsListState extends State<RequestsList> {
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<RequestsListViewModel>(
       lazy: false,
       create: (context) {
-        var newViewModel = RequestsListViewModel(pending: viewModel.pending,
-            approved: viewModel.approved,
-            intertwined: viewModel.intertwined,
-            denied: viewModel.denied);
+        var newViewModel = RequestsListViewModel(
+            pending: widget.viewModel.pending,
+            approved: widget.viewModel.approved,
+            intertwined: widget.viewModel.intertwined,
+            denied: widget.viewModel.denied);
         newViewModel.updateRequests();
         return newViewModel;
       },
@@ -37,5 +43,11 @@ class RequestsList extends StatelessWidget {
             },
           ),
     );
+  }
+  @override
+  void dispose() {
+    Provider
+        .of<RequestsListViewModel>(context).dispose();
+    super.dispose();
   }
 }

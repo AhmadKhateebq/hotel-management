@@ -86,6 +86,8 @@ class ReceptionHomeViewModel with ChangeNotifier {
         }
       ];
 
+  get getUser => _auth.loginUser;
+
 
   void init(TickerProvider val) {
     // getUserData();
@@ -106,8 +108,6 @@ class ReceptionHomeViewModel with ChangeNotifier {
   }
 
   // getRequestsStream() => _requestApi.getRequestsStream();
-
-  getDrawer() => _auth.loginUser.getDrawer();
 
   onTapItem(int index) {
     controller.animateToPage(index,

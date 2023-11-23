@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hotel_management/mvvm/view/components/custom_drawer.dart';
 import 'package:hotel_management/mvvm/view/room/filters_menu.dart';
 import 'package:hotel_management/mvvm/view/room/rooms_list_view.dart';
 import 'package:hotel_management/mvvm/view_model/room/filters_menu_model_view.dart';
@@ -18,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeScreenViewModel viewModel = HomeScreenViewModel();
-
+  final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     viewModel.init();
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      key: _key,
       child: Scaffold(
         body: homeScreen(),
         appBar: AppBar(
@@ -43,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.filter_alt)),
           ],
         ),
-        drawer: viewModel.getDrawer,
+        drawer: CustomDrawer(user: viewModel.getUser,),
         // floatingActionButton: viewModel.addRoom
       ),
     );
@@ -57,8 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
               : Obx(
                   () => RoomsListView(
                       viewModel: RoomListViewModel(
-                          startDate: viewModel.startDate,
-                          endDate: viewModel.endDate,
                           // ignore: invalid_use_of_protected_member
                           rooms: viewModel.rooms.value,
                           onRefresh: viewModel.getRooms)),

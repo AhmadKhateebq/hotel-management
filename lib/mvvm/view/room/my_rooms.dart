@@ -38,7 +38,7 @@ class _MyRoomsViewState extends State<MyRoomsView> {
 
   get listView => ListView.builder(
       itemCount: viewModel.rooms.length,
-      itemBuilder: (contxt, index) => InkWell(
+      itemBuilder: (context, index) => InkWell(
           onTap: () => viewModel.onTap(index),
           child: RoomCard(
               viewModel: RoomCardViewModel(

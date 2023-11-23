@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
-import 'package:hotel_management/mvvm/repository/my_rooms_facade.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RoomPreviewViewModel {
   final Room _room;
@@ -56,6 +56,25 @@ class RoomPreviewViewModel {
   }
 
   getAvg() async {
-    avg.value = await MyRoomsFacade().getAvgReview(_room.roomId);
+    avg.value = await getAvgReview(_room.roomId);
+  }
+  Future<double> getAvgReview(String roomId) async {
+    double avg = 0;
+    if(!Get.find<ConnectivityController>().connected.value){
+      return avg;
+    }
+    var ratings = await Supabase.instance.client
+        .from('review')
+        .select<List>('rating')
+        .eq('room_id', roomId);
+    void addAvg(dynamic value) {
+      avg += double.parse(value['rating'].toString());
+    }
+
+    if (ratings.isNotEmpty) {
+      ratings.forEach(addAvg);
+      avg /= ratings.length;
+    }
+    return avg;
   }
 }

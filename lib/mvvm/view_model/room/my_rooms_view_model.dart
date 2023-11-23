@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
@@ -6,12 +7,14 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyRoomsViewModel {
   var loading = true.obs;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
   var empty = false.obs;
   final PanelController panelController = PanelController();
   List<Room> rooms = [];
   double stars = 0;
   late Rx<Room> currentRoom;
   final MyRoomsFacade facade = MyRoomsFacade();
+  MyRoomsViewModel({this.scaffoldKey});
   void init() async {
     rooms = await facade.getRooms();
     if(rooms.isNotEmpty){
@@ -22,7 +25,6 @@ class MyRoomsViewModel {
       loading.value = false;
       empty.value = true;
     }
-
   }
 
   void onTap(int index) {
@@ -51,6 +53,10 @@ class MyRoomsViewModel {
   }
 
   void reserveNow() {
-    Get.offNamed('/home');
+    if(scaffoldKey!=null){
+      Get.back();
+    }
+
+    Get.back();
   }
 }

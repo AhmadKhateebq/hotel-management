@@ -13,7 +13,7 @@ class FilterMenuModelView {
   TextEditingController adultController = TextEditingController();
   TextEditingController bedsController = TextEditingController();
   static const double minPriceCanChoose = 0;
-  static const double maxPriceCanChoose = 1000;
+  static const double maxPriceCanChoose = 5500;
   var seaView = false.obs;
   var priceRange = const RangeValues(minPriceCanChoose, maxPriceCanChoose).obs;
   double maxPrice = 5500;

@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 
 class RoomListViewModel {
-  final DateTime startDate;
-  final DateTime endDate;
   Future<void> Function() onRefresh;
   int currentFloor = 0;
   final List<Room> rooms;
 
   RoomListViewModel({
     required this.rooms,
-    required this.startDate,
-    required this.endDate,
     required this.onRefresh,
   });
 
@@ -19,17 +15,17 @@ class RoomListViewModel {
     var floor = int.parse(roomId.replaceAll(RegExp(r'[^0-9]'), ''));
     if (floor != currentFloor) {
       currentFloor = floor;
-      return (getDivider(floor));
+      return (_getDivider(floor));
     } else {
       return const SizedBox();
     }
   }
 
-  Widget getDivider(int floor) {
-    return ListTile(title: Text(getFloorText(floor)));
+  Widget _getDivider(int floor) {
+    return ListTile(title: Text(_getFloorText(floor)));
   }
 
-  String getFloorText(int floor) {
+  String _getFloorText(int floor) {
     return floor == 1
         ? 'First Floor'
         : floor == 2

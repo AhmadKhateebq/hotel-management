@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
+import 'package:hotel_management/mvvm/model/login_user_model.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:hotel_management/mvvm/view/room/add_room.dart';
 import 'package:hotel_management/util/const.dart';
@@ -17,22 +17,10 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class HomeScreenViewModel {
   final RoomRepository roomApi = Get.find();
-  final CustomerRepository customerApi = Get.find();
-  final SupabaseAuthController _authController = Get.find();
   PanelController panelController = PanelController();
-  TextEditingController adultController = TextEditingController();
-  TextEditingController bedsController = TextEditingController();
   final InAppReview inAppReview = InAppReview.instance;
-  double maxPriceCanChoose = 1000;
-  double minPriceCanChoose = 0;
-  late RangeValues priceRange;
-  double rating = 0;
-  int adults = 2;
-  int beds = 1;
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
-  List<bool> stars = [true, true, true, true, true];
-  bool seaView = false;
   var rooms = <Room>[].obs;
   bool isSearching = false;
   var loading = true.obs;
@@ -47,8 +35,9 @@ class HomeScreenViewModel {
     // appStoreIdentifier: '0000000',
   );
 
-  void init()  {
-    priceRange = RangeValues(minPriceCanChoose, maxPriceCanChoose);
+  LoginUser get getUser =>Get.find<SupabaseAuthController>().loginUser;
+
+  init() {
     getRooms();
     rateMyApp.init().then((value) => {
           if (checkOpens())
@@ -68,21 +57,24 @@ class HomeScreenViewModel {
   }
 
   openFilters() {
-    panelController.isPanelOpen
-        // ? panelController.close()
-        ? panelController.animatePanelToPosition(0,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOutQuart)
-        // : panelController0.open();
-        : panelController.animatePanelToPosition(1,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOutQuart);
-    isFilterShowing.value = !isFilterShowing.value;
+    // panelController.isPanelOpen
+    // ? panelController.close()
+    // ?
+    // : panelController0.open();
+    if (panelController.isPanelOpen) {
+      panelController.animatePanelToPosition(0,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOutQuart);
+      isFilterShowing.value = false;
+    } else {
+      panelController.animatePanelToPosition(1,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOutQuart);
+      isFilterShowing.value = true;
+    }
   }
 
-  get getDrawer => _authController.loginUser.getDrawer();
-
-  get addRoom => (customerApi.getRole() == ROLE.admin)
+  get addRoom => (getUser.role== ROLE.admin)
       ? FloatingActionButton(
           // title: Text("add".tr),
           onPressed: () {
@@ -149,37 +141,12 @@ class HomeScreenViewModel {
         rateButton: 'RATE',
         noButton: 'NO THANKS',
         laterButton: 'MAYBE LATER',
-        //uses the native rating app, ass google play store or app store
-        // listener: (button) {
-        //   switch (button) {
-        //     case RateMyAppDialogButton.rate:
-        //       if (kDebugMode) {
-        //         print('Clicked on "Rate".');
-        //       }
-        //       break;
-        //     case RateMyAppDialogButton.later:
-        //       if (kDebugMode) {
-        //         print('Clicked on "Later".');
-        //       }
-        //       break;
-        //     case RateMyAppDialogButton.no:
-        //       if (kDebugMode) {
-        //         print('Clicked on "No".');
-        //       }
-        //       break;
-        //   }
-        //
-        //   return true; // Return false if you want to cancel the click event.
-        // },
         ignoreNativeDialog: Platform.isAndroid,
         // ignoreNativeDialog: false,
-        // Set to false if you want to show the Apple's native app rating dialog on iOS or Google's native app rating dialog (depends on the current Platform).
         dialogStyle: const DialogStyle(),
         onDismissed: () =>
             rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed),
-        // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
         contentBuilder: (context, defaultContent) => defaultContent,
-        // This one allows you to change the default dialog content.
         actionsBuilder: (context) => [
           OutlinedButton(
             child: const Text('Never'),
@@ -229,7 +196,6 @@ class HomeScreenViewModel {
         // The dialog title.
         message:
             'You like this app ? Then take a little bit of your time to leave a rating :',
-
         contentBuilder: (context, defaultContent) => defaultContent,
         actionsBuilder: (context, stars) {
           if (kDebugMode) {

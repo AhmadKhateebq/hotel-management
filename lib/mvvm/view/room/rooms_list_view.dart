@@ -9,15 +9,13 @@ class RoomsListView extends StatelessWidget {
     super.key,
     required this.viewModel,
   });
-
   final RoomListViewModel viewModel;
-
   @override
   Widget build(BuildContext context) {
-    List<Widget> a = listViewBuilderOneLine;
+    List<Widget> rooms = roomsListBuilder();
     bool shrink = false;
-    if (a.length == 1) {
-      if (a.first.runtimeType == Center) {
+    if (rooms.length == 1) {
+      if (rooms.first.runtimeType == Center) {
         shrink = true;
       }
     }
@@ -26,12 +24,12 @@ class RoomsListView extends StatelessWidget {
       strokeWidth: 4.0,
       child: ListView(
         shrinkWrap: shrink,
-        children: a,
+        children: rooms,
       ),
     );
   }
 
-  get listViewBuilderOneLine {
+  List<Widget>  roomsListBuilder() {
     int index = 0;
     List<Widget> list = <Widget>[];
     for (index; index < viewModel.rooms.length; index++) {

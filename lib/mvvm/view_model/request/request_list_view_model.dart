@@ -24,9 +24,7 @@ class RequestsListViewModel with ChangeNotifier {
     // required this.mapper
   }) {
     requestRepository.setUpListener(updateRequests);
-
   }
-
   get length => requests.length;
 
   // Stream<List<Map<String, dynamic>>> get dataStream => Get.find<RoomRequestRepository>().getRequestsStream();

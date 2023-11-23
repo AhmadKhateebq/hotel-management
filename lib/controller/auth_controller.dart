@@ -28,7 +28,6 @@ class SupabaseAuthController extends GetxController {
     _online = false;
   }
 
-  late final StreamSubscription _authSubscription;
   final GoogleSignIn googleSignInPlatform = GoogleSignIn(
     clientId: iosClientId,
     serverClientId: webClientId,
@@ -56,11 +55,6 @@ class SupabaseAuthController extends GetxController {
   //   } else {
   //   }
   // }
-  StreamSubscription<AuthState> setSubscription(
-      void Function(AuthState) onData) {
-    // _authSubscription =
-    return _supabase.auth.onAuthStateChange.listen(onData);
-  }
 
   setUpSubscription() {
     if (_online) {
@@ -91,19 +85,6 @@ class SupabaseAuthController extends GetxController {
       });
     }
   }
-
-  endSubscription() {
-    _authSubscription.cancel();
-  }
-
-  resumeSubscription() {
-    _authSubscription.resume();
-  }
-
-  pauseSubscription() {
-    _authSubscription.pause();
-  }
-
   Future<AuthResponse> signUp(
       {required String email, required String password}) async {
     try {

@@ -205,7 +205,7 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                         activeColor: Colors.redAccent,
                         divisions: 50,
                         labels: RangeLabels(
-                            "${viewModel.minPrice}", "${viewModel.maxPrice}"),
+                            "${viewModel.minPrice.round()}", "${viewModel.maxPrice.round()}"),
                         values: viewModel.priceRange.value,
                         onChanged: viewModel.changePriceRange,
                         max: FilterMenuModelView.maxPriceCanChoose,

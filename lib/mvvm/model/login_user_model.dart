@@ -70,24 +70,28 @@ class LoginUser {
                         imageUrl: _profileImageUrl!,
                         fit: BoxFit.cover,
                         placeholder: (_, u) => Image.asset(
-                          'assets/image/noImage.png',
-                          fit: BoxFit.cover,
-                          width: 100,
-                          height: 100,
-                        ),
-                        errorWidget: (context, url, error) => Image.asset(
                           'assets/image/noProfile.png',
                           fit: BoxFit.cover,
                           width: 100,
                           height: 100,
                         ),
+                        errorWidget: (context, url, error) => ClipOval(
+                          child: Image.asset(
+                            'assets/image/noProfile.png',
+                            fit: BoxFit.cover,
+                            width: 100,
+                            height: 100,
+                          ),
+                        ),
                       )
-                    : Image.asset(
-                        'assets/image/noProfile.png',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+                    : ClipOval(
+                      child: Image.asset(
+                          'assets/image/noProfile.png',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                    ),
               )),
             ),
             Align(
@@ -140,7 +144,9 @@ class LoginUser {
               title: const Text('My Requests'),
               onTap: () async {
                 if(Get.find<ConnectivityController>().connected.value){
-                  Get.to(() => const MyRequests());
+                  Get.to(() => const MyRequests(),  duration: const Duration(milliseconds: 500),
+                    transition: Transition.cupertino,
+                    curve: Curves.easeInExpo,);
                 }
                 else{
                   Get.snackbar('No Internet Connection', 'try again later');

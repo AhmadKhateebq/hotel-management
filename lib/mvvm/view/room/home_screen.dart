@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/mvvm/view/filters_menu.dart';
+import 'package:hotel_management/mvvm/view/room/filters_menu.dart';
 import 'package:hotel_management/mvvm/view/room/rooms_list_view.dart';
-import 'package:hotel_management/mvvm/view_model/filters_menu_model_view.dart';
-import 'package:hotel_management/mvvm/view_model/home_screen_view_model.dart';
+import 'package:hotel_management/mvvm/view_model/room/filters_menu_model_view.dart';
+import 'package:hotel_management/mvvm/view_model/room/home_screen_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/room/room_list_view_model.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'components/ads/banner_ads.dart';
+import '../components/ads/banner_ads.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -5,5 +5,5 @@ class SharedPrefController{
   static init() async {
     _prefs = await SharedPreferences.getInstance();
   }
-  static get reference => _prefs;
+  static SharedPreferences get reference => _prefs;
 }

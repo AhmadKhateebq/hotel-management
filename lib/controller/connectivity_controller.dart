@@ -13,14 +13,12 @@ import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ConnectivityController extends GetxController {
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   RxBool connected = false.obs;
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   bool _online = false;
   bool _offline = false;
   late StreamSubscription requestsStreamListener;
-  ConnectivityResult get connectedStatus => _connectionStatus;
   StreamSubscription<ConnectivityResult> get subscription =>
       _connectivitySubscription;
 
@@ -48,7 +46,6 @@ class ConnectivityController extends GetxController {
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    _connectionStatus = result;
     result == ConnectivityResult.none
         ? connected.value = false
         : connected.value = true;
@@ -116,10 +113,4 @@ class ConnectivityController extends GetxController {
       Get.find<CustomerRepository>().getCustomerDetails('');
     }
   }
-
-  void streamController(StreamSubscription listener) {
-    requestsStreamListener = listener;
-  }
-  get isOnline => _online;
-  get isOffline => _offline;
 }

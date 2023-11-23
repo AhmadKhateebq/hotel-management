@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 class MyRequestsViewModel with ChangeNotifier{
@@ -46,10 +44,6 @@ class MyRequestsViewModel with ChangeNotifier{
       intertwined = false;
       denied = true;
     }
-    log('$pending',name: 'pending');
-    log('$approved',name: 'approved');
-    log('$intertwined',name: 'intertwined');
-    log('$denied',name: 'denied');
     notifyListeners();
   }
 }

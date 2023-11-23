@@ -130,6 +130,7 @@ class RoomRequestApi extends RoomRequestRepository {
     return _requestsSupabase.stream(primaryKey: ['id']);
   }
 
+  @Deprecated("Unimplemented")
   @override
   setUpListener(void Function() func) {
     throw UnimplementedError();

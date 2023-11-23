@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
 import 'package:hotel_management/mvvm/view/requests/request_details_view.dart';
@@ -19,9 +20,15 @@ class RoomRequestDetailsViewModel {
   get endingDate => DateFormatter.format(_request.endingDate);
 
   cardOnTap() {
-    Get.to(() => PreviewRequest(
-          viewModel: RequestReviewViewModel(
-              request: _request,),
-        ));
+    Get.to(
+      () => PreviewRequest(
+        viewModel: RequestReviewViewModel(
+          request: _request,
+        ),
+      ),
+      duration: const Duration(milliseconds: 500),
+      transition: Transition.circularReveal,
+      curve: Curves.easeInExpo,
+    );
   }
 }

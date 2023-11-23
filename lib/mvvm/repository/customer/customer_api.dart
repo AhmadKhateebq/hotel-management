@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/customer.dart';
 import 'package:hotel_management/mvvm/model/customer_details.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
@@ -12,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class CustomerApi extends CustomerRepository {
   final _supabase = Supabase.instance.client;
   final _auth = Get.find<SupabaseAuthController>();
+  final _pref = SharedPrefController.reference;
 
   @override
   getRole() => _auth.loginUser.role;
@@ -22,17 +24,13 @@ class CustomerApi extends CustomerRepository {
   @override
   getCustomerDetails(String id) async {
     List<dynamic> ids =
-    await _supabase.from('customer').select('*').eq('id', id);
+        await _supabase.from('customer').select('*').eq('id', id);
     if (ids.isEmpty || !await _customerDetailsExists(id)) {
       if (await _auth.googleSignInPlatform.isSignedIn()) {
         var metadata = _auth.loginUser.user!.userMetadata!;
         await Get.offNamed('/add_customer', arguments: {
-          'firstName': metadata['full_name']
-              .split(' ')
-              .first,
-          'lastName': metadata['full_name']
-              .split(' ')
-              .last,
+          'firstName': metadata['full_name'].split(' ').first,
+          'lastName': metadata['full_name'].split(' ').last,
           'imageUrl': metadata['avatar_url'],
         });
       } else {
@@ -51,18 +49,18 @@ class CustomerApi extends CustomerRepository {
         CustomerDetails.fromDynamicMap(a[0]);
     _auth.loginUser.user = _auth.currentUser();
     _auth.loginUser.role = RoleUtil.fromString(ids[0]['role']);
+    await _pref.setString('role', ids[0]['role']);
     _auth.loginUser.profileImageUrl = _auth
-        .loginUser.user!.userMetadata?['avatar_url'] !=
-        null
+                .loginUser.user!.userMetadata?['avatar_url'] !=
+            null
         ? _auth.loginUser.user!.userMetadata!['avatar_url']
         : _auth.loginUser.currentCustomerDetails.pictureUrl ??
-        'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
+            'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG-Free-Download.png';
     _auth.loginUser.fullName = _auth
-        .loginUser.user!.userMetadata?['full_name'] !=
-        null
+                .loginUser.user!.userMetadata?['full_name'] !=
+            null
         ? _auth.loginUser.user!.userMetadata!['full_name']
-        : '${_auth.loginUser.currentCustomerDetails.firstName} ${_auth.loginUser
-        .currentCustomerDetails.lastName}';
+        : '${_auth.loginUser.currentCustomerDetails.firstName} ${_auth.loginUser.currentCustomerDetails.lastName}';
     _auth.loginUser.role = _auth.loginUser.role;
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     await analytics.setUserProperty(
@@ -99,7 +97,7 @@ class CustomerApi extends CustomerRepository {
 
   Future<bool> _customerExists(String id) async {
     List<dynamic> ids =
-    await _supabase.from('customer').select('id').eq('id', id);
+        await _supabase.from('customer').select('id').eq('id', id);
     if (ids.isEmpty) {
       return false;
     }
@@ -107,14 +105,12 @@ class CustomerApi extends CustomerRepository {
   }
 
   @override
-  saveCustomer({required String firstName,
-    required String lastName,
-    required DateTime dateOfBirth,
-    String? imageUrl}) async {
-    var user = Get
-        .find<SupabaseAuthController>()
-        .loginUser
-        .user;
+  saveCustomer(
+      {required String firstName,
+      required String lastName,
+      required DateTime dateOfBirth,
+      String? imageUrl}) async {
+    var user = Get.find<SupabaseAuthController>().loginUser.user;
     var customerId = user!.id;
     String email = user.email!;
     CustomerDetails details = CustomerDetails(
@@ -137,8 +133,10 @@ class CustomerApi extends CustomerRepository {
 
   @override
   Future<String> getCustomerName(String customerId) async {
-    return (await _supabase.from('customer').select('full_name').eq(
-        "id", customerId))[0]['full_name'];
+    return (await _supabase
+        .from('customer')
+        .select('full_name')
+        .eq("id", customerId))[0]['full_name'];
   }
 
   @override

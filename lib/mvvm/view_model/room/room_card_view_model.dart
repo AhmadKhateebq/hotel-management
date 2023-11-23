@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 import 'package:hotel_management/mvvm/view/room/room_preview.dart';
@@ -32,11 +33,16 @@ class RoomCardViewModel {
 
   void onTap() {
     if (!isHistory) {
-      Get.to(() => PreviewRoom(
-            viewModel: RoomPreviewViewModel(
-                room: room,
-                ),
-          ));
+      Get.to(
+        () => PreviewRoom(
+          viewModel: RoomPreviewViewModel(
+            room: room,
+          ),
+        ),
+        duration: const Duration(milliseconds: 500),
+        transition: Transition.circularReveal,
+        curve: Curves.easeInExpo,
+      );
     }
   }
 }

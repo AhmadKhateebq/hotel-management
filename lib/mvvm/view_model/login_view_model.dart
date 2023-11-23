@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/view/components/google_sign_in_button.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginViewModel {
   final SupabaseAuthController authController = Get.find();
@@ -19,14 +17,7 @@ class LoginViewModel {
   var eyeClicked = false.obs;
   var isLogin = true.obs;
 
-
-  StreamSubscription<AuthState> setSubscription(
-      void Function(AuthState) onData) {
-    return authController.setSubscription(onData);
-  }
-
   void setupAuthListener() {
-
     try {
       authController.setUpSubscription();
     } catch (e, s) {
@@ -88,11 +79,9 @@ class LoginViewModel {
     setupAuthListener();
   }
 
-  get initialized => authController.initUser;
-
   bool validEmail(String value) {
     return
-    RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+    RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(value);
   }
 

@@ -96,11 +96,11 @@ class RoomRequestLocal extends RoomRequestRepository {
   }
 
   List<RoomRequest> getAllRequests() {
-    return _prefs
+    return _prefs.containsKey('requests')? _prefs
         .getStringList('requests')!
         .map(jsonDecode)
         .map(RoomRequest.fromDynamic)
-        .toList();
+        .toList():[];
   }
 
   @override
@@ -113,6 +113,7 @@ class RoomRequestLocal extends RoomRequestRepository {
     return getAllRequests();
   }
 
+  @Deprecated("Unimplemented")
   @override
   setUpListener(void Function() func) {
     throw UnimplementedError();

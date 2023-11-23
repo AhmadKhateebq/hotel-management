@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
-// ignore: unused_import
-import 'package:hotel_management/mvvm/repository/room/room_api.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:image_picker/image_picker.dart';
@@ -62,8 +60,6 @@ class AddRoomViewModel {
       }
     }
   }
-
-
 
   uploadImage(String roomId) async {
     return image != null

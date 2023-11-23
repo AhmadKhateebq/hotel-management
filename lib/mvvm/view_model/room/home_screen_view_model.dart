@@ -15,8 +15,8 @@ import 'package:rate_my_app/rate_my_app.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class HomeScreenViewModel {
-  final RoomRepository roomApi= Get.find();
-  final CustomerRepository customerApi= Get.find();
+  final RoomRepository roomApi = Get.find();
+  final CustomerRepository customerApi = Get.find();
   final SupabaseAuthController _authController = Get.find();
   PanelController panelController = PanelController();
   TextEditingController adultController = TextEditingController();
@@ -46,19 +46,18 @@ class HomeScreenViewModel {
     // appStoreIdentifier: '0000000',
   );
 
-
   void init() {
     bedsController.text = '$beds';
     adultController.text = '$adults';
     priceRange = RangeValues(minPriceCanChoose, maxPriceCanChoose);
     getRooms().then((_) async {
+      await rateMyApp.init();
       if (checkOpens()) {
         if (await inAppReview.isAvailable()) {
           inAppReview.requestReview();
         }
       }
 
-      await rateMyApp.init();
       openRateUsStarsDialog();
       try {
         rateMyApp.launchNativeReviewDialog();
@@ -75,7 +74,7 @@ class HomeScreenViewModel {
   }
 
   bool checkOpens() {
-    return true;
+    return rateMyApp.shouldOpenDialog;
   }
 
   void getUserData() {
@@ -84,23 +83,28 @@ class HomeScreenViewModel {
 
   openFilters() {
     panelController.isPanelOpen
-        ? panelController.close()
-        : panelController.open();
+        // ? panelController.close()
+        ? panelController.animatePanelToPosition(0,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOutQuart)
+        // : panelController0.open();
+        : panelController.animatePanelToPosition(1,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOutQuart);
     isFilterShowing.value = !isFilterShowing.value;
   }
 
   get getDrawer => _authController.loginUser.getDrawer();
 
-  get addRoom =>
-      (customerApi.getRole() == ROLE.admin)
-          ? FloatingActionButton(
-              // title: Text("add".tr),
-              onPressed: () {
-                Get.offAllNamed('/add_room');
-              },
-              child: const Icon(Icons.add, color: Colors.black),
-            )
-          : const SizedBox();
+  get addRoom => (customerApi.getRole() == ROLE.admin)
+      ? FloatingActionButton(
+          // title: Text("add".tr),
+          onPressed: () {
+            Get.offAllNamed('/add_room');
+          },
+          child: const Icon(Icons.add, color: Colors.black),
+        )
+      : const SizedBox();
 
   Future<void> getRooms() async {
     isFilterShowing.value = false;

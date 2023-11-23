@@ -7,7 +7,7 @@ import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyRoomsFacade {
-  late final SupabaseClient? _supabase;
+  late final SupabaseClient _supabase =  Supabase.instance.client;
   final RoomRepository _roomApi = Get.find();
   final String _userId = Get.find<SupabaseAuthController>().loginUser.user!.id;
 
@@ -18,17 +18,15 @@ class MyRoomsFacade {
       return [];
     }
   }
-  init(){
-    _supabase ??= Supabase.instance.client;
-  }
+
   submitReview(String roomId, double rating) async {
     RoomReview review =
         RoomReview(roomId: roomId, customerId: _userId, rating: rating);
     if (await reviewExist(review.roomId)) {
-      await _supabase!.from('review').insert(review.toJson());
+      await _supabase.from('review').insert(review.toJson());
       Get.snackbar('Review Sent', 'your review has been sent');
     } else {
-      await _supabase!
+      await _supabase
           .from('review')
           .update({'rating': review.rating})
           .eq('customer_id', _userId)
@@ -42,7 +40,7 @@ class MyRoomsFacade {
     if(!Get.find<ConnectivityController>().connected.value){
       return avg;
     }
-    var ratings = await _supabase!
+    var ratings = await _supabase
         .from('review')
         .select<List>('rating')
         .eq('room_id', roomId);
@@ -58,7 +56,7 @@ class MyRoomsFacade {
   }
 
   reviewExist(String roomId) async {
-    var res = await _supabase!
+    var res = await _supabase
         .from('review')
         .select<List<Map<String, dynamic>>>('rating')
         .eq('customer_id', _userId)

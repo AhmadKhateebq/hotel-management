@@ -5,7 +5,7 @@ import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/view/add_new_customer.dart';
 import 'package:hotel_management/mvvm/view/first_screen.dart';
 import 'package:hotel_management/mvvm/view/login_screen.dart';
-import 'package:hotel_management/mvvm/view/reciptionest_home.dart';
+import 'package:hotel_management/mvvm/view/requests/reciptionest_home.dart';
 import 'package:hotel_management/mvvm/view/requests/my_requests.dart';
 import 'package:hotel_management/mvvm/view/room/add_room.dart';
 import 'package:hotel_management/mvvm/view/room/my_rooms.dart';
@@ -13,7 +13,7 @@ import 'package:hotel_management/mvvm/view/splash_screen.dart';
 import 'package:hotel_management/mvvm/view_model/add_new_customer_view_model.dart';
 import 'package:hotel_management/mvvm/view_model/splash_screen_model_view.dart';
 
-import 'mvvm/view/home_screen.dart';
+import 'mvvm/view/room/home_screen.dart';
 
 final primaryColor = Colors.primaries[3];
 bool internet = false;
@@ -44,19 +44,19 @@ void main() async {
         checkboxTheme: CheckboxThemeData(
           fillColor: MaterialStateColor.resolveWith(getColor),
         )),
+    defaultTransition: Transition.cupertino,
+    transitionDuration: const Duration(milliseconds: 500),
+
     getPages: [
       GetPage(
           name: '/',
-          page: () => const HomeScreen(),
-          transition: Transition.leftToRightWithFade),
+          page: () => const HomeScreen()),
       GetPage(
           name: '/login',
-          page: () => const LoginScreen(),
-          transition: Transition.fadeIn),
+          page: () => const LoginScreen()),
       GetPage(
           name: '/home',
-          page: () => const HomeScreen(),
-          transition: Transition.leftToRight),
+          page: () => const HomeScreen()),
       GetPage(
           name: '/loading',
           page: () => SplashScreen(
@@ -64,8 +64,7 @@ void main() async {
               )),
       GetPage(
           name: '/recep_home',
-          page: () => const ReceptionHome(),
-          transition: Transition.downToUp),
+          page: () => const ReceptionHome()),
       GetPage(
           name: '/add_customer',
           page: () => AddCustomer(

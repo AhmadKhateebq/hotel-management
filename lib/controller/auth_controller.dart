@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/login_user_model.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/util/const.dart';
@@ -12,7 +12,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthController extends GetxController {
   late final SupabaseClient _supabase;
-  User? _currentUser;
   var initUser = false.obs;
   bool _online = true;
 
@@ -21,12 +20,10 @@ class SupabaseAuthController extends GetxController {
 
   SupabaseAuthController.online() {
     _supabase = Supabase.instance.client;
-    _currentUser = _supabase.auth.currentUser;
     _online = true;
   }
 
   SupabaseAuthController.offline() {
-    // _supabase = Supabase.instance.client;
     _online = false;
   }
 
@@ -37,11 +34,7 @@ class SupabaseAuthController extends GetxController {
   );
 
   User? currentUser() {
-    return _currentUser;
-  }
-
-  init() {
-    // databaseController  = Get.find();
+    return _supabase.auth.currentUser;
   }
 
   getUserData() {
@@ -59,22 +52,9 @@ class SupabaseAuthController extends GetxController {
           ? loginUser.user!.userMetadata!['full_name']
           : '${loginUser.currentCustomerDetails.firstName} ${loginUser.currentCustomerDetails.lastName}';
       loginUser.role = loginUser.role;
-      _currentUser = _supabase.auth.currentUser;
     } else {
-      _currentUser = null;
     }
   }
-
-  setSubscriptionLog() {
-    a(AuthState data) {
-      final AuthChangeEvent event = data.event;
-      // session = data.session;
-      log(event.toString(), name: 'event');
-    }
-
-    _authSubscription = _supabase.auth.onAuthStateChange.listen(a);
-  }
-
   StreamSubscription<AuthState> setSubscription(
       void Function(AuthState) onData) {
     // _authSubscription =
@@ -156,20 +136,6 @@ class SupabaseAuthController extends GetxController {
     }
   }
 
-  signInWithOtp(String email) async {
-    await _supabase.auth.signInWithOtp(
-      email: email,
-      emailRedirectTo: kIsWeb ? null : 'io.supabase.flutter://signin-callback/',
-    );
-    // session = _supabase.auth.currentSession;
-    loginUser.user = _supabase.auth.currentUser;
-  }
-
-  signInWithGoogle(BuildContext context) async {
-    await _supabase.auth.signInWithOAuth(Provider.google,
-        context: context, authScreenLaunchMode: LaunchMode.inAppWebView);
-  }
-
   signOut() async {
     if (_online) {
       await _supabase.auth.signOut();
@@ -186,6 +152,7 @@ class SupabaseAuthController extends GetxController {
       loginUser.logout();
       initUser = false.obs;
       Get.find<CustomerRepository>().signOut();
+      SharedPrefController.reference.remove('role');
     }
   }
 
@@ -204,7 +171,7 @@ class SupabaseAuthController extends GetxController {
       if (idToken == null) {
         throw 'No ID Token found.';
       }
-      return signInWithIdToken(
+      return _signInWithIdToken(
         provider: Provider.google,
         idToken: idToken,
         accessToken: accessToken,
@@ -214,7 +181,7 @@ class SupabaseAuthController extends GetxController {
     }
   }
 
-  Future<AuthResponse> signInWithIdToken(
+  Future<AuthResponse> _signInWithIdToken(
       {required Provider provider,
       required String idToken,
       required String accessToken}) async {
@@ -228,7 +195,4 @@ class SupabaseAuthController extends GetxController {
     return res;
   }
 
-  void cancelSubscription() {
-    _authSubscription.cancel();
-  }
 }

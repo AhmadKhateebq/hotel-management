@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_management/mvvm/view_model/reciptionest_home_view_model.dart';
+import 'package:hotel_management/mvvm/view_model/request/reciptionest_home_view_model.dart';
 import 'package:provider/provider.dart';
 
-import 'components/flow/floating_action_button_flow.dart';
+import '../components/flow/floating_action_button_flow.dart';
 
 class ReceptionHome extends StatefulWidget {
   const ReceptionHome({super.key});

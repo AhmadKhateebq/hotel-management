@@ -87,7 +87,7 @@ class RoomLocal extends RoomRepository {
   getMyRooms({required String userId}) {
     Get.snackbar('No Internet Connection', 'try again later');
   }
-
+  @Deprecated("Unimplemented")
   @override
   getNextID(String floor) {
     throw UnimplementedError();
@@ -97,10 +97,9 @@ class RoomLocal extends RoomRepository {
   Future<void> saveRoom(Room room) async {
     Get.snackbar('No Internet Connection', 'try again later');
   }
-
+  @Deprecated("Unimplemented")
   @override
   Future<String> uploadImage(File file, String roomId) {
-    // TODO: implement uploadImage
     throw UnimplementedError();
   }
 

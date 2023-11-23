@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/firebase_options.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
@@ -18,22 +19,31 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FirstScreenViewModel {
   late SupabaseAuthController _authController;
-
   late CustomerRepository _customerApi;
-
+  final _pref = SharedPrefController.reference;
   RxBool isLoading = true.obs;
 
   init() async {
-    _authController = Get.find();
-    _customerApi = Get.find();
-    isLoading.value = true;
-    if (_authController.currentUser() != null) {
-      await _customerApi.getCustomerDetails(_authController.currentUser()!.id);
-      _authController.getUserData();
-    } else {
-      _authController.getUserData();
-      Get.find<CustomerRepository>().getCustomerDetails('');
-      isLoading.value = false;
+    try {
+      _authController = Get.find();
+      _customerApi = Get.find();
+      isLoading.value = true;
+      if(_pref.containsKey('role')){
+        if (_authController.currentUser() != null ) {
+          await _customerApi
+              .getCustomerDetails(_authController.currentUser()!.id);
+          _authController.getUserData();
+        } else {
+          _authController.getUserData();
+          Get.find<CustomerRepository>().getCustomerDetails('');
+          isLoading.value = false;
+        }
+      }else{
+        Get.offNamed('/login');
+      }
+
+    } catch (e) {
+      Get.find<SupabaseAuthController>().signOut();
     }
   }
 

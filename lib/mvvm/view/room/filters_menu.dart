@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/mvvm/view_model/filters_menu_model_view.dart';
+import 'package:hotel_management/mvvm/view_model/room/filters_menu_model_view.dart';
 
 class FiltersCustomMenu extends StatefulWidget {
   const FiltersCustomMenu({super.key, required this.viewModel});

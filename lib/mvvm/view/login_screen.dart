@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void didUpdateWidget(covariant LoginScreen oldWidget) {
-    viewModel.loading.value = false;
+    viewModel.init();
     super.didUpdateWidget(oldWidget);
   }
 
@@ -94,9 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 'assets/image/hotel_logo.png',
                 scale: 3,
               )),
-               Divider(
+               const Divider(
                 thickness: 1,
-                color: Theme.of(context).primaryColor,
+                color: Colors.black,
               ),
               const SizedBox(
                 height: 5,

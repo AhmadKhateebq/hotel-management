@@ -53,7 +53,11 @@ class RequestsListViewModel with ChangeNotifier {
   Future<void> updateRequests() async {
     if(myRequests){
     requests = (await requestRepository.getMyRoomRequests()).where(filterRequests).toList();
-    notifyListeners();
+    try {
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {}
+    }
     }else{
       var temp =
       (await requestRepository.getRoomRequests()).where(filterRequests).toList();

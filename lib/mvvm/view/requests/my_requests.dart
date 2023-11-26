@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_management/mvvm/view/components/flow/floating_action_button_flow.dart';
 import 'package:hotel_management/mvvm/view_model/request/my_request_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,7 @@ class _MyRequestsState extends State<MyRequests>
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<MyRequestsViewModel>(
+      lazy: true,
       create: (_) {
         viewModel = MyRequestsViewModel();
         viewModel.init(this);
@@ -38,6 +40,12 @@ class _MyRequestsState extends State<MyRequests>
             onPageChanged: viewModel.onPageChange,
             children: viewModel.requests,
           ),
+          floatingActionButton :FloatingActionButtonFlow(
+            icons:viewModel.icons,
+            functions: viewModel.functions,
+          ),
+          floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked,
         ),
       ),
     );

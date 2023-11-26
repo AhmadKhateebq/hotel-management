@@ -90,4 +90,29 @@ class MyRequestsViewModel with ChangeNotifier {
     onTapItem(index);
     changeIcon(index);
   }
+  get icons => const [
+    Icons.home,
+    Icons.access_time_rounded,
+    Icons.check,
+    Icons.compare_arrows,
+    Icons.close,
+  ];
+
+  get functions => [
+        () {
+      homeButton(0);
+    },
+        () {
+      homeButton(1);
+    },
+        () {
+      homeButton(2);
+    },
+        () {
+      homeButton(3);
+    },
+        () {
+      homeButton(4);
+    }
+  ];
 }

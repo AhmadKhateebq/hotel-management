@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
@@ -19,6 +21,7 @@ class LoginController extends GetxController {
     clientId: iosClientId,
     serverClientId: webClientId,
   );
+
   String? firstName;
   String? lastName;
   String? id;
@@ -26,7 +29,7 @@ class LoginController extends GetxController {
   String? _token;
   String? userImage;
   late bool _connected;
-
+  bool _isInit = false;
   init() async {
     _setUpListener();
     if (_prefs.containsKey('token')) {
@@ -40,19 +43,25 @@ class LoginController extends GetxController {
     await initConnectivity();
     if (connectivityController.connected.value) {
       _supabase = Supabase.instance.client;
+      _isInit = true;
     }
-    if (_token != null) {
-      if (_connected) {
-        await _supabase.auth.refreshSession();
-      }
-      if (role == ROLE.customer) {
-        Get.offAllNamed('/home');
+    try{
+      if (_token != null) {
+        if (_connected) {
+          await _supabase.auth.refreshSession();
+        }
+        if (role == ROLE.customer) {
+          Get.offAllNamed('/home');
+        } else {
+          Get.offAllNamed('/recep_home');
+        }
       } else {
-        Get.offAllNamed('/recep_home');
+        Get.offAll(() => const LoginScreen());
       }
-    } else {
-      Get.offAll(() => const LoginScreen());
+    }catch(e){
+      signOut();
     }
+
   }
 
   _setUpListener() {
@@ -72,8 +81,11 @@ class LoginController extends GetxController {
     _connected = connectivityController.connected.value;
   }
 
-  Future<AuthResponse> signUp(
+  signUp(
       {required String email, required String password}) async {
+    if(!await _isOnline()){
+      return;
+    }
     try {
       final AuthResponse res = await _supabase.auth.signUp(
         email: email,
@@ -86,8 +98,11 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<String> signIn(
+   signIn(
       {required String email, required String password}) async {
+     if(!await _isOnline()){
+       return 'false';
+     }
     try {
       final AuthResponse res = await _supabase.auth.signInWithPassword(
         email: email,
@@ -107,20 +122,21 @@ class LoginController extends GetxController {
       if (await googleSignInPlatform.isSignedIn()) {
         googleSignInPlatform.signOut();
       }
-      Get.offAll(() => const LoginScreen());
-    } else {
-      if (await googleSignInPlatform.isSignedIn()) {
-        googleSignInPlatform.signOut();
-      }
-      _prefs.remove('role');
-      _prefs.remove('user_id');
-      _prefs.remove('first_name');
-      _prefs.remove('last_name');
-      _prefs.remove('user_image');
     }
-  }
 
-  Future<AuthResponse> googleSignIn() async {
+    _prefs.remove('role');
+    _prefs.remove('user_id');
+    _prefs.remove('first_name');
+    _prefs.remove('last_name');
+    _prefs.remove('user_image');
+    _prefs.remove('token');
+
+    Get.offAll(() => const LoginScreen());
+  }
+  googleSignIn() async {
+    if(!await _isOnline()){
+      throw Exception();
+    }
     try {
       final googleUser = await googleSignInPlatform.signIn();
       if (googleUser == null) {
@@ -161,6 +177,9 @@ class LoginController extends GetxController {
   }
 
   tryLoggingIn(AuthResponse res) async {
+    if(!await _isOnline()){
+      return;
+    }
     if (res.user != null) {
       await _prefs.setString('user_id', res.user!.id);
       await _prefs.setString('token', res.session!.accessToken);
@@ -178,5 +197,39 @@ class LoginController extends GetxController {
         signOut();
       }
     }
+  }
+  final Connectivity _connectivity = Connectivity();
+  Future<bool> _isOnline() async {
+    late ConnectivityResult result;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+      if(result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile){
+        if(!_isInit){
+         _initSupabase();
+          _isInit = true;
+        }
+        return true;
+      }
+      Get.snackbar('No Internet Connection', 'Please Try Again Later');
+      return false;
+    } on PlatformException catch (e) {
+      log('Couldn\'t check connectivity status', error: e);
+      return false;
+    }
+  }
+  _initSupabase() async {
+    try {
+      await Supabase.initialize(
+        url: supabaseUrl,
+        anonKey: publicAnonKey,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+    _supabase = Supabase.instance.client;
   }
 }

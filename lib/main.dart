@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/connectivity_controller.dart';
-import 'package:hotel_management/controller/shared_pref_controller.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/mvvm/view/requests/reciptionest_home.dart';
 import 'package:hotel_management/mvvm/view/splash_screen.dart';
 
@@ -13,10 +10,7 @@ bool internet = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SharedPrefController.init();
-  Get.put(ConnectivityController(), permanent: true);
-  Get.put(CustomerApi(), permanent: true);
-  await Get.find<ConnectivityController>().init();
+
   runApp(GetMaterialApp(
     color: primaryColor,
     theme: ThemeData(

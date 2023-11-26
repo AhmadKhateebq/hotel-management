@@ -112,7 +112,6 @@ class RoomRequestCache extends RoomRequestRepository {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
-      result = await _connectivity.checkConnectivity();
       if(result == ConnectivityResult.wifi ||
           result == ConnectivityResult.mobile){
         await init();

@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   final SplashScreenViewModel viewModel = SplashScreenViewModel();
   @override
   void initState() {
-    viewModel.initControllers();
+    viewModel.initApp();
     super.initState();
   }
 

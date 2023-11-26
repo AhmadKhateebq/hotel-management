@@ -124,6 +124,13 @@ class RoomRequestLocal extends RoomRequestRepository {
     await _prefs.remove('deny');
     await _prefs.remove('reserve');
   }
+
+  @override
+  Future<List<RoomRequest>> getMyRoomRequests() async {
+    String userId = _prefs.getString('user_id')!;
+    bool filter(RoomRequest requests) => requests.customerId == userId;
+    return  getAllRequests().where(filter).toList();
+  }
 }
 
 class Request {

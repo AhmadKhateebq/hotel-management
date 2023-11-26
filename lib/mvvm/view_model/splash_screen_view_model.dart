@@ -24,6 +24,13 @@ class SplashScreenViewModel {
 
     Get.put(ConnectivityController(), permanent: true);
     Get.put(CustomerApi(), permanent: true);
+    try{
+      await Get.find<CustomerApi>().init();
+    }catch(e){
+      if(kDebugMode){
+        print(e);
+      }
+    }
     //set up connectivity sub
     await Get.find<ConnectivityController>().init();
     bool internet = Get.find<ConnectivityController>().connected.value;

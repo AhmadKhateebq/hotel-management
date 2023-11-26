@@ -19,7 +19,7 @@ class RequestsList extends StatelessWidget {
             pending: viewModel.pending,
             approved: viewModel.approved,
             intertwined: viewModel.intertwined,
-            denied: viewModel.denied);
+            denied: viewModel.denied, myRequests: viewModel.myRequests);
         newViewModel.updateRequests();
         return newViewModel;
       },

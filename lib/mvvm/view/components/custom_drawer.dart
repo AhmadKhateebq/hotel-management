@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
@@ -37,44 +38,50 @@ class CustomDrawer extends StatelessWidget {
               alignment: AlignmentDirectional.centerEnd,
               child: ClipOval(
                   child: Obx(
-                () => Get.find<ConnectivityController>().connected.value &&
+                        () =>
+                    Get
+                        .find<ConnectivityController>()
+                        .connected
+                        .value &&
                         profileImageUrl != ''
-                    ? CachedNetworkImage(
-                        imageUrl: profileImageUrl,
-                        fit: BoxFit.cover,
-                        width: 100,
-                        height: 100,
-                        placeholder: (_, u) => Image.asset(
-                          'assets/image/noProfile.png',
-                          fit: BoxFit.cover,
-                          width: 100,
-                          height: 100,
-                        ),
-                        errorWidget: (context, url, error) => ClipOval(
-                          child: Image.asset(
+                        ? CachedNetworkImage(
+                      imageUrl: profileImageUrl,
+                      fit: BoxFit.cover,
+                      width: 100,
+                      height: 100,
+                      placeholder: (_, u) =>
+                          Image.asset(
                             'assets/image/noProfile.png',
                             fit: BoxFit.cover,
                             width: 100,
                             height: 100,
                           ),
-                        ),
-                      )
-                    : ClipOval(
-                        child: Image.asset(
-                          'assets/image/noProfile.png',
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
+                      errorWidget: (context, url, error) =>
+                          ClipOval(
+                            child: Image.asset(
+                              'assets/image/noProfile.png',
+                              fit: BoxFit.cover,
+                              width: 100,
+                              height: 100,
+                            ),
+                          ),
+                    )
+                        : ClipOval(
+                      child: Image.asset(
+                        'assets/image/noProfile.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
                       ),
-              )),
+                    ),
+                  )),
             ),
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: Text(
                 fullName,
                 style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(
@@ -86,10 +93,10 @@ class CustomDrawer extends StatelessWidget {
                 role == ROLE.reception
                     ? 'reception'
                     : role == ROLE.admin
-                        ? 'Admin'
-                        : 'Customer',
+                    ? 'Admin'
+                    : 'Customer',
                 style:
-                    const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
               ),
             ),
           ],
@@ -118,7 +125,10 @@ class CustomDrawer extends StatelessWidget {
               leading: const Icon(Icons.my_library_books_rounded),
               title: const Text('My Requests'),
               onTap: () async {
-                if (Get.find<ConnectivityController>().connected.value) {
+                var res = await Connectivity().checkConnectivity();
+                if (res == ConnectivityResult.ethernet ||
+                    res == ConnectivityResult.wifi ||
+                    res == ConnectivityResult.mobile) {
                   Get.back();
                   Get.to(() => const MyRequests());
                 } else {
@@ -132,7 +142,9 @@ class CustomDrawer extends StatelessWidget {
                 color: Colors.red,
               ),
               title: const Text("logout"),
-              onTap: Get.find<LoginController>().signOut,
+              onTap: Get
+                  .find<LoginController>()
+                  .signOut,
             ),
             const BannerAdWidget(
               withClose: false,
@@ -141,68 +153,71 @@ class CustomDrawer extends StatelessWidget {
         ));
   }
 
-  _getNavTile(ROLE role) => role == ROLE.customer
-      ? const SizedBox()
-      : Column(
-          children: [
-            Get.currentRoute == '/home'
-                ? Column(
-                    children: [
-                      const Align(
-                          alignment: AlignmentDirectional.topStart,
-                          child: Text('Admin Menu')),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.request_page),
-                        title: const Text('Requests'),
-                        onTap: () async {
-                          Get.offAllNamed('/recep_home');
-                        },
-                      ),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      const Align(
-                          alignment: AlignmentDirectional.topStart,
-                          child: Text('Admin Menu')),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.hotel),
-                        title: const Text('Rooms'),
-                        onTap: () async {
-                          Get.offAllNamed('/home');
-                        },
-                      ),
-                    ],
-                  ),
-          ],
-        );
+  _getNavTile(ROLE role) =>
+      role == ROLE.customer
+          ? const SizedBox()
+          : Column(
+        children: [
+          Get.currentRoute == '/home'
+              ? Column(
+            children: [
+              const Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Text('Admin Menu')),
+              const SizedBox(
+                height: 10,
+              ),
+              ListTile(
+                leading: const Icon(Icons.request_page),
+                title: const Text('Requests'),
+                onTap: () async {
+                  Get.offAllNamed('/recep_home');
+                },
+              ),
+            ],
+          )
+              : Column(
+            children: [
+              const Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Text('Admin Menu')),
+              const SizedBox(
+                height: 10,
+              ),
+              ListTile(
+                leading: const Icon(Icons.hotel),
+                title: const Text('Rooms'),
+                onTap: () async {
+                  Get.offAllNamed('/home');
+                },
+              ),
+            ],
+          ),
+        ],
+      );
 
-  _getAddTile(ROLE role) => role == ROLE.admin && Get.currentRoute == '/home'
-      ? Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.add),
-              title: const Text('Add Room'),
-              onTap: () async {
-                Get.offAll(() => const AddRoom());
-              },
-            ),
-            const Divider(
-              thickness: 1,
-            ),
-          ],
-        )
-      : const Divider(
-          thickness: 1,
-        );
+  _getAddTile(ROLE role) =>
+      role == ROLE.admin && Get.currentRoute == '/home'
+          ? Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text('Add Room'),
+            onTap: () async {
+              Get.offAll(() => const AddRoom());
+            },
+          ),
+          const Divider(
+            thickness: 1,
+          ),
+        ],
+      )
+          : const Divider(
+        thickness: 1,
+      );
 
-  _getMyRoomsTile() => ListTile(
+  _getMyRoomsTile() =>
+      ListTile(
         leading: const Icon(Icons.history),
         title: const Text('My Rooms'),
         onTap: () async {

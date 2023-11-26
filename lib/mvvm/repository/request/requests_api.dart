@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:hotel_management/util/const.dart';
@@ -133,5 +134,12 @@ class RoomRequestApi extends RoomRequestRepository {
   @override
   setUpListener(void Function() func) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<List<RoomRequest>> getMyRoomRequests() async {
+    String userId = SharedPrefController.reference.getString('user_id')!;
+    bool filter(RoomRequest requests) => requests.customerId == userId;
+    return (await getRoomRequests()).where(filter).toList();
   }
 }

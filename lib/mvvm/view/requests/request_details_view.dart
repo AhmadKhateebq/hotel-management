@@ -30,7 +30,7 @@ class _PreviewRequestState extends State<PreviewRequest> {
               Get.back();
             },
             icon: const Icon(Icons.close)),
-        title: Text('Room ${widget.viewModel.roomId} Requests'),
+        title: Text('Room ${widget.viewModel.roomId} Request'),
         centerTitle: true,
       ),
       body: SizedBox.expand(

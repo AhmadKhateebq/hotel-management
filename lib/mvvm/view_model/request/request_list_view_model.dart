@@ -11,6 +11,7 @@ class RequestsListViewModel with ChangeNotifier {
   final bool? approved;
   final bool? intertwined;
   final bool? denied;
+  final bool myRequests;
 
   // final RoomRequest Function(Map<String, dynamic> data) mapper;
   final RoomRequestRepository requestRepository = Get.find();
@@ -21,10 +22,12 @@ class RequestsListViewModel with ChangeNotifier {
     required this.approved,
     required this.intertwined,
     required this.denied,
+    required  this.myRequests,
     // required this.mapper
   }) {
     requestRepository.setUpListener(updateRequests);
   }
+
   get length => requests.length;
 
   // Stream<List<Map<String, dynamic>>> get dataStream => Get.find<RoomRequestRepository>().getRequestsStream();
@@ -48,15 +51,21 @@ class RequestsListViewModel with ChangeNotifier {
   request(int index) => requests[index];
 
   Future<void> updateRequests() async {
-    var temp =
-        (await requestRepository.getRoomRequests()).where(filterRequests).toList();
-    if (requests != temp) {
-      requests = temp;
-      try {
-        notifyListeners();
-      } catch (e) {
-        if (kDebugMode) {}
+    if(myRequests){
+    requests = (await requestRepository.getMyRoomRequests()).where(filterRequests).toList();
+    notifyListeners();
+    }else{
+      var temp =
+      (await requestRepository.getRoomRequests()).where(filterRequests).toList();
+      if (requests != temp) {
+        requests = temp;
+        try {
+          notifyListeners();
+        } catch (e) {
+          if (kDebugMode) {}
+        }
       }
     }
+
   }
 }

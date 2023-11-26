@@ -3,6 +3,7 @@ import 'package:hotel_management/mvvm/model/request.dart';
 
 abstract class RoomRequestRepository {
   Future<List<RoomRequest>> getRoomRequests();
+  Future<List<RoomRequest>> getMyRoomRequests();
 
   addRoomRequest(RoomRequest request);
 

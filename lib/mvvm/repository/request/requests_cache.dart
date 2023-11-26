@@ -94,8 +94,7 @@ class RoomRequestCache extends RoomRequestRepository {
   reserveRoom(String roomId, String customerId, DateTimeRange dates) async {
     if (await _isOnline()) {
       await api.reserveRoom(roomId, customerId, dates);
-    }
-    else{
+    } else {
       Get.snackbar('No Internet Connection', 'try again later');
     }
   }
@@ -112,8 +111,8 @@ class RoomRequestCache extends RoomRequestRepository {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
-      if(result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile){
+      if (result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile) {
         await init();
         return true;
       }
@@ -171,18 +170,28 @@ class RoomRequestCache extends RoomRequestRepository {
       _function!.call();
     }
   }
+
   init() async {
-    try{
+    try {
       if (!_init) {
         api = RoomRequestApi();
         await api.init();
         _setUpListener();
         _init = true;
       }
-    }catch (e){
-      if(kDebugMode){
+    } catch (e) {
+      if (kDebugMode) {
         print(e);
       }
+    }
+  }
+
+  @override
+  Future<List<RoomRequest>> getMyRoomRequests() async {
+    if (await _isOnline()) {
+      return await api.getMyRoomRequests();
+    } else {
+      return await local.getMyRoomRequests();
     }
   }
 }

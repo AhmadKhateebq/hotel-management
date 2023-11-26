@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:hotel_management/util/util_classes.dart';
@@ -20,8 +21,7 @@ class RequestReviewViewModel {
       SharedPrefController.reference.getString('role') != 'customer');
 
   getCustomerName() async {
-    final pref = SharedPrefController.reference;
-    customerName.value =  '${pref.getString('first_name')!} ${pref.getString('last_name')!}';
+    Get.find<CustomerApi>().getCustomerName(_request.customerId).then((value) => customerName.value = value);
   }
 
   get startingDate => DateFormatter.format(_request.startingDate);

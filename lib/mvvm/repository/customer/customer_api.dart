@@ -28,6 +28,19 @@ class CustomerApi {
     _supabase = Supabase.instance.client;
   }
 
+  Future<String> getCustomerName(String customerId) async {
+    try {
+      return (await _supabase
+              .from('customer')
+              .select<List>('full_name')
+              .eq('id', customerId))
+          .first['full_name'];
+    } catch (e) {
+      return '';
+    }
+  }
+
+
   getCustomerDetails(String id) async {
     List<dynamic> ids =
         await _supabase.from('customer').select('*').eq('id', id);
@@ -100,16 +113,19 @@ class CustomerApi {
     }
     await _saveCustomerDetails(details);
   }
-  saveCustomerInPref(
-      {required String firstName,
-        required String lastName,
-        required ROLE role,
-        required String userImage,}) async {
+
+  saveCustomerInPref({
+    required String firstName,
+    required String lastName,
+    required ROLE role,
+    required String userImage,
+  }) async {
     await _prefs.setString('first_name', firstName);
     await _prefs.setString('last_name', lastName);
     await _prefs.setString('role', RoleUtil.roleToString(role));
     await _prefs.setString('user_image', userImage);
   }
+
   void signOut() {
     _prefs.remove('first_name');
     _prefs.remove('last_name');

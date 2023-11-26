@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_management/mvvm/view/requests/requests_list_page.dart';
 import 'package:hotel_management/mvvm/view_model/request/my_request_view_model.dart';
-import 'package:hotel_management/mvvm/view_model/request/request_list_view_model.dart';
 import 'package:provider/provider.dart';
 
 class MyRequests extends StatefulWidget {
@@ -35,14 +33,10 @@ class _MyRequestsState extends State<MyRequests>
             title: const Text('My Requests'),
             bottom: getTabBar(context),
           ),
-          body: RequestsList(
-            viewModel: RequestsListViewModel(
-              pending: viewModel.pending,
-              approved: viewModel.approved,
-              intertwined: viewModel.intertwined,
-              denied: viewModel.denied,
-              // mapper: RoomRequest.fromDynamicMap,
-            ),
+          body: PageView(
+            controller: viewModel.controller,
+            onPageChanged: viewModel.onPageChange,
+            children: viewModel.requests,
           ),
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:hotel_management/mvvm/view_model/request/request_list_view_model
 
 class ReceptionHomeViewModel with ChangeNotifier {
   late TabController tabController;
+
   // final SupabaseAuthController _auth = Get.find();
   final PageController controller = PageController();
   Timer? _timer;
@@ -17,6 +18,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: false,
             denied: false,
+            myRequests: false,
             // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
@@ -26,6 +28,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: false,
             denied: false,
+            myRequests: false,
             // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
@@ -35,6 +38,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: true,
             intertwined: false,
             denied: false,
+            myRequests: false,
             // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
@@ -44,6 +48,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: true,
             denied: false,
+            myRequests: false,
             // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
@@ -53,6 +58,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
             approved: false,
             intertwined: false,
             denied: true,
+            myRequests: false,
             // mapper: RoomRequest.fromDynamicMap,
           ),
         ),
@@ -85,7 +91,6 @@ class ReceptionHomeViewModel with ChangeNotifier {
       ];
 
   // get getUser => _auth.loginUser;
-
 
   void init(TickerProvider val) {
     // getUserData();

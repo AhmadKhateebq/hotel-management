@@ -1,58 +1,47 @@
-import 'dart:developer';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
-import 'package:hotel_management/controller/shared_pref_controller.dart';
+import 'package:hotel_management/controller/login_controller.dart';
 import 'package:hotel_management/firebase_options.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/repository/request/requests_cache.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:hotel_management/mvvm/repository/room/room_cache.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
-import 'package:hotel_management/mvvm/view/login_screen.dart';
 import 'package:hotel_management/util/const.dart';
-import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreenViewModel {
-  late SupabaseAuthController _authController;
-  late CustomerRepository _customerApi;
-  final _pref = SharedPrefController.reference;
   RxBool isLoading = true.obs;
-
+  final LoginController loginController = Get.put(LoginController());
   init() async {
-    try {
-      _authController = Get.find();
-      _customerApi = Get.find();
-      isLoading.value = true;
-      if(_pref.containsKey('role')){
-        if (_authController.currentUser() != null ) {
-          var role = await _customerApi
-              .getCustomerDetails(_authController.currentUser()!.id);
-          if (role == ROLE.customer) {
-            Get.offAllNamed('/home');
-          } else {
-            Get.offAllNamed('/recep_home');
-          }
-        } else {
-          isLoading.value = false;
-          Get.find<SupabaseAuthController>().signOut();
-          Get.off(()=>const LoginScreen());
-        }
-      }else{
-        Get.off(()=>const LoginScreen());
-      }
-    }
-    catch (e) {
-      Get.find<SupabaseAuthController>().signOut();
-    }
+    await loginController.init();
+    // try {
+    //   _authController = Get.find();
+    //   isLoading.value = true;
+    //   if(_pref.containsKey('role')){
+    //     if (_authController.currentUser() != null ) {
+    //       var role = await _customerApi
+    //           .getCustomerDetails(_authController.currentUser()!.id);
+    //       if (role == ROLE.customer) {
+    //         Get.offAllNamed('/home');
+    //       } else {
+    //         Get.offAllNamed('/recep_home');
+    //       }
+    //     } else {
+    //       isLoading.value = false;
+    //       Get.find<SupabaseAuthController>().signOut();
+    //       Get.off(()=>const LoginScreen());
+    //     }
+    //   }else{
+    //     Get.off(()=>const LoginScreen());
+    //   }
+    // }
+    // catch (e) {
+    //   Get.find<SupabaseAuthController>().signOut();
+    // }
   }
 
   initControllers() async {
@@ -67,26 +56,13 @@ class SplashScreenViewModel {
           url: supabaseUrl,
           anonKey: publicAnonKey,
         );
-        var res = await Supabase.instance.client.from('logged_in').select('*');
-        log(res.toString(),name: 'LOGGED IN TABLE');
       } catch (error) {
         if (kDebugMode) {
           print(error);
         }
       }
-      try {
-        Get.put(SupabaseAuthController.online(), permanent: true);
-        Get.put<CustomerLocal>(CustomerLocal(), permanent: true);
-        Get.put<CustomerRepository>(CustomerApi(), permanent: true);
-      } catch (error) {
-        if (kDebugMode) {
-          print(error);
-        }
-      }
-    } else {
-      Get.put(SupabaseAuthController.offline(), permanent: true);
-      Get.put<CustomerRepository>(CustomerLocal(), permanent: true);
     }
+    Get.put(LoginController());
     Get.put<RoomRequestRepository>(RoomRequestCache(), permanent: true);
     Get.put<RoomRepository>(RoomCache(), permanent: true);
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;

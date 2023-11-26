@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,7 +16,7 @@ class RoomPreviewViewModel {
   }) : _room = room;
   final RoomRequestRepository requestApi= Get.find();
 
-  final CustomerRepository customerApi= Get.find();
+  final CustomerApi customerApi= Get.find();
 
   get room => _room;
 
@@ -34,17 +35,13 @@ class RoomPreviewViewModel {
   get adults => _room.adults;
 
   Future<void> reserveRoom() async {
-    if(Get.find<ConnectivityController>().connected.value){
-      DateTimeRange dates = await _dateRangePicker() ??
-          DateTimeRange(
-              start: DateTime.now(),
-              end: DateTime.now().add(const Duration(days: 1)));
-      var customerId = customerApi.getId();
-      requestApi.reserveRoom(roomId, customerId, dates);
-    }
-    else{
-      Get.snackbar('No Internet Connection', 'try again later');
-    }
+    DateTimeRange dates = await _dateRangePicker() ??
+        DateTimeRange(
+            start: DateTime.now(),
+            end: DateTime.now().add(const Duration(days: 1)));
+    var customerId = SharedPrefController.reference.getString('user_id')!;
+    requestApi.reserveRoom(roomId, customerId, dates);
+
 
   }
 

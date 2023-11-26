@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/request.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/mvvm/repository/request/room_request_repository.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
 import 'package:hotel_management/util/util_classes.dart';
@@ -12,16 +12,16 @@ class RequestReviewViewModel {
 
   final RoomRequest _request;
   final RoomRequestRepository requestApi = Get.find();
-  final CustomerRepository customerApi  = Get.find();
   var customerName = ''.obs;
 
   get request => _request;
 
   get getButtons => (_request.status == STATUS.pending &&
-      customerApi.getRole() != ROLE.customer);
+      SharedPrefController.reference.getString('role') != 'customer');
 
   getCustomerName() async {
-    customerName.value = await customerApi.getCustomerName(_request.customerId);
+    final pref = SharedPrefController.reference;
+    customerName.value =  '${pref.getString('first_name')!} ${pref.getString('last_name')!}';
   }
 
   get startingDate => DateFormatter.format(_request.startingDate);
@@ -37,7 +37,7 @@ class RequestReviewViewModel {
   get status => StatusUtil.getStatusString(_request.status);
 
   get onApprove => () async {
-        await requestApi.approve(_request.id, _request.roomId);
+        await requestApi.approve(_request.id!, _request.roomId);
         Get.back();
       };
 
@@ -47,7 +47,7 @@ class RequestReviewViewModel {
       };
 
   get onDeny => () async {
-        await requestApi.deny(_request.id, _request.roomId);
+        await requestApi.deny(_request.id!, _request.roomId);
         Get.back();
       };
 }

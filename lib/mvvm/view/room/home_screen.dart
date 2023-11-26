@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.filter_alt)),
           ],
         ),
-        drawer: CustomDrawer(user: viewModel.getUser,),
+        drawer: const CustomDrawer(),
         // floatingActionButton: viewModel.addRoom
       ),
     );

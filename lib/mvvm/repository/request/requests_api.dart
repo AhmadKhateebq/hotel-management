@@ -31,7 +31,7 @@ class RoomRequestApi extends RoomRequestRepository {
     if (await _requestExists(request)) {
       Get.snackbar("You already applied for this room", '');
     } else {
-      await _requestsSupabase.insert(request);
+      await _requestsSupabase.insert(request.toJsonNoId());
       Get.offNamed('/home');
       Get.snackbar("Room Applied", '');
     }
@@ -60,7 +60,6 @@ class RoomRequestApi extends RoomRequestRepository {
   @override
   reserveRoom(String roomId, String customerId, DateTimeRange dates) async {
     return await addRoomRequest(RoomRequest(
-        id: 0,
         roomId: roomId,
         customerId: customerId,
         time: DateTime.now().toUtc(),
@@ -114,7 +113,7 @@ class RoomRequestApi extends RoomRequestRepository {
       }
       if (!value.startingDate.isAfter(reservedEnd) ||
           !value.endingDate.isBefore(reservedStart)) {
-        ids.add(value.id);
+        ids.add(value.id!);
       }
     }
     _updateStatus(ids);

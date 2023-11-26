@@ -1,8 +1,11 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
@@ -148,11 +151,30 @@ class RoomCache extends RoomRepository {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
-      return result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile;
+      if(result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile){
+        await init();
+        return true;
+      }
+      return false;
     } on PlatformException catch (e) {
       log('Couldn\'t check connectivity status', error: e);
       return false;
+    }
+  }
+
+  init() async {
+    try{
+      if (!_init) {
+        api = RoomApi();
+        await api.init();
+        _setUpListener();
+        _init = true;
+      }
+    }catch (e){
+      if(kDebugMode){
+        print(e);
+      }
     }
   }
 }

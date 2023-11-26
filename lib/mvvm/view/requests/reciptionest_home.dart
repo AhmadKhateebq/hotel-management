@@ -32,7 +32,7 @@ class _ReceptionHomeState extends State<ReceptionHome>
             bottom: getTabBar(context),
           ),
           body: getBody(),
-          drawer: CustomDrawer(user: viewModel.getUser),
+          drawer: const CustomDrawer(),
           floatingActionButton: FloatingActionButtonFlow(
             icons:viewModel.icons,
             functions: viewModel.functions,

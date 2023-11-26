@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
 import 'package:hotel_management/mvvm/view/requests/requests_list_page.dart';
 import 'package:hotel_management/mvvm/view_model/request/request_list_view_model.dart';
 
 class ReceptionHomeViewModel with ChangeNotifier {
   late TabController tabController;
-  final SupabaseAuthController _auth = Get.find();
+  // final SupabaseAuthController _auth = Get.find();
   final PageController controller = PageController();
   Timer? _timer;
 
@@ -86,7 +84,7 @@ class ReceptionHomeViewModel with ChangeNotifier {
         }
       ];
 
-  get getUser => _auth.loginUser;
+  // get getUser => _auth.loginUser;
 
 
   void init(TickerProvider val) {

@@ -5,10 +5,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_offlne.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -57,8 +53,6 @@ class ConnectivityController extends GetxController {
       if (_offline) {
         _offline = false;
         _online = true;
-        Get.delete<SupabaseAuthController>();
-        Get.delete<CustomerRepository>();
         try {
           await Supabase.initialize(
             url: supabaseUrl,
@@ -67,9 +61,6 @@ class ConnectivityController extends GetxController {
         } catch (error) {
           log(error: error, 'error');
         }
-        Get.put(SupabaseAuthController.online(), permanent: true);
-        Get.put<CustomerLocal>(CustomerLocal(), permanent: true);
-        Get.put<CustomerRepository>(CustomerApi(), permanent: true);
         try{
           requestsStreamListener.resume();
         }catch(e){
@@ -84,11 +75,6 @@ class ConnectivityController extends GetxController {
       if (_online) {
         _online = false;
         _offline = true;
-        Get.delete<SupabaseAuthController>();
-        Get.delete<CustomerRepository>();
-        Get.delete<CustomerLocal>();
-        Get.put(SupabaseAuthController.offline(), permanent: true);
-        Get.put<CustomerRepository>(CustomerLocal(), permanent: true);
         try{
           requestsStreamListener.pause();
         }catch(e){

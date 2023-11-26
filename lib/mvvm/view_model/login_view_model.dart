@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
+import 'package:hotel_management/controller/login_controller.dart';
+import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
 import 'package:hotel_management/mvvm/view/components/google_sign_in_button.dart';
 
 class LoginViewModel {
-  final SupabaseAuthController authController = Get.find();
+  final LoginController authController = Get.find();
   GoogleSignInButton button = const GoogleSignInButton();
-  final CustomerRepository api= Get.find();
+  final CustomerApi api= Get.find();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();

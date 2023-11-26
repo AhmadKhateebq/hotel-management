@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:hotel_management/util/util_classes.dart';
 
 class RoomRequest implements Comparable {
-  int id;
+  int? id;
   String roomId;
   String customerId;
   DateTime time;
@@ -12,7 +12,7 @@ class RoomRequest implements Comparable {
   STATUS status;
 
   RoomRequest({
-    required this.id,
+    this.id,
     required this.roomId,
     required this.customerId,
     required this.time,
@@ -53,6 +53,14 @@ class RoomRequest implements Comparable {
         'ending_date': (endingDate).toString(),
         'status': StatusUtil.getStatusString(status)
       };
+  Map<String, dynamic> toJsonNoId() => {
+    'time': (time).toString(),
+    'room_id': roomId,
+    'customer_id': customerId,
+    'starting_date': (startingDate).toString(),
+    'ending_date': (endingDate).toString(),
+    'status': StatusUtil.getStatusString(status)
+  };
 
   @override
   String toString() {

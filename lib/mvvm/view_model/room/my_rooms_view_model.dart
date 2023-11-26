@@ -56,7 +56,6 @@ class MyRoomsViewModel {
     if(scaffoldKey!=null){
       Get.back();
     }
-
     Get.back();
   }
 }

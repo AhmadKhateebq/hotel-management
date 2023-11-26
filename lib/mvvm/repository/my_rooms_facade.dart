@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 import 'package:hotel_management/mvvm/model/room_review.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
@@ -8,7 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class MyRoomsFacade {
   late final SupabaseClient _supabase =  Supabase.instance.client;
   final RoomRepository _roomApi = Get.find();
-  final String _userId = Get.find<SupabaseAuthController>().loginUser.user!.id;
+  final String _userId = SharedPrefController.reference.getString('user_id')!;
 
   Future<List<Room>> getRooms() async {
     try {

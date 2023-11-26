@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
+import 'package:hotel_management/controller/login_controller.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   const GoogleSignInButton({super.key});
@@ -33,7 +33,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
             setState(() {
               _isSigningIn = true;
             });
-            await Get.find<SupabaseAuthController>().googleSignIn();
+            await Get.find<LoginController>().googleSignIn();
           }catch(e){
             setState(() {
               _isSigningIn = false;

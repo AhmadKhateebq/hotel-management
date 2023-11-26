@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
-import 'package:hotel_management/mvvm/model/login_user_model.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_repository.dart';
+import 'package:hotel_management/controller/login_controller.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/view/requests/my_requests.dart';
 import 'package:hotel_management/mvvm/view/room/add_room.dart';
 import 'package:hotel_management/mvvm/view/room/my_rooms.dart';
@@ -12,16 +12,20 @@ import 'package:hotel_management/util/util_classes.dart';
 import 'ads/banner_ads.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key, required this.user});
-
-  final LoginUser user;
+  const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return _getDrawer();
+    final pref = SharedPrefController.reference;
+    String profileImageUrl = pref.getString('user_image')!;
+    String firstName = pref.getString('first_name')!;
+    String lastName = pref.getString('last_name')!;
+    String role = pref.getString('role')!;
+    return _getDrawer(
+        profileImageUrl, '$firstName $lastName', RoleUtil.fromString(role));
   }
 
-  Widget _profile() {
+  Widget _profile(String profileImageUrl, String fullName, ROLE role) {
     return SizedBox(
       height: (Get.height) * (1 / 4),
       child: Padding(
@@ -34,9 +38,9 @@ class CustomDrawer extends StatelessWidget {
               child: ClipOval(
                   child: Obx(
                 () => Get.find<ConnectivityController>().connected.value &&
-                        user.profileImageUrl != ''
+                        profileImageUrl != ''
                     ? CachedNetworkImage(
-                        imageUrl: user.profileImageUrl,
+                        imageUrl: profileImageUrl,
                         fit: BoxFit.cover,
                         width: 100,
                         height: 100,
@@ -68,7 +72,7 @@ class CustomDrawer extends StatelessWidget {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: Text(
-                user.fullName,
+                fullName,
                 style:
                     const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
@@ -79,9 +83,9 @@ class CustomDrawer extends StatelessWidget {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: Text(
-                user.role == ROLE.reception
+                role == ROLE.reception
                     ? 'reception'
-                    : user.role == ROLE.admin
+                    : role == ROLE.admin
                         ? 'Admin'
                         : 'Customer',
                 style:
@@ -94,21 +98,21 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
-  Widget _getDrawer() {
+  Widget _getDrawer(String profileImageUrl, String fullName, ROLE role) {
     return Drawer(
         elevation: 10,
         width: (Get.width) * (3 / 4),
         child: Column(
           children: [
-            _profile(),
+            _profile(profileImageUrl, fullName, role),
             const Divider(
               thickness: 1,
             ),
             const SizedBox(
               height: 10,
             ),
-            _getNavTile(),
-            _getAddTile(),
+            _getNavTile(role),
+            _getAddTile(role),
             _getMyRoomsTile(),
             ListTile(
               leading: const Icon(Icons.my_library_books_rounded),
@@ -128,7 +132,7 @@ class CustomDrawer extends StatelessWidget {
                 color: Colors.red,
               ),
               title: const Text("logout"),
-              onTap: Get.find<CustomerRepository>().signOut,
+              onTap: Get.find<LoginController>().signOut,
             ),
             const BannerAdWidget(
               withClose: false,
@@ -137,7 +141,7 @@ class CustomDrawer extends StatelessWidget {
         ));
   }
 
-  _getNavTile() => user.role == ROLE.customer
+  _getNavTile(ROLE role) => role == ROLE.customer
       ? const SizedBox()
       : Column(
           children: [
@@ -179,7 +183,7 @@ class CustomDrawer extends StatelessWidget {
           ],
         );
 
-  _getAddTile() => user.role == ROLE.admin && Get.currentRoute == '/home'
+  _getAddTile(ROLE role) => role == ROLE.admin && Get.currentRoute == '/home'
       ? Column(
           children: [
             ListTile(

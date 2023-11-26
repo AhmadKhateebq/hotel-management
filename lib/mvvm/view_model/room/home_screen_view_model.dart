@@ -4,8 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/controller/auth_controller.dart';
-import 'package:hotel_management/mvvm/model/login_user_model.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/mvvm/model/room.dart';
 import 'package:hotel_management/mvvm/repository/room/room_repository.dart';
 import 'package:hotel_management/mvvm/view/room/add_room.dart';
@@ -35,7 +34,7 @@ class HomeScreenViewModel {
     // appStoreIdentifier: '0000000',
   );
 
-  LoginUser get getUser =>Get.find<SupabaseAuthController>().loginUser;
+  // LoginUser get getUser =>Get.find<SupabaseAuthController>().loginUser;
 
   init() {
     getRooms();
@@ -74,7 +73,7 @@ class HomeScreenViewModel {
     }
   }
 
-  get addRoom => (getUser.role== ROLE.admin)
+  get addRoom => (RoleUtil.fromString(SharedPrefController.reference.getString('role')!)== ROLE.admin)
       ? FloatingActionButton(
           // title: Text("add".tr),
           onPressed: () {

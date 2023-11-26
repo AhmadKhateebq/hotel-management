@@ -25,7 +25,13 @@ class CustomerApi {
         print(e);
       }
     }
-    _supabase = Supabase.instance.client;
+    try{
+      _supabase = Supabase.instance.client;
+    }catch(e){
+      if(kDebugMode){
+        print(e);
+      }
+    }
   }
 
   Future<String> getCustomerName(String customerId) async {

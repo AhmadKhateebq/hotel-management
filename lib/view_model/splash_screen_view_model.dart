@@ -53,7 +53,7 @@ class SplashScreenViewModel {
     }
     //start the login process
     final LoginController loginController = Get.put(LoginController());
-    Get.put<RoomRequestRepository>(RoomRequestCache(), permanent: true);
+    Get.put<RoomRequestRepository>(RoomRequestRepositoryImpl(), permanent: true);
     Get.put<RoomRepository>(RoomRepositoryImpl(), permanent: true);
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     await analytics.setAnalyticsCollectionEnabled(true);

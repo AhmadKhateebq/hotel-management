@@ -25,7 +25,7 @@ class RequestsListViewModel with ChangeNotifier {
     required this.denied,
     required this.myRequests,
   }) {
-    model.setUpListener(updateRequests);
+    model.setUpListener(updateRequestsOnDataChange);
     updateRequests().then((_)=>notify());
   }
 
@@ -44,6 +44,10 @@ class RequestsListViewModel with ChangeNotifier {
       await model.getRequests();
     }
     notify();
+  }
+  Future<void> updateRequestsOnDataChange() async {
+    model.updateData();
+    updateRequests();
   }
   notify(){
     try{

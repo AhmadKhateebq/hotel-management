@@ -35,6 +35,12 @@ class UserModel {
             lastName: lastName,
             customerId: customerId,
             role: role)));
+    this.profileImageUrl = profileImageUrl;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.customerId = customerId;
+    this.role = role;
+
   }
 
   void remove() {

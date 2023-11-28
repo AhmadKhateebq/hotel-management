@@ -12,14 +12,14 @@ import 'package:hotel_management/repository/request/requests_api.dart';
 import 'package:hotel_management/repository/request/room_request_local.dart';
 import 'package:hotel_management/repository/request/room_request_repository.dart';
 
-class RoomRequestCache extends RoomRequestRepository {
+class RoomRequestRepositoryImpl extends RoomRequestRepository {
   RoomRequestLocal local = RoomRequestLocal();
   late RoomRequestApi api;
   void Function()? _function;
   late StreamSubscription subscription;
   bool _init = false;
 
-  RoomRequestCache() {
+  RoomRequestRepositoryImpl() {
     _isOnline().then((value) async {
       if (value) {
         if (!_init) {

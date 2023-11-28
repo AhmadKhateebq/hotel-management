@@ -1,10 +1,9 @@
-import 'package:get/get.dart';
 import 'package:hotel_management/interface/request.dart';
-import 'package:hotel_management/repository/request/room_request_repository.dart';
+import 'package:hotel_management/repository/room_requests_repository_impl.dart';
 import 'package:hotel_management/util/util_classes.dart';
 
 class RequestModel {
-  final RoomRequestRepository requestRepository = Get.find();
+  final RoomRequestRepositoryImpl requestRepository = RoomRequestRepositoryImpl();
   List<RoomRequest> _requests = <RoomRequest>[];
   List<RoomRequest> _myRequests = <RoomRequest>[];
   List<RoomRequest> filteredRequests = <RoomRequest>[];
@@ -74,5 +73,13 @@ class RequestModel {
     this.denied = denied;
     this.approved = approved;
     this.intertwined = intertwined;
+  }
+
+  Future<void> updateData() async {
+    await requestRepository.refreshData();
+     _myRequests = (await requestRepository.getMyRoomRequests())
+        .toList();
+     _requests = (await requestRepository.getRoomRequests())
+         .toList();
   }
 }

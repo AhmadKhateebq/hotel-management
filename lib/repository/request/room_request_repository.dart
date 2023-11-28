@@ -15,5 +15,4 @@ abstract class RoomRequestRepository {
 
   autoApprove(String roomId);
 
-  setUpListener(void Function() func);
 }

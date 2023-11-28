@@ -9,7 +9,7 @@ import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RoomRequestApi extends RoomRequestRepository {
-  late final SupabaseQueryBuilder _requestsSupabase;
+  late final SupabaseClient _supabase;
 
   RxList<RoomRequest> requests = <RoomRequest>[].obs;
 
@@ -24,7 +24,7 @@ class RoomRequestApi extends RoomRequestRepository {
         print(e);
       }
     }
-    _requestsSupabase = Supabase.instance.client.from('request');
+    _supabase = Supabase.instance.client;
   }
 
   @override
@@ -32,14 +32,15 @@ class RoomRequestApi extends RoomRequestRepository {
     if (await _requestExists(request)) {
       Get.snackbar("You already applied for this room", '');
     } else {
-      await _requestsSupabase.insert(request.toJsonNoId());
+      await _supabase.from('request').insert(request.toJsonNoId());
       Get.offNamed('/home');
       Get.snackbar("Room Applied", '');
     }
   }
 
   Future<bool> _requestExists(RoomRequest request) async {
-    var a = await _requestsSupabase
+    var a = await _supabase
+        .from('request')
         .select('*')
         .eq('customer_id', request.customerId)
         .eq('room_id', request.roomId);
@@ -69,31 +70,30 @@ class RoomRequestApi extends RoomRequestRepository {
         status: STATUS.pending));
   }
 
-
   bool _matchDates(DateTime first, DateTime second, bool depart) {
     return true;
   }
 
   _updateStatus(List<int> ids) async {
-    await _requestsSupabase
+    await _supabase
+        .from('request')
         .update({'status': 'reserved'})
         .in_('id', ids)
         .select();
   }
 
   Future<List<dynamic>> _getAllRequestsWithRoomId(String roomId) async {
-    return await _requestsSupabase.select('*').eq('room_id', roomId);
+    return await _supabase.from('request').select('*').eq('room_id', roomId);
   }
-
 
   @override
   approve(int id, String roomId) async {
-    await _requestsSupabase.update({'status': 'approved'}).eq('id', id);
+    await _supabase.from('request').update({'status': 'approved'}).eq('id', id);
   }
 
   @override
   deny(int id, String roomId) async {
-    await _requestsSupabase.update({'status': 'denied'}).eq('id', id);
+    await _supabase.from('request').update({'status': 'denied'}).eq('id', id);
   }
 
   @override
@@ -108,7 +108,8 @@ class RoomRequestApi extends RoomRequestRepository {
     for (var value in requests) {
       if (value == requests.first) {
         value.status = STATUS.approved;
-        await _requestsSupabase
+        await _supabase
+            .from('request')
             .update({'status': 'approved'}).eq('id', value.id);
         continue;
       }
@@ -122,24 +123,22 @@ class RoomRequestApi extends RoomRequestRepository {
 
   @override
   Future<List<RoomRequest>> getRoomRequests() async {
-    var requests = await _requestsSupabase.select<List<dynamic>>('*');
+    var requests = await _supabase.from('request').select<List<dynamic>>('*');
     return requests.map(RoomRequest.fromDynamic).toList();
   }
 
   Stream<List<Map<String, dynamic>>> getStream() {
-    return _requestsSupabase.stream(primaryKey: ['id']);
-  }
-
-  @Deprecated("Unimplemented")
-  @override
-  setUpListener(void Function() func) {
-    throw UnimplementedError();
+    return _supabase.from('request').stream(primaryKey: ['id']);
   }
 
   @override
   Future<List<RoomRequest>> getMyRoomRequests() async {
     String userId = Get.find<UserModel>().customerId;
-    bool filter(RoomRequest requests) => requests.customerId == userId;
-    return (await getRoomRequests()).where(filter).toList();
+    var res = await _supabase.rpc('get_my_requests',
+        params: {'user_id': userId})
+        .select<List<Map<String, dynamic>>>('*');
+    return res
+        .map(RoomRequest.fromDynamicMap)
+        .toList();
   }
 }

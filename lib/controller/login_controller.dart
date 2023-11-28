@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
+import 'package:hotel_management/model/request/all_request_model.dart';
+import 'package:hotel_management/model/request/my_request_model.dart';
 import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/repository/customer/customer_api.dart';
 import 'package:hotel_management/view/login_view.dart';
@@ -70,9 +72,11 @@ class LoginController extends GetxController {
         if (_connected) {
           await _supabase.auth.refreshSession();
         }
+        Get.put<MyRequestModel>(MyRequestModel(),permanent: true);
         if (role == ROLE.customer) {
           Get.offAllNamed('/home');
         } else {
+          Get.put<AllRequestModel>(AllRequestModel(),permanent: true);
           Get.offAllNamed('/recep_home');
         }
       } else {

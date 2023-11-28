@@ -4,7 +4,7 @@ import 'package:hotel_management/interface/request.dart';
 import 'package:hotel_management/view_model/request/request_list_view_model.dart';
 import 'package:provider/provider.dart';
 
-class RequestsList extends StatelessWidget {
+class RequestsList extends StatefulWidget {
   const RequestsList({
     super.key,
     required this.pending,
@@ -21,21 +21,27 @@ class RequestsList extends StatelessWidget {
   final bool myRequests;
 
   @override
+  State<RequestsList> createState() => _RequestsListState();
+}
+
+class _RequestsListState extends State<RequestsList> {
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<RequestsListViewModel>(
       lazy: false,
       create: (context) {
-        var newViewModel = RequestsListViewModel(
-            pending: pending,
-            approved: approved,
-            intertwined: intertwined,
-            denied: denied,
-            myRequests: myRequests);
-        newViewModel.init();
-        return newViewModel;
+        final viewModel = RequestsListViewModel(
+            pending: widget.pending,
+            approved: widget.approved,
+            intertwined: widget.intertwined,
+            denied: widget.denied,
+            myRequests: widget.myRequests);
+        viewModel.init();
+        return viewModel;
       },
       builder: (context, child) => ListView.builder(
-        itemCount: Provider.of<RequestsListViewModel>(context).length,
+        itemCount: Provider.of<RequestsListViewModel>(context).requests.length,
         itemBuilder: (context, index) {
           List<RoomRequest> requests =
               Provider.of<RequestsListViewModel>(context).requests;
@@ -48,4 +54,5 @@ class RequestsList extends StatelessWidget {
       ),
     );
   }
+
 }

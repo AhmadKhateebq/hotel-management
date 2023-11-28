@@ -114,11 +114,6 @@ class RoomRequestLocal extends RoomRequestRepository {
     return getAllRequests();
   }
 
-  @Deprecated("Unimplemented")
-  @override
-  setUpListener(void Function() func) {
-    throw UnimplementedError();
-  }
 
   Future<void> emptyCachedRequests() async {
     await _prefs.remove('approve');

@@ -8,7 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/interface/request.dart';
-import 'package:hotel_management/model/request_model.dart';
+import 'package:hotel_management/model/request/all_request_model.dart';
+import 'package:hotel_management/model/request/my_request_model.dart';
 import 'package:hotel_management/repository/request/requests_api.dart';
 import 'package:hotel_management/repository/request/room_request_local.dart';
 import 'package:hotel_management/repository/request/room_request_repository.dart';
@@ -16,7 +17,6 @@ import 'package:hotel_management/repository/request/room_request_repository.dart
 class RoomRequestRepositoryImpl extends RoomRequestRepository {
   RoomRequestLocal local = RoomRequestLocal();
   late RoomRequestApi api;
-  void Function()? _function;
   late StreamSubscription subscription;
   bool _init = false;
 
@@ -105,10 +105,7 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
     }
   }
 
-  @override
-  setUpListener(void Function() func) {
-    _function = func;
-  }
+
 
   final Connectivity _connectivity = Connectivity();
 
@@ -128,15 +125,12 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
       return false;
     }
   }
-
+  Stream<List<Map<String, dynamic>>> getStream () => api.getStream();
   _setUpListener() {
     var listener = api.getStream().listen((event) async {
       List<RoomRequest> temp = event.map(RoomRequest.fromDynamicMap).toList();
       if (temp != await getRoomRequests()) {
         await local.saveRoomRequestToPref(temp);
-        if (_function != null) {
-          _function!.call();
-        }
       }
     });
     return listener;
@@ -164,19 +158,16 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
     }
     await local.emptyCachedRequests();
 
-    if (_function != null) {
-      _function!.call();
-    }
+
   }
 
   Future<void> refreshData() async {
     List<RoomRequest> temp = await api.getRoomRequests();
     await local.saveRoomRequestToPref(temp);
-    Get.find<RequestModel>().setRequests(temp);
-    if (_function != null) {
-      _function!.call();
-    }
-
+    Get.find<AllRequestModel>().setRequests(temp);
+  }Future<void> refreshMyData() async {
+    List<RoomRequest> temp = await api.getMyRoomRequests();
+    Get.find<MyRequestModel>().setRequests(temp);
   }
 
   init() async {
@@ -202,4 +193,6 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
       return await local.getMyRoomRequests();
     }
   }
+
+
 }

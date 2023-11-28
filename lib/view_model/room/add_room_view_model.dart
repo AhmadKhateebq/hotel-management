@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/model/room_model.dart';
+import 'package:hotel_management/model/room/room_model.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:image_picker/image_picker.dart';
 

@@ -7,7 +7,7 @@ import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/controller/login_controller.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/firebase_options.dart';
-import 'package:hotel_management/model/room_model.dart';
+import 'package:hotel_management/model/room/room_model.dart';
 import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/repository/customer/customer_api.dart';
 import 'package:hotel_management/repository/request/room_request_repository.dart';

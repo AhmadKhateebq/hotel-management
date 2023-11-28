@@ -3,6 +3,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/component/room/room_card.dart';
 import 'package:hotel_management/view_model/room/my_rooms_view_model.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MyRoomsView extends StatefulWidget {
   const MyRoomsView({super.key});
@@ -78,10 +79,17 @@ class _MyRoomsViewState extends State<MyRoomsView> {
             : Stack(
                 children: [
                   listView,
+                  panel,
                 ],
               ),
       );
+  get panel => SlidingUpPanel(
+    minHeight: 0,
+    maxHeight: Get.height *.19,
+    controller: viewModel.panelController,
+    panelBuilder: (c) => panelBody,
 
+  );
   getRatingWidget() => Obx(
         () => RatingBar.builder(
           initialRating: viewModel.currentRoom.value.stars,

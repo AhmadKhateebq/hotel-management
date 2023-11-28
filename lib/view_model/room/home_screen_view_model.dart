@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/interface/room.dart';
-import 'package:hotel_management/model/room_model.dart';
+import 'package:hotel_management/model/room/room_model.dart';
 import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';

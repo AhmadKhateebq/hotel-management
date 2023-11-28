@@ -1,4 +1,6 @@
+import 'package:get/get.dart';
 import 'package:hotel_management/interface/request.dart';
+import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/repository/room_requests_repository_impl.dart';
 import 'package:hotel_management/util/util_classes.dart';
 
@@ -77,9 +79,13 @@ class RequestModel {
 
   Future<void> updateData() async {
     await requestRepository.refreshData();
-     _myRequests = (await requestRepository.getMyRoomRequests())
-        .toList();
-     _requests = (await requestRepository.getRoomRequests())
-         .toList();
+
+  }
+
+  void setRequests(List<RoomRequest> temp) {
+    String userId = Get.find<UserModel>().customerId;
+    bool filter(RoomRequest requests) => requests.customerId == userId;
+    _myRequests = temp.where(filter).toList();
+    _requests = temp;
   }
 }

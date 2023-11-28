@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/interface/request.dart';
+import 'package:hotel_management/model/request_model.dart';
 import 'package:hotel_management/repository/request/requests_api.dart';
 import 'package:hotel_management/repository/request/room_request_local.dart';
 import 'package:hotel_management/repository/request/room_request_repository.dart';
@@ -171,9 +172,11 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
   Future<void> refreshData() async {
     List<RoomRequest> temp = await api.getRoomRequests();
     await local.saveRoomRequestToPref(temp);
+    Get.find<RequestModel>().setRequests(temp);
     if (_function != null) {
       _function!.call();
     }
+
   }
 
   init() async {

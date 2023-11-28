@@ -7,14 +7,16 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
-import 'package:hotel_management/mvvm/repository/customer/customer_api.dart';
-import 'package:hotel_management/mvvm/view/login_screen.dart';
+import 'package:hotel_management/model/user_model.dart';
+import 'package:hotel_management/repository/customer/customer_api.dart';
+import 'package:hotel_management/view/login_view.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginController extends GetxController {
   late final SupabaseClient _supabase;
+
   final _prefs = SharedPrefController.reference;
   final ConnectivityController connectivityController = Get.find();
   final GoogleSignIn googleSignInPlatform = GoogleSignIn(
@@ -30,22 +32,40 @@ class LoginController extends GetxController {
   String? userImage;
   late bool _connected;
   bool _isInit = false;
+
   init() async {
     _setUpListener();
     if (_prefs.containsKey('token')) {
-      firstName = _prefs.getString('first_name');
-      lastName = _prefs.getString('last_name');
-      id = _prefs.getString('user_id');
-      _token = _prefs.getString('token');
-      userImage = _prefs.getString('user_image');
-      role = RoleUtil.fromString(_prefs.getString('role')!);
+      try{
+        Get.find<UserModel>().getDetails();
+        firstName = Get
+            .find<UserModel>()
+            .firstName;
+        lastName = Get
+            .find<UserModel>()
+            .lastName;
+        id = Get
+            .find<UserModel>()
+            .customerId;
+        _token = _prefs.getString('token');
+        userImage = Get
+            .find<UserModel>()
+            .profileImageUrl;
+        role = RoleUtil.fromString(Get
+            .find<UserModel>()
+            .role);
+      }catch(e){
+        if(kDebugMode){
+          print(e);
+        }
+      }
     }
     await initConnectivity();
     if (connectivityController.connected.value) {
       _supabase = Supabase.instance.client;
       _isInit = true;
     }
-    try{
+    try {
       if (_token != null) {
         if (_connected) {
           await _supabase.auth.refreshSession();
@@ -58,10 +78,9 @@ class LoginController extends GetxController {
       } else {
         Get.offAll(() => const LoginScreen());
       }
-    }catch(e){
+    } catch (e) {
       signOut();
     }
-
   }
 
   _setUpListener() {
@@ -81,9 +100,8 @@ class LoginController extends GetxController {
     _connected = connectivityController.connected.value;
   }
 
-  signUp(
-      {required String email, required String password}) async {
-    if(!await _isOnline()){
+  signUp({required String email, required String password}) async {
+    if (!await _isOnline()) {
       return;
     }
     try {
@@ -98,11 +116,10 @@ class LoginController extends GetxController {
     }
   }
 
-   signIn(
-      {required String email, required String password}) async {
-     if(!await _isOnline()){
-       return 'false';
-     }
+  signIn({required String email, required String password}) async {
+    if (!await _isOnline()) {
+      return 'false';
+    }
     try {
       final AuthResponse res = await _supabase.auth.signInWithPassword(
         email: email,
@@ -124,17 +141,12 @@ class LoginController extends GetxController {
       }
     }
 
-    _prefs.remove('role');
-    _prefs.remove('user_id');
-    _prefs.remove('first_name');
-    _prefs.remove('last_name');
-    _prefs.remove('user_image');
-    _prefs.remove('token');
-
+    Get.find<UserModel>().remove();
     Get.offAll(() => const LoginScreen());
   }
+
   googleSignIn() async {
-    if(!await _isOnline()){
+    if (!await _isOnline()) {
       throw Exception();
     }
     try {
@@ -161,10 +173,9 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<AuthResponse> _signInWithIdToken(
-      {required Provider provider,
-      required String idToken,
-      required String accessToken}) async {
+  Future<AuthResponse> _signInWithIdToken({required Provider provider,
+    required String idToken,
+    required String accessToken}) async {
     AuthResponse res = await _supabase.auth.signInWithIdToken(
       provider: Provider.google,
       idToken: idToken,
@@ -177,11 +188,10 @@ class LoginController extends GetxController {
   }
 
   tryLoggingIn(AuthResponse res) async {
-    if(!await _isOnline()){
+    if (!await _isOnline()) {
       return;
     }
     if (res.user != null) {
-      await _prefs.setString('user_id', res.user!.id);
       await _prefs.setString('token', res.session!.accessToken);
       try {
         CustomerApi api = Get.find();
@@ -198,16 +208,18 @@ class LoginController extends GetxController {
       }
     }
   }
+
   final Connectivity _connectivity = Connectivity();
+
   Future<bool> _isOnline() async {
     late ConnectivityResult result;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
-      if(result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile){
-        if(!_isInit){
-         _initSupabase();
+      if (result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile) {
+        if (!_isInit) {
+          _initSupabase();
           _isInit = true;
         }
         return true;
@@ -219,6 +231,7 @@ class LoginController extends GetxController {
       return false;
     }
   }
+
   _initSupabase() async {
     try {
       await Supabase.initialize(

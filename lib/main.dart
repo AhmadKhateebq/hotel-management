@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/mvvm/view/requests/reciptionest_home.dart';
-import 'package:hotel_management/mvvm/view/splash_screen.dart';
+import 'package:hotel_management/view/request/reciptionest_home.dart';
+import 'package:hotel_management/view/splash_screen.dart';
 
-import 'mvvm/view/room/home_screen.dart';
+import 'view/room/home_screen.dart';
 
 final primaryColor = Colors.primaries[3];
 bool internet = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   runApp(GetMaterialApp(
     color: primaryColor,
     theme: ThemeData(

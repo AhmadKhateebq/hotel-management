@@ -58,6 +58,7 @@ dependencies:
   shared_preferences: ^2.2.2
   connectivity_plus: ^5.0.1
   cached_network_image: ^3.3.0
+  styled_widget: ^0.4.1
 #  restart_app: ^1.2.1
 
 

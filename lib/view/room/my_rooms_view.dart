@@ -27,13 +27,45 @@ class _MyRoomsViewState extends State<MyRoomsView> {
       appBar: AppBar(
         title: const Text("My Rooms"),
       ),
-      body: Obx(() => viewModel.loading.value ? loadingScreen : homeScreen),
+      body: Obx(() => viewModel.loading.value ? loading : mainWidget),
     );
   }
 
-  get loadingScreen => const Center(
+  get loading => const Center(
         child: CircularProgressIndicator(),
       );
+  get mainWidget => Obx(
+        () => viewModel.empty.value
+        ? empty
+        : Stack(
+      children: [
+        listView,
+        panel,
+      ],
+    ),
+  );
+  get empty => SizedBox.expand(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'You Have No Rooms yet :(',
+          style: style,
+        ),
+        TextButton(
+            onPressed: viewModel.reserveNow,
+            child: Text(
+              'Reserve Now !',
+              style: style,
+            )),
+      ],
+    ),
+  );
+
+  TextStyle get style => const TextStyle(
+    fontSize: 24,
+  );
 
   get listView => ListView.builder(
       itemCount: viewModel.rooms.length,
@@ -41,56 +73,29 @@ class _MyRoomsViewState extends State<MyRoomsView> {
           onTap: () => viewModel.onTap(index),
           child: RoomCard(room: viewModel.rooms[index],)));
 
-  get panelBody => Column(
-        children: [
-          const Center(
-            child: Text(
-              'Rate This Room',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
-          ),
-          Obx(() => Text(viewModel.currentRoom.value.roomId)),
-          getRatingWidget(),
-          FilledButton(
-              onPressed: viewModel.submit, child: const Text('Submit Review'))
-        ],
-      );
 
-  get homeScreen => Obx(
-        () => viewModel.empty.value
-            ? SizedBox.expand(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'You Have No Rooms yet :(',
-                      style: style,
-                    ),
-                    TextButton(
-                        onPressed: viewModel.reserveNow,
-                        child: Text(
-                          'Reserve Now !',
-                          style: style,
-                        )),
-                  ],
-                ),
-              )
-            : Stack(
-                children: [
-                  listView,
-                  panel,
-                ],
-              ),
-      );
   get panel => SlidingUpPanel(
     minHeight: 0,
     maxHeight: Get.height *.19,
     controller: viewModel.panelController,
     panelBuilder: (c) => panelBody,
-
   );
-  getRatingWidget() => Obx(
+  get panelBody => Column(
+    children: [
+      const Center(
+        child: Text(
+          'Rate This Room',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+        ),
+      ),
+      Obx(() => Text(viewModel.currentRoom.value.roomId)),
+      ratingWidget,
+      FilledButton(
+          onPressed: viewModel.submit, child: const Text('Submit Review'))
+    ],
+  );
+
+  get ratingWidget => Obx(
         () => RatingBar.builder(
           initialRating: viewModel.currentRoom.value.stars,
           minRating: 1,
@@ -107,7 +112,4 @@ class _MyRoomsViewState extends State<MyRoomsView> {
         ),
       );
 
-  TextStyle get style => const TextStyle(
-        fontSize: 24,
-      );
 }

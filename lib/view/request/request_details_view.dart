@@ -18,6 +18,19 @@ class PreviewRequest extends StatefulWidget {
 class _PreviewRequestState extends State<PreviewRequest> {
   late RequestReviewViewModel viewModel;
 
+  TextStyle get labelStyle =>
+      const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey);
+
+  TextStyle get detailStyle => const TextStyle(fontWeight: FontWeight.bold);
+
+  get divider => const Divider(
+        height: 20,
+        thickness: 1,
+        indent: 20,
+        endIndent: 0,
+        color: Colors.grey,
+      );
+
   @override
   void initState() {
     viewModel = RequestReviewViewModel(request: widget.request);
@@ -39,38 +52,83 @@ class _PreviewRequestState extends State<PreviewRequest> {
       ),
       body: SizedBox.expand(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('request id : ${viewModel.requestId}'),
-            Text('requestTime : ${viewModel.requestTime}'),
-            Text('status : ${viewModel.status}'),
-            Obx(() => Text('customer Name : ${viewModel.customerName.value}')),
-            Text('from date ${viewModel.startingDate}'),
-            Text('to Date ${viewModel.endingDate}'),
-            getButtons(),
+            Expanded(
+              flex: 4,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Request Id',
+                        style: labelStyle,
+                      ),
+                      divider,
+                      Text('Request Time', style: labelStyle),
+                      divider,
+                      Text('Request Status', style: labelStyle),
+                      divider,
+                      Text('Customer Name', style: labelStyle),
+                      divider,
+                      Text('Arrival Date', style: labelStyle),
+                      divider,
+                      Text('Departure Date', style: labelStyle),
+                    ],
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const VerticalDivider(
+                    width: 20,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 0,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(' ${viewModel.requestId}', style: detailStyle),
+                      divider,
+                      Text(' ${viewModel.requestTime}', style: detailStyle),
+                      divider,
+                      Text(' ${viewModel.status}', style: detailStyle),
+                      divider,
+                      Obx(
+                        () => Text(viewModel.customerName.value,
+                            style: detailStyle),
+                      ),
+                      divider,
+                      Text('${viewModel.startingDate}', style: detailStyle),
+                      divider,
+                      Text('${viewModel.endingDate}', style: detailStyle),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Expanded(flex: 1, child: getButtons()),
           ],
         ),
       ),
     );
   }
 
-  getButtons() => viewModel.getButtons
-      ? Column(
+  Widget getButtons() => viewModel.getButtons
+      ? Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                OutlinedButton(
-                    onPressed: viewModel.onDeny, child: const Text('deny')),
-                const SizedBox(
-                  width: 10,
-                ),
-                OutlinedButton(
-                    onPressed: viewModel.onApprove,
-                    child: const Text('Approve')),
-              ],
-            ),
+            OutlinedButton(
+                onPressed: viewModel.onDeny, child: const Text('deny')),
+            OutlinedButton(
+                onPressed: viewModel.onApprove, child: const Text('Approve')),
             OutlinedButton(
                 onPressed: viewModel.onAutoApprove,
                 child: const Text('Auto Approve')),

@@ -17,6 +17,4 @@ class MyRequestModel extends RequestModel {
   @override
   Stream<List<Map<String, dynamic>>> get stream =>
       requestRepository.getMyStream();
-
-
 }

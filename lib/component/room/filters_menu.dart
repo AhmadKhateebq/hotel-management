@@ -195,9 +195,7 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                   ),
-                  Obx(() => Switch(
-                      value: seaView.value,
-                      onChanged: setSeaView))
+                  Obx(() => Switch(value: seaView.value, onChanged: setSeaView))
                 ],
               ),
             ),
@@ -218,11 +216,11 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
                         inactiveColor: Colors.redAccent[100],
                         activeColor: Colors.redAccent,
                         divisions: 50,
-                        labels: RangeLabels("${minPrice.round()}",
-                            "${maxPrice.round()}"),
+                        labels: RangeLabels(
+                            "${minPrice.round()}", "${maxPrice.round()}"),
                         values: priceRange.value,
                         onChanged: changePriceRange,
-                        max:maxPriceCanChoose,
+                        max: maxPriceCanChoose,
                         min: minPriceCanChoose,
                       )),
                 ],
@@ -278,11 +276,12 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
       ],
     );
   }
+
   Future<DateTimeRange> dateRangePicker() async {
     return await showDateRangePicker(
-        firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(days: 1461)),
-        context: Get.context!) ??
+            firstDate: DateTime.now(),
+            lastDate: DateTime.now().add(const Duration(days: 1461)),
+            context: Get.context!) ??
         DateTimeRange(
             start: DateTime.now(),
             end: DateTime.now().add(const Duration(days: 1)));
@@ -308,25 +307,27 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
   }
 
   getRatingWidget(int index) => Column(
-    children: [
-      Text('${index + 1} Star${index > 1 ? 's' : ''}'),
-      Obx(() => Checkbox(
-          value: stars[index],
-          onChanged: (val) {
-            stars[index] = val!;
-          }))
-    ],
-  );
+        children: [
+          Text('${index + 1} Star${index > 1 ? 's' : ''}'),
+          Obx(() => Checkbox(
+              value: stars[index],
+              onChanged: (val) {
+                stars[index] = val!;
+              }))
+        ],
+      );
 
   applyFilters() {
     if (widget.panelController.isPanelOpen) {
-      widget. panelController.close();
+      widget.panelController.close();
     }
     int beds = int.tryParse(bedsController.text) ?? 0;
     int adult = int.tryParse(adultController.text) ?? 0;
     var list = getRating();
     widget.searchOnClick({
       'max': maxPrice,
+      'start': range.start,
+      'end': range.end,
       'min': minPrice,
       'bed': beds,
       'adult': adult,
@@ -337,14 +338,15 @@ class _FiltersCustomMenuState extends State<FiltersCustomMenu> {
       'rating5': list[4],
     }, seaView.value);
   }
+
   resetFilters() {
     seaView.value = false;
     priceRange.value = const RangeValues(minPriceCanChoose, maxPriceCanChoose);
     stars.value = [false, false, false, false, false];
     if (widget.panelController.isPanelOpen) {
-      widget. panelController.close();
+      widget.panelController.close();
     }
-    widget. resetOnClick();
+    widget.resetOnClick();
   }
 
   List<int> getRating() {

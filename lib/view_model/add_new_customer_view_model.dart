@@ -7,8 +7,6 @@ import 'package:image_picker/image_picker.dart';
 
 class AddNewCustomerViewModel {
   late DateTime dateOfBirth;
-
-
   final CustomerApi customerApi = Get.find();
   final firstNameController = TextEditingController();
 

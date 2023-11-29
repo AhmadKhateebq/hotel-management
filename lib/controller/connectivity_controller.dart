@@ -26,7 +26,6 @@ class ConnectivityController extends GetxController {
 
   Future<void> initConnectivity() async {
     late ConnectivityResult result;
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
       result == ConnectivityResult.none
@@ -38,14 +37,10 @@ class ConnectivityController extends GetxController {
       log('Couldn\'t check connectivity status', error: e);
       return;
     }
-    return _updateConnectionStatus(result);
+    _updateConnectionStatus(result);
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    result == ConnectivityResult.none
-        ? connected.value = false
-        : connected.value = true;
-
     if (result == ConnectivityResult.ethernet ||
         result == ConnectivityResult.wifi ||
         result == ConnectivityResult.mobile) {
@@ -70,7 +65,7 @@ class ConnectivityController extends GetxController {
         }
       }
     }
-    if (result == ConnectivityResult.none) {
+    else {
       connected.value = false;
       if (_online) {
         _online = false;

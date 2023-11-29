@@ -49,7 +49,7 @@ Color getColor(Set<MaterialState> states) {
     MaterialState.selected,
   };
   if (states.any(interactiveStates.contains)) {
-    return Colors.redAccent;
+    return primaryColor;
   }
   return Colors.white;
 }

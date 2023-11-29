@@ -94,7 +94,6 @@ class HomeScreenViewModel with ChangeNotifier{
           : const SizedBox();
 
   Future<void> getRoomsBetweenDates() async {
-
     loading.value = true;
     await _roomModel.getRoomsBetweenDates(startDate, endDate);
     loading = false.obs;
@@ -109,6 +108,8 @@ class HomeScreenViewModel with ChangeNotifier{
       return;
     }
     loading.value = true;
+    DateTime start = filters['start'];
+    DateTime end = filters['end'];
     int adult = filters['adult'] ?? 0;
     int bed = filters['bed'] ?? 0;
     double max = filters['max'] ?? 10000;
@@ -120,8 +121,8 @@ class HomeScreenViewModel with ChangeNotifier{
     int rating5 = filters['rating5'] ?? 5;
     isSearching = true;
     await _roomModel.getEmptyRoomsFiltered(
-      start: startDate,
-      end: endDate,
+      start: start,
+      end: end,
       adult: adult,
       bed: bed,
       max: max,

@@ -18,20 +18,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginController extends GetxController {
   late final SupabaseClient _supabase;
-
   final _prefs = SharedPrefController.reference;
   final ConnectivityController connectivityController = Get.find();
   final GoogleSignIn googleSignInPlatform = GoogleSignIn(
     clientId: iosClientId,
     serverClientId: webClientId,
   );
-
-  String? firstName;
-  String? lastName;
-  String? id;
+  final Connectivity _connectivity = Connectivity();
   ROLE? role;
   String? _token;
-  String? userImage;
   late bool _connected;
   bool _isInit = false;
 
@@ -42,15 +37,7 @@ class LoginController extends GetxController {
     if (_prefs.containsKey('token')) {
       try {
         _userModel.getDetails();
-        firstName = _userModel
-            .firstName;
-        lastName = _userModel
-            .lastName;
-        id = _userModel
-            .customerId;
         _token = _prefs.getString('token');
-        userImage = _userModel
-            .profileImageUrl;
         role = RoleUtil.fromString(_userModel
             .role);
       } catch (e) {
@@ -141,7 +128,6 @@ class LoginController extends GetxController {
         googleSignInPlatform.signOut();
       }
     }
-
     _userModel.remove();
     Get.offAll(() => const LoginScreen());
   }
@@ -209,8 +195,6 @@ class LoginController extends GetxController {
       }
     }
   }
-
-  final Connectivity _connectivity = Connectivity();
 
   Future<bool> _isOnline() async {
     late ConnectivityResult result;

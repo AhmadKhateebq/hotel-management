@@ -10,13 +10,13 @@ class RequestsPageViewModel {
   Timer? _timer;
   final bool _myRequests;
 
+  RequestsPageViewModel({bool? myRequests})
+      : _myRequests = myRequests ?? false;
   get drawer => _myRequests ?  null:const CustomDrawer() ;
 
   get title =>
       _myRequests ? const Text('My Requests') : const Text('All Requests');
 
-  RequestsPageViewModel({bool? myRequests})
-      : _myRequests = myRequests ?? false;
 
   get requests => [
         RequestsList(

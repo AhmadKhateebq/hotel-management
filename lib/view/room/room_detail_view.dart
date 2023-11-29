@@ -21,7 +21,7 @@ class RoomDetailsView extends StatefulWidget {
 }
 
 class _RoomDetailsViewState extends State<RoomDetailsView> {
-  late final RoomDetailsViewModel viewModel ;
+  late final RoomDetailsViewModel viewModel;
 
   @override
   void initState() {
@@ -29,6 +29,11 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
     viewModel.getAvg();
     super.initState();
   }
+
+  TextStyle get labelStyle =>
+      const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey);
+
+  TextStyle get detailStyle => const TextStyle(fontWeight: FontWeight.bold);
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +47,13 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
         title: Text('Room ${viewModel.roomId}'),
         centerTitle: true,
       ),
-      body: Container(
+      body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
+              flex: 2,
               child: FlipCard(
                   front: setSlideShow(),
                   back: Obx(
@@ -62,38 +68,68 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
                     ),
                   )),
             ),
+            const Divider(
+              height: 20,
+              thickness: 1,
+              indent: 20,
+              endIndent: 0,
+              color: Colors.grey,
+            ),
+            const Text('Room Details',style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20
+            ),),
+
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
-                    height: 20,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Price', style: labelStyle),
+                      Text('Beds', style: labelStyle),
+                      Text('Size', style: labelStyle),
+                      Text('Floor', style: labelStyle),
+                    ],
                   ),
-                  Text('Price : ${viewModel.price} \$'),
-                  const SizedBox(
+                  const Divider(
                     height: 20,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 0,
+                    color: Colors.grey,
                   ),
-                  Text(
-                      'Beds : ${viewModel.beds} Bed${viewModel.beds > 1 ? 's' : ''} '),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                      'Size : ${viewModel.adults} Adult${viewModel.adults > 1 ? 's' : ''} '),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text('Floor : ${getFloor(viewModel.roomId)}'),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextButton(
-                    onPressed: viewModel.reserveRoom,
-                    child: const Text(
-                      'Apply Now',
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${viewModel.price} \$', style: detailStyle),
+                      Text(
+                          '${viewModel.beds} Bed${viewModel.beds > 1 ? 's' : ''} ',
+                          style: detailStyle),
+                      Text(
+                          '${viewModel.adults} Adult${viewModel.adults > 1 ? 's' : ''} ',
+                          style: detailStyle),
+                      Text('${getFloor(viewModel.roomId)}', style: detailStyle),
+                    ],
                   ),
                 ],
+              ),
+            ),
+            const Divider(
+              height: 20,
+              thickness: 1,
+              indent: 20,
+              endIndent: 0,
+              color: Colors.grey,
+            ),
+            TextButton(
+              onPressed: viewModel.reserveRoom,
+              child: const Text(
+                'Apply Now',
               ),
             ),
           ],

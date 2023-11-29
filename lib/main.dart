@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hotel_management/view/request/reciptionest_home.dart';
+import 'package:hotel_management/view/request/requests_page_view.dart';
 import 'package:hotel_management/view/splash_screen.dart';
 
 import 'view/room/home_screen.dart';
@@ -35,7 +35,7 @@ void main() async {
     transitionDuration: const Duration(milliseconds: 500),
     getPages: [
       GetPage(name: '/home', page: () => const HomeScreen()),
-      GetPage(name: '/recep_home', page: () => const ReceptionHome()),
+      GetPage(name: '/recep_home', page: () => const RequestsPagesView()),
     ],
     home: const SplashScreen(),
   ));

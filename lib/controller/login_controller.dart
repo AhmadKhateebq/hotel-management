@@ -35,29 +35,26 @@ class LoginController extends GetxController {
   late bool _connected;
   bool _isInit = false;
 
+  late final UserModel _userModel  ;
   init() async {
     _setUpListener();
+   _userModel =  Get.find<UserModel>();
     if (_prefs.containsKey('token')) {
-      try{
-        Get.find<UserModel>().getDetails();
-        firstName = Get
-            .find<UserModel>()
+      try {
+        _userModel.getDetails();
+        firstName = _userModel
             .firstName;
-        lastName = Get
-            .find<UserModel>()
+        lastName = _userModel
             .lastName;
-        id = Get
-            .find<UserModel>()
+        id = _userModel
             .customerId;
         _token = _prefs.getString('token');
-        userImage = Get
-            .find<UserModel>()
+        userImage = _userModel
             .profileImageUrl;
-        role = RoleUtil.fromString(Get
-            .find<UserModel>()
+        role = RoleUtil.fromString(_userModel
             .role);
-      }catch(e){
-        if(kDebugMode){
+      } catch (e) {
+        if (kDebugMode) {
           print(e);
         }
       }
@@ -72,11 +69,11 @@ class LoginController extends GetxController {
         if (_connected) {
           await _supabase.auth.refreshSession();
         }
-        Get.put<MyRequestModel>(MyRequestModel(),permanent: true);
+        Get.put<MyRequestModel>(MyRequestModel(), permanent: true);
         if (role == ROLE.customer) {
           Get.offAllNamed('/home');
         } else {
-          Get.put<AllRequestModel>(AllRequestModel(),permanent: true);
+          Get.put<AllRequestModel>(AllRequestModel(), permanent: true);
           Get.offAllNamed('/recep_home');
         }
       } else {
@@ -145,7 +142,7 @@ class LoginController extends GetxController {
       }
     }
 
-    Get.find<UserModel>().remove();
+    _userModel.remove();
     Get.offAll(() => const LoginScreen());
   }
 

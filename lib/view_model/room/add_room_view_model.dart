@@ -7,7 +7,7 @@ import 'package:hotel_management/util/const.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddRoomViewModel {
-  final RoomModel roomModel = Get.find();
+  final RoomModel _roomModel = Get.find();
   double rating = 3.5;
   XFile? image;
   RxBool seaView = false.obs;
@@ -36,12 +36,12 @@ class AddRoomViewModel {
       double price = double.parse(priceController.text);
       int beds = int.parse(bedsController.text);
       int size = int.parse(sizeController.text);
-      bool validRoomId = await roomModel.validateData(floor);
+      bool validRoomId = await _roomModel.validateData(floor);
       if (!validRoomId) {
         Get.snackbar('Please enter a valid Room Floor',
             'a valid Floor is One Number Only');
       } else {
-        await roomModel.saveRoom(floor, rating, image, price, beds, size);
+        await _roomModel.saveRoom(floor, rating, image, price, beds, size);
         Get.back();
         Get.snackbar('DONE', 'Room Added!');
 

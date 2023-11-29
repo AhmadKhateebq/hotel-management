@@ -1,64 +1,58 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:hotel_management/component/custom_drawer.dart';
 import 'package:hotel_management/view/request/requests_list_page_view.dart';
 
-class ReceptionHomeViewModel with ChangeNotifier {
+class RequestsPageViewModel {
   late TabController tabController;
-
-  // final SupabaseAuthController _auth = Get.find();
   final PageController controller = PageController();
   Timer? _timer;
+  final bool _myRequests;
+
+  get drawer => _myRequests ?  null:const CustomDrawer() ;
+
+  get title =>
+      _myRequests ? const Text('My Requests') : const Text('All Requests');
+
+  RequestsPageViewModel({bool? myRequests})
+      : _myRequests = myRequests ?? false;
 
   get requests => [
-        const RequestsList(
-
-            pending: false,
-            approved: false,
-            intertwined: false,
-            denied: false,
-            myRequests: false,
-            // mapper: RoomRequest.fromDynamicMap,
-
+        RequestsList(
+          pending: false,
+          approved: false,
+          intertwined: false,
+          denied: false,
+          myRequests: _myRequests,
         ),
-        const RequestsList(
-
-            pending: true,
-            approved: false,
-            intertwined: false,
-            denied: false,
-            myRequests: false,
-            // mapper: RoomRequest.fromDynamicMap,
-
+        RequestsList(
+          pending: true,
+          approved: false,
+          intertwined: false,
+          denied: false,
+          myRequests: _myRequests,
         ),
-        const RequestsList(
-            pending: false,
-            approved: true,
-            intertwined: false,
-            denied: false,
-            myRequests: false,
-            // mapper: RoomRequest.fromDynamicMap,
-
+        RequestsList(
+          pending: false,
+          approved: true,
+          intertwined: false,
+          denied: false,
+          myRequests: _myRequests,
         ),
-        const RequestsList(
-
-            pending: false,
-            approved: false,
-            intertwined: true,
-            denied: false,
-            myRequests: false,
-            // mapper: RoomRequest.fromDynamicMap,
-
+        RequestsList(
+          pending: false,
+          approved: false,
+          intertwined: true,
+          denied: false,
+          myRequests: _myRequests,
         ),
-        const RequestsList(
-
-            pending: false,
-            approved: false,
-            intertwined: false,
-            denied: true,
-            myRequests: false,
-            // mapper: RoomRequest.fromDynamicMap,
-
+        RequestsList(
+          pending: false,
+          approved: false,
+          intertwined: false,
+          denied: true,
+          myRequests: _myRequests,
         ),
       ];
 

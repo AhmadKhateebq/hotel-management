@@ -3,17 +3,10 @@ import 'package:hotel_management/model/request/requests_model.dart';
 class AllRequestModel extends RequestModel {
   @override
   getRequests() async {
-    if (requests.isNotEmpty) {
-      filteredRequests = requests.where(filterRequests).toList();
-    } else {
-      var temp = (await requestRepository.getRoomRequests())
-          .where(filterRequests)
-          .toList();
-      if (requests != temp) {
-        requests = temp;
-        filteredRequests = temp;
-      }
+    if (requests.isEmpty) {
+      setRequests(await requestRepository.getRoomRequests());
     }
+    filteredRequests = requests.where(filterRequests).toList();
   }
 
   @override
@@ -21,5 +14,7 @@ class AllRequestModel extends RequestModel {
     await requestRepository.refreshData();
   }
 
-
+  @override
+  Stream<List<Map<String, dynamic>>> get stream =>
+  requestRepository.getStream();
 }

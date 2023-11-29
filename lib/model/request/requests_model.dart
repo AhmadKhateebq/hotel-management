@@ -7,8 +7,7 @@ abstract class RequestModel {
       RoomRequestRepositoryImpl();
   List<RoomRequest> requests = <RoomRequest>[];
 
-  Stream<List<Map<String, dynamic>>> get stream =>
-      requestRepository.getStream();
+  Stream<List<Map<String, dynamic>>> get stream ;
 
   List<RoomRequest> filteredRequests = <RoomRequest>[];
   bool pending = false;
@@ -56,7 +55,7 @@ abstract class RequestModel {
   }
 
   void updateWithData(List<RoomRequest> requests) {
-    this.requests = requests;
+    setRequests(requests);
     filteredRequests = requests.where(filterRequests).toList();
   }
 }

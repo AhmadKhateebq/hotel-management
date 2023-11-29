@@ -6,20 +6,21 @@ import 'package:hotel_management/component/ads/banner_ads.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/controller/login_controller.dart';
 import 'package:hotel_management/model/user_model.dart';
-import 'package:hotel_management/view/request/my_requests_view.dart';
+import 'package:hotel_management/util/util_classes.dart';
+import 'package:hotel_management/view/request/requests_page_view.dart';
 import 'package:hotel_management/view/room/add_room_view.dart';
 import 'package:hotel_management/view/room/my_rooms_view.dart';
-import 'package:hotel_management/util/util_classes.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userModel =  Get.find<UserModel>();
     return _getDrawer(
-        Get.find<UserModel>().profileImageUrl,
-        '${Get.find<UserModel>().firstName} ${Get.find<UserModel>().lastName}',
-        RoleUtil.fromString(Get.find<UserModel>().role));
+        userModel.profileImageUrl,
+        '${userModel.firstName} ${userModel.lastName}',
+        RoleUtil.fromString( userModel.role));
   }
 
   Widget _profile(String profileImageUrl, String fullName, ROLE role) {
@@ -120,7 +121,7 @@ class CustomDrawer extends StatelessWidget {
                     res == ConnectivityResult.wifi ||
                     res == ConnectivityResult.mobile) {
                   Get.back();
-                  Get.to(() => const MyRequests());
+                  Get.to(() => const RequestsPagesView(myRequests: true,));
                 } else {
                   Get.snackbar('No Internet Connection', 'try again later');
                 }
@@ -190,7 +191,7 @@ class CustomDrawer extends StatelessWidget {
               leading: const Icon(Icons.add),
               title: const Text('Add Room'),
               onTap: () async {
-                Get.offAll(() => const AddRoom());
+                Get.to(() => const AddRoom());
               },
             ),
             const Divider(

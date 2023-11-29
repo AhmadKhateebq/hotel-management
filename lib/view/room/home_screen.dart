@@ -27,7 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         key: _key,
-        child: ChangeNotifierProvider<HomeScreenViewModel>(create: (context) {
+        child: ChangeNotifierProvider<HomeScreenViewModel>(
+            create: (context) {
           HomeScreenViewModel viewModel = HomeScreenViewModel();
           viewModel.init();
           return viewModel;

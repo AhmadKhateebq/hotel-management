@@ -44,13 +44,12 @@ class SplashScreenViewModel {
           url: supabaseUrl,
           anonKey: publicAnonKey,
         );
-      } catch (error) {
+      } catch (e) {
         if (kDebugMode) {
-          print(error);
+          print(e);
         }
       }
     }
-    //start the login process
     final LoginController loginController = Get.put(LoginController());
     Get.put<RoomRequestRepository>(RoomRequestRepositoryImpl(), permanent: true);
     Get.put<RoomRepository>(RoomRepositoryImpl(), permanent: true);

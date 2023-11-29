@@ -17,7 +17,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class HomeScreenViewModel with ChangeNotifier{
 
-  final RoomModel roomModel = Get.find();
+  final RoomModel _roomModel = Get.find();
   PanelController panelController = PanelController();
   final InAppReview inAppReview = InAppReview.instance;
   DateTime startDate = DateTime.now();
@@ -34,7 +34,7 @@ class HomeScreenViewModel with ChangeNotifier{
     // appStoreIdentifier: '0000000',
   );
 
-  List<Room> get rooms => roomModel.rooms;
+  List<Room> get rooms => _roomModel.rooms;
 
   // LoginUser get getUser =>Get.find<SupabaseAuthController>().loginUser;
   void onRoomTap(Room room) {
@@ -81,7 +81,7 @@ class HomeScreenViewModel with ChangeNotifier{
 
   get addRoom =>
       (RoleUtil.fromString(Get.find<UserModel>().role) ==
-              ROLE.reception)
+              ROLE.admin)
           ? FloatingActionButton(
               // title: Text("add".tr),
               onPressed: () {
@@ -96,7 +96,7 @@ class HomeScreenViewModel with ChangeNotifier{
   Future<void> getRoomsBetweenDates() async {
 
     loading.value = true;
-    await roomModel.getRoomsBetweenDates(startDate, endDate);
+    await _roomModel.getRoomsBetweenDates(startDate, endDate);
     loading = false.obs;
     notifyListeners();
   }
@@ -119,7 +119,7 @@ class HomeScreenViewModel with ChangeNotifier{
     int rating4 = filters['rating4'] ?? 4;
     int rating5 = filters['rating5'] ?? 5;
     isSearching = true;
-    await roomModel.getEmptyRoomsFiltered(
+    await _roomModel.getEmptyRoomsFiltered(
       start: startDate,
       end: endDate,
       adult: adult,

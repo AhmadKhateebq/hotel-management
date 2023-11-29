@@ -1,51 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_management/component/custom_drawer.dart';
 import 'package:hotel_management/view_model/request/reciptionest_home_view_model.dart';
-import 'package:provider/provider.dart';
 
 import '../../component/animation/flow/floating_action_button_flow.dart';
 
-class ReceptionHome extends StatefulWidget {
-  const ReceptionHome({super.key});
-
+class RequestsPagesView extends StatefulWidget {
+  const RequestsPagesView({super.key, this.myRequests});
+  final bool? myRequests;
   @override
-  State<ReceptionHome> createState() => _ReceptionHomeState();
+  State<RequestsPagesView> createState() => _RequestsPagesViewState();
 }
 
-class _ReceptionHomeState extends State<ReceptionHome>
+class _RequestsPagesViewState extends State<RequestsPagesView>
     with TickerProviderStateMixin {
-  late final ReceptionHomeViewModel viewModel;
-
+  late final RequestsPageViewModel viewModel;
+  @override
+  void initState() {
+    viewModel = RequestsPageViewModel(myRequests: widget.myRequests);
+    viewModel.init(this);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ReceptionHomeViewModel>(
-      create: (_) {
-        viewModel = ReceptionHomeViewModel();
-        viewModel.init(this);
-        return viewModel;
-      },
-      builder: (context, child) => SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: const Text('Requests'),
-            bottom: getTabBar(context),
-          ),
-          body: getBody(),
-          drawer: const CustomDrawer(),
-          floatingActionButton: FloatingActionButtonFlow(
-            icons:viewModel.icons,
-            functions: viewModel.functions,
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: viewModel.title,
+          bottom: getTabBar(context),
         ),
+        body: getBody(),
+        drawer: viewModel.drawer,
+        floatingActionButton: FloatingActionButtonFlow(
+          icons:viewModel.icons,
+          functions: viewModel.functions,
+        ),
+        floatingActionButtonLocation:
+        FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
   getTabBar(context) => TabBar(
-        controller: Provider.of<ReceptionHomeViewModel>(context).tabController,
+        controller: viewModel.tabController,
         labelPadding: const EdgeInsets.symmetric(horizontal: 0),
         unselectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.bold,
@@ -74,7 +70,7 @@ class _ReceptionHomeState extends State<ReceptionHome>
             text: 'Denied',
           ),
         ],
-        onTap: Provider.of<ReceptionHomeViewModel>(context).onTapItem,
+        onTap: viewModel.onTapItem,
       );
 
   getBody() => PageView(

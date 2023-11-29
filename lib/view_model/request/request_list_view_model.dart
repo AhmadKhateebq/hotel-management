@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/model/request/all_request_model.dart';
 import 'package:hotel_management/interface/request.dart';
 import 'package:hotel_management/model/request/my_request_model.dart';
@@ -15,9 +17,9 @@ class RequestsListViewModel with ChangeNotifier {
   final bool? intertwined;
   final bool? denied;
   final bool myRequests;
-  late final RequestModel model;
+  late final RequestModel _model;
   bool _mounted = false;
-  late StreamSubscription streamSubscriber;
+  StreamSubscription? streamSubscriber;
 
   RequestsListViewModel({
     required this.pending,
@@ -26,34 +28,50 @@ class RequestsListViewModel with ChangeNotifier {
     required this.denied,
     required this.myRequests,
   }) {
-    model =
+    _model =
         myRequests ? Get.find<MyRequestModel>() : Get.find<AllRequestModel>();
-    streamSubscriber = model.stream.listen(updateRequestsOnDataChange);
+    setUpConnectivityListener();
     updateRequests();
   }
-
-  List<RoomRequest> get requests => model.filteredRequests;
+  setUpConnectivityListener(){
+    if(Get.find<ConnectivityController>().connected.value) {
+      streamSubscriber = _model.stream.listen(updateRequestsOnDataChange);
+    }
+    Get.find<ConnectivityController>().subscription.onData((data) {
+      if(data == ConnectivityResult.wifi ||data == ConnectivityResult.ethernet ||data == ConnectivityResult.mobile ){
+        streamSubscriber ??= _model.stream.listen(updateRequestsOnDataChange);
+        if(streamSubscriber!.isPaused){
+          streamSubscriber!.resume();
+        }
+      }else{
+        if(streamSubscriber != null){
+          streamSubscriber!.pause();
+        }
+      }
+    });
+  }
+  List<RoomRequest> get requests => _model.filteredRequests;
 
   Future<void> updateRequests() async {
-    model.setUpFlags(
+    _model.setUpFlags(
         pending: pending,
         denied: denied,
         approved: approved,
         intertwined: intertwined,
         myRequests: myRequests);
-    model.getRequests().then((value) => notify());
+    _model.getRequests().then((value) => notify());
   }
 
    updateRequestsOnDataChange(
       List<Map<String, dynamic>> data)  {
-     model.setUpFlags(
+     _model.setUpFlags(
          pending: pending,
          denied: denied,
          approved: approved,
          intertwined: intertwined,
          myRequests: myRequests);
-    final temp = data.map(RoomRequest.fromDynamicMap).toList();
-    model.updateWithData(temp);
+    List<RoomRequest> temp = data.map(RoomRequest.fromDynamicMap).toList();
+    _model.updateWithData(temp);
      notify();
   }
 
@@ -70,12 +88,12 @@ class RequestsListViewModel with ChangeNotifier {
     }
   }
 
-  get length => model.filteredRequests.length;
+  get length => _model.filteredRequests.length;
 
-  request(int index) => model.filteredRequests[index];
+  request(int index) => _model.filteredRequests[index];
 
   void init() {
-    model.setUpFlags(
+    _model.setUpFlags(
         pending: pending,
         denied: denied,
         approved: approved,
@@ -98,6 +116,6 @@ class RequestsListViewModel with ChangeNotifier {
   void dispose() {
     super.dispose();
     _mounted = true;
-    streamSubscriber.cancel();
+    streamSubscriber?.cancel();
   }
 }

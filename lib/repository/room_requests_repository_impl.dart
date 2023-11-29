@@ -16,15 +16,15 @@ import 'package:hotel_management/repository/request/room_request_repository.dart
 
 class RoomRequestRepositoryImpl extends RoomRequestRepository {
   RoomRequestLocal local = RoomRequestLocal();
-  late RoomRequestApi api;
+  RoomRequestApi? _api;
   late StreamSubscription subscription;
   bool _init = false;
-
+  RoomRequestApi get api => _api??=RoomRequestApi();
   RoomRequestRepositoryImpl() {
     _isOnline().then((value) async {
       if (value) {
         if (!_init) {
-          api = RoomRequestApi();
+          _api = RoomRequestApi();
           await api.init();
           subscription = _setUpListener();
           _init = true;
@@ -36,14 +36,13 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
       if (data == ConnectivityResult.wifi ||
           data == ConnectivityResult.mobile) {
         if (!_init) {
-          api = RoomRequestApi();
+          _api = RoomRequestApi();
           await api.init();
           subscription = _setUpListener();
           _init = true;
         }
         subscription.resume();
         await _emptyCache();
-        refreshData();
       } else {
         subscription.pause();
       }
@@ -126,9 +125,13 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
     }
   }
   Stream<List<Map<String, dynamic>>> getStream () => api.getStream();
+  Stream<List<Map<String, dynamic>>> getMyStream () => api.getMyStream();
   _setUpListener() {
     var listener = api.getStream().listen((event) async {
-      List<RoomRequest> temp = event.map(RoomRequest.fromDynamicMap).toList();
+      final temp =
+      event
+          .map(RoomRequest.fromDynamicMap)
+          .toList();
       if (temp != await getRoomRequests()) {
         await local.saveRoomRequestToPref(temp);
       }
@@ -165,7 +168,8 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
     List<RoomRequest> temp = await api.getRoomRequests();
     await local.saveRoomRequestToPref(temp);
     Get.find<AllRequestModel>().setRequests(temp);
-  }Future<void> refreshMyData() async {
+  }
+  Future<void> refreshMyData() async {
     List<RoomRequest> temp = await api.getMyRoomRequests();
     Get.find<MyRequestModel>().setRequests(temp);
   }
@@ -173,7 +177,7 @@ class RoomRequestRepositoryImpl extends RoomRequestRepository {
   init() async {
     try {
       if (!_init) {
-        api = RoomRequestApi();
+        _api = RoomRequestApi();
         await api.init();
         _setUpListener();
         _init = true;

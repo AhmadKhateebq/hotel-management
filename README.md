@@ -1,4 +1,4 @@
-# hotel_managment
+# hotel_management_quizplus
 
 A new Flutter project.
 

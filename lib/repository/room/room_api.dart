@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:hotel_management/interface/room.dart';
@@ -73,7 +72,7 @@ class RoomApi extends RoomRepository {
   }
 
   @override
-  Future<String> uploadImage(File file, String roomId) async {
+  Future<String> uploadImage(dynamic file, String roomId) async {
     await _supabase.storage
         .from('room_images')
         .upload('$roomId/thumbnail${p.extension(file.path)}', file);

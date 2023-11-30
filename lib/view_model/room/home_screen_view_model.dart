@@ -38,7 +38,7 @@ class HomeScreenViewModel with ChangeNotifier{
 
   // LoginUser get getUser =>Get.find<SupabaseAuthController>().loginUser;
   void onRoomTap(Room room) {
-    Get.to(
+     Get.to(
       () => RoomDetailsView(
         room: room,
       ),

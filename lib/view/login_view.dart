@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   border: Border.all(color: Colors.black26, width: 2),
                   color: Colors.redAccent,
                   borderRadius: const BorderRadius.all(Radius.circular(20))),
-              height: Get.height * (2 / 3) + 10,
+              height: Get.height * (2 / 3) + 20,
               width: Get.width * (7 / 8),
               child: Obx(() =>
                   viewModel.loading.value ? loadingWidget() : loginForm()),

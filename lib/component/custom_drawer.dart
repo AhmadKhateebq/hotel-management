@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/component/ads/banner_ads.dart';
@@ -135,7 +136,7 @@ class CustomDrawer extends StatelessWidget {
               title: const Text("logout"),
               onTap: Get.find<LoginController>().signOut,
             ),
-            const BannerAdWidget(
+            kIsWeb?const SizedBox():const BannerAdWidget(
               withClose: false,
             ),
           ],

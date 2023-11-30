@@ -50,17 +50,19 @@ class SplashScreenViewModel {
         }
       }
     }
-    final LoginController loginController = Get.put(LoginController());
+    final LoginController loginController = Get.put(LoginController(), permanent: true);
     Get.put<RoomRequestRepository>(RoomRequestRepositoryImpl(), permanent: true);
     Get.put<RoomRepository>(RoomRepositoryImpl(), permanent: true);
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     await analytics.setAnalyticsCollectionEnabled(true);
     await analytics.logAppOpen();
-    await MobileAds.instance.initialize();
-    await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(
-        testDeviceIds: ["36503A67BE05B5A6A4AC1DC738CAB9FC"]));
-    Get.put(RoomModel());
-    Get.put(UserModel());
+    if(!kIsWeb){
+      await MobileAds.instance.initialize();
+      await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(
+          testDeviceIds: ["36503A67BE05B5A6A4AC1DC738CAB9FC"]));
+    }
+    Get.put(RoomModel(), permanent: true);
+    Get.put(UserModel(), permanent: true);
     await loginController.init();
   }
 }

@@ -6,7 +6,7 @@ import 'package:hotel_management/view/request/requests_list_page_view.dart';
 
 class RequestsPageViewModel {
   late TabController tabController;
-  final PageController controller = PageController();
+  final PageController pageController = PageController();
   Timer? _timer;
   final bool _myRequests;
 
@@ -105,7 +105,7 @@ class RequestsPageViewModel {
   // getRequestsStream() => _requestApi.getRequestsStream();
 
   onTapItem(int index) {
-    controller.animateToPage(index,
+    pageController.animateToPage(index,
         duration: const Duration(milliseconds: 250), curve: Curves.easeIn);
     // notifyListeners();
   }

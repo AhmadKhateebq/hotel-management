@@ -74,7 +74,7 @@ class _RequestsPagesViewState extends State<RequestsPagesView>
       );
 
   getBody() => PageView(
-        controller: viewModel.controller,
+        controller: viewModel.pageController,
         onPageChanged: viewModel.onPageChange,
         children: viewModel.requests,
       );

@@ -7,6 +7,7 @@ import 'package:hotel_management/view_model/splash_screen_view_model.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
+  static String routeName = '/splash';
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }

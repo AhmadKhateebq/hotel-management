@@ -12,7 +12,7 @@ class RequestReviewViewModel {
   }) : _request = request;
 
   final RoomRequest _request;
-  final RoomRequestRepository requestApi = Get.find();
+  final RoomRequestRepository _requestApi = Get.find();
   var customerName = ''.obs;
 
   get request => _request;
@@ -37,17 +37,17 @@ class RequestReviewViewModel {
   get status => StatusUtil.getStatusString(_request.status);
 
   get onApprove => () async {
-        await requestApi.approve(_request.id!, _request.roomId);
+        await _requestApi.approve(_request.id!, _request.roomId);
         Get.back();
       };
 
   get onAutoApprove => () async {
-        await requestApi.autoApprove(_request.roomId);
+        await _requestApi.autoApprove(_request.roomId);
         Get.back();
       };
 
   get onDeny => () async {
-        await requestApi.deny(_request.id!, _request.roomId);
+        await _requestApi.deny(_request.id!, _request.roomId);
         Get.back();
       };
 }

@@ -1,6 +1,6 @@
 {
-    "name": "hotel_managment",
-    "short_name": "hotel_managment",
+    "name": "hotel_management_quizplus",
+    "short_name": "hotel_management_quizplus",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

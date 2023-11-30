@@ -2,16 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hotel_management/model/room/add_room_model.dart';
 import 'package:hotel_management/model/room/room_model.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddRoomViewModel {
   final RoomModel _roomModel = Get.find();
-  double rating = 3.5;
-  XFile? image;
-  RxBool seaView = false.obs;
-  List<XFile>? slideShow;
+  final AddRoomModel _model = AddRoomModel();
   TextEditingController idController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController bedsController = TextEditingController();
@@ -20,13 +18,24 @@ class AddRoomViewModel {
   var imagePicked = false.obs;
   var slideshowPicked = false.obs;
 
+  RxBool get seaView => _model.seaView;
+
+  List<XFile>? get slideShow => _model.slideShow;
+  XFile? get image => _model.image;
+
+  double get rating => _model.rating;
+
+  set rating(double value) {
+    _model.setRating(value);
+  }
+
   imagePicker() async {
-    image = await ImagePicker().pickImage(source: ImageSource.gallery);
+   await _model.pickImage();
     imagePicked.value = true;
   }
 
   imagePickerSlideshow() async {
-    slideShow = await ImagePicker().pickMultiImage();
+    await _model.pickSlideShow();
     slideshowPicked.value = true;
   }
 
@@ -41,7 +50,7 @@ class AddRoomViewModel {
         Get.snackbar('Please enter a valid Room Floor',
             'a valid Floor is One Number Only');
       } else {
-        await _roomModel.saveRoom(floor, rating, image, price, beds, size);
+        await _roomModel.saveRoom(floor, _model.rating, _model.image, price, beds, size);
         Get.back();
         Get.snackbar('DONE', 'Room Added!');
 
@@ -60,7 +69,7 @@ class AddRoomViewModel {
   }
 
   void setSeaView(bool value) {
-    seaView.value = !seaView.value;
+   _model.setSeaView();
   }
 
 }

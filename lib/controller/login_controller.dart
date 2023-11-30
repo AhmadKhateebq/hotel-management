@@ -19,26 +19,35 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class LoginController extends GetxController {
   late final SupabaseClient _supabase;
   final _prefs = SharedPrefController.reference;
-  final ConnectivityController connectivityController = Get.find();
-  final GoogleSignIn googleSignInPlatform = GoogleSignIn(
-    clientId: iosClientId,
-    serverClientId: webClientId,
-  );
+  final ConnectivityController _connectivityController = Get.find();
+  late final GoogleSignIn _googleSignInPlatform;
   final Connectivity _connectivity = Connectivity();
-  ROLE? role;
+  ROLE? _role;
   String? _token;
   late bool _connected;
   bool _isInit = false;
-
+  String? deepLinkId;
   late final UserModel _userModel  ;
   init() async {
     _setUpListener();
+    if(kIsWeb){
+      _googleSignInPlatform =  GoogleSignIn(
+        signInOption: SignInOption.standard,
+        clientId: webClientId,
+      );
+    }else{
+      _googleSignInPlatform = GoogleSignIn(
+        signInOption: SignInOption.standard,
+        clientId: iosClientId,
+        serverClientId: webClientId,
+      );
+    }
    _userModel =  Get.find<UserModel>();
     if (_prefs.containsKey('token')) {
       try {
         _userModel.getDetails();
         _token = _prefs.getString('token');
-        role = RoleUtil.fromString(_userModel
+        _role = RoleUtil.fromString(_userModel
             .role);
       } catch (e) {
         if (kDebugMode) {
@@ -47,7 +56,7 @@ class LoginController extends GetxController {
       }
     }
     await initConnectivity();
-    if (connectivityController.connected.value) {
+    if (_connectivityController.connected.value) {
       _supabase = Supabase.instance.client;
       _isInit = true;
     }
@@ -56,13 +65,7 @@ class LoginController extends GetxController {
         if (_connected) {
           await _supabase.auth.refreshSession();
         }
-        Get.put<MyRequestModel>(MyRequestModel(), permanent: true);
-        if (role == ROLE.customer) {
-          Get.offAllNamed('/home');
-        } else {
-          Get.put<AllRequestModel>(AllRequestModel(), permanent: true);
-          Get.offAllNamed('/recep_home');
-        }
+       navigate();
       } else {
         Get.offAll(() => const LoginScreen());
       }
@@ -72,7 +75,7 @@ class LoginController extends GetxController {
   }
 
   _setUpListener() {
-    connectivityController.subscription.onData((data) {
+    _connectivityController.subscription.onData((data) {
       if (data == ConnectivityResult.wifi ||
           data == ConnectivityResult.mobile ||
           data == ConnectivityResult.ethernet) {
@@ -84,8 +87,8 @@ class LoginController extends GetxController {
   }
 
   initConnectivity() async {
-    await connectivityController.initConnectivity();
-    _connected = connectivityController.connected.value;
+    await _connectivityController.initConnectivity();
+    _connected = _connectivityController.connected.value;
   }
 
   signUp({required String email, required String password}) async {
@@ -124,8 +127,8 @@ class LoginController extends GetxController {
   signOut() async {
     if (_connected) {
       await _supabase.auth.signOut();
-      if (await googleSignInPlatform.isSignedIn()) {
-        googleSignInPlatform.signOut();
+      if (await _googleSignInPlatform.isSignedIn()) {
+        _googleSignInPlatform.signOut();
       }
     }
     _userModel.remove();
@@ -137,7 +140,14 @@ class LoginController extends GetxController {
       throw Exception();
     }
     try {
-      final googleUser = await googleSignInPlatform.signIn();
+      late final GoogleSignInAccount? googleUser;
+      if(kIsWeb){
+        googleUser = await GoogleSignIn(
+          clientId : webClientId,
+        ).signIn();
+      }else{
+        googleUser = await _googleSignInPlatform.signIn();
+      }
       if (googleUser == null) {
         throw 'Login Canceled';
       }
@@ -184,10 +194,11 @@ class LoginController extends GetxController {
         CustomerApi api = Get.find();
         await api.init();
         await api.getCustomerDetails(res.user!.id);
-        if (role == ROLE.customer) {
-          Get.offAllNamed('/home');
-        } else {
-          Get.offAllNamed('/recep_home');
+        _role = RoleUtil.fromString(Get.find<UserModel>().role);
+        if(deepLinkId == null){
+         navigate();
+        }else{
+          Get.back();
         }
       } catch (e, s) {
         log('error', error: e, stackTrace: s);
@@ -229,5 +240,15 @@ class LoginController extends GetxController {
       }
     }
     _supabase = Supabase.instance.client;
+  }
+
+  void navigate() {
+    Get.put<MyRequestModel>(MyRequestModel(), permanent: true);
+    if (_role == ROLE.customer) {
+      Get.offAllNamed('/home');
+    } else {
+      Get.put<AllRequestModel>(AllRequestModel(), permanent: true);
+      Get.offAllNamed('/recep_home');
+    }
   }
 }

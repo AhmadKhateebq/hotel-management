@@ -11,6 +11,7 @@ bool internet = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(GetMaterialApp(
+
     color: primaryColor,
     theme: ThemeData(
         fontFamily: 'RobotoCondensed',
@@ -35,9 +36,13 @@ void main() async {
     transitionDuration: const Duration(milliseconds: 500),
     getPages: [
       GetPage(name: '/home', page: () => const HomeScreen()),
+      GetPage(name: '/splash', page: () => const SplashScreen()),
       GetPage(name: '/recep_home', page: () => const RequestsPagesView()),
+
     ],
     home: const SplashScreen(),
+    initialRoute: '/splash',
+    unknownRoute: GetPage( name: SplashScreen.routeName, page: () => const SplashScreen(), ),
   ));
 }
 

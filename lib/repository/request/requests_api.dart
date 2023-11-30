@@ -11,8 +11,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class RoomRequestApi extends RoomRequestRepository {
   late final SupabaseClient _supabase;
 
-  RxList<RoomRequest> requests = <RoomRequest>[].obs;
-  final _userModel = Get.find<UserModel>();
   Future<void> init() async {
     try {
       await Supabase.initialize(
@@ -131,13 +129,13 @@ class RoomRequestApi extends RoomRequestRepository {
     return _supabase.from('request').stream(primaryKey: ['id']);
   }
   Stream<List<Map<String, dynamic>>> getMyStream() {
-    final customerId = _userModel.customerId;
+    final customerId =  Get.find<UserModel>().customerId;
     return _supabase.from('request').stream(primaryKey: ['id']).eq('customer_id', customerId);
   }
 
   @override
   Future<List<RoomRequest>> getMyRoomRequests() async {
-    String userId = _userModel.customerId;
+    String userId =  Get.find<UserModel>().customerId;
     var res = await _supabase.rpc('get_my_requests',
         params: {'user_id': userId})
         .select<List<Map<String, dynamic>>>('*');

@@ -19,7 +19,7 @@ class RequestsListViewModel with ChangeNotifier {
   final bool myRequests;
   late final RequestModel _model;
   bool _mounted = false;
-  StreamSubscription? streamSubscriber;
+  StreamSubscription? _streamSubscriber;
 
   RequestsListViewModel({
     required this.pending,
@@ -29,23 +29,25 @@ class RequestsListViewModel with ChangeNotifier {
     required this.myRequests,
   }) {
     _model =
-        myRequests ? Get.find<MyRequestModel>() : Get.find<AllRequestModel>();
+        myRequests
+            ? Get.find<MyRequestModel>()
+            : Get.find<AllRequestModel>();
     setUpConnectivityListener();
     updateRequests();
   }
   setUpConnectivityListener(){
     if(Get.find<ConnectivityController>().connected.value) {
-      streamSubscriber = _model.stream.listen(updateRequestsOnDataChange);
+      _streamSubscriber = _model.stream.listen(updateRequestsOnDataChange);
     }
     Get.find<ConnectivityController>().subscription.onData((data) {
       if(data == ConnectivityResult.wifi ||data == ConnectivityResult.ethernet ||data == ConnectivityResult.mobile ){
-        streamSubscriber ??= _model.stream.listen(updateRequestsOnDataChange);
-        if(streamSubscriber!.isPaused){
-          streamSubscriber!.resume();
+        _streamSubscriber ??= _model.stream.listen(updateRequestsOnDataChange);
+        if(_streamSubscriber!.isPaused){
+          _streamSubscriber!.resume();
         }
       }else{
-        if(streamSubscriber != null){
-          streamSubscriber!.pause();
+        if(_streamSubscriber != null){
+          _streamSubscriber!.pause();
         }
       }
     });
@@ -116,6 +118,6 @@ class RequestsListViewModel with ChangeNotifier {
   void dispose() {
     super.dispose();
     _mounted = true;
-    streamSubscriber?.cancel();
+    _streamSubscriber?.cancel();
   }
 }

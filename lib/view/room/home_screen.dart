@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/component/ads/banner_ads.dart';
@@ -56,7 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 maxHeight: Get.height,
                 minHeight: 0,
               ),
-              const BannerAdWidget(withClose: true),
+              kIsWeb?const SizedBox():const BannerAdWidget(
+                withClose: false,
+              ),
             ]),
             appBar: AppBar(
               title: const Text(

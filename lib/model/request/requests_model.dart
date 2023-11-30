@@ -14,7 +14,7 @@ abstract class RequestModel {
   bool approved = false;
   bool intertwined = false;
   bool denied = false;
-  bool myRequests = false;
+  // bool myRequests = false;
 
   Future<void> getRequests();
 
@@ -41,7 +41,7 @@ abstract class RequestModel {
       bool? approved,
       bool? intertwined,
       required bool myRequests}) {
-    this.myRequests = myRequests;
+    // this.myRequests = myRequests;
     this.pending = pending ?? false;
     this.denied = denied ?? false;
     this.approved = approved ?? false;

@@ -60,7 +60,10 @@ dependencies:
   cached_network_image: ^3.3.0
   styled_widget: ^0.4.1
   mockito: ^5.4.3
-#  restart_app: ^1.2.1
+  app_links: ^3.4.5
+  logger: ^2.0.2+1
+  path_provider: ^2.1.1
+  flutter_branch_sdk: ^7.0.1
 
 
 dev_dependencies:

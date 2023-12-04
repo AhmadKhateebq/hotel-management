@@ -8,6 +8,7 @@ import 'package:hotel_management/interface/room.dart';
 import 'package:hotel_management/model/room/room_model.dart';
 import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/util/const.dart';
+import 'package:hotel_management/util/file_output.dart';
 import 'package:hotel_management/util/util_classes.dart';
 import 'package:hotel_management/view/room/add_room_view.dart';
 import 'package:hotel_management/view/room/room_detail_view.dart';
@@ -40,7 +41,7 @@ class HomeScreenViewModel with ChangeNotifier{
   void onRoomTap(Room room) {
      Get.to(
       () => RoomDetailsView(
-        room: room,
+        id: room.roomId,
       ),
       duration: const Duration(milliseconds: 500),
       transition: Transition.circularReveal,
@@ -97,7 +98,11 @@ class HomeScreenViewModel with ChangeNotifier{
     loading.value = true;
     await _roomModel.getRoomsBetweenDates(startDate, endDate);
     loading = false.obs;
-    notifyListeners();
+    try{
+      notifyListeners();
+    }catch(e){
+      CustomLogger.logger.e('error',error: e);
+    }
   }
 
   getRoomsFiltered(Map<String, dynamic> filters, bool seaView) async {

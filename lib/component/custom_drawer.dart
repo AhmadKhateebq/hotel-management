@@ -160,7 +160,7 @@ class CustomDrawer extends StatelessWidget {
                         leading: const Icon(Icons.request_page),
                         title: const Text('Requests'),
                         onTap: () async {
-                          Get.offAllNamed('/recep_home');
+                          Navigator.pushReplacementNamed(Get.context!,'/recep_home');
                         },
                       ),
                     ],
@@ -177,7 +177,7 @@ class CustomDrawer extends StatelessWidget {
                         leading: const Icon(Icons.hotel),
                         title: const Text('Rooms'),
                         onTap: () async {
-                          Get.offAllNamed('/home');
+                          Navigator.pushReplacementNamed(Get.context!,'/home');
                         },
                       ),
                     ],

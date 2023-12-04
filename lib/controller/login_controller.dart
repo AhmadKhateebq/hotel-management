@@ -7,48 +7,55 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
-import 'package:hotel_management/model/request/all_request_model.dart';
-import 'package:hotel_management/model/request/my_request_model.dart';
 import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/repository/customer/customer_api.dart';
-import 'package:hotel_management/view/login_view.dart';
 import 'package:hotel_management/util/const.dart';
-import 'package:hotel_management/util/util_classes.dart';
+import 'package:hotel_management/view/login_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginController extends GetxController {
   late final SupabaseClient _supabase;
   final _prefs = SharedPrefController.reference;
   final ConnectivityController _connectivityController = Get.find();
-  late final GoogleSignIn _googleSignInPlatform;
+  late GoogleSignIn _googleSignInPlatform;
   final Connectivity _connectivity = Connectivity();
-  ROLE? _role;
   String? _token;
   late bool _connected;
   bool _isInit = false;
-  String? deepLinkId;
-  late final UserModel _userModel  ;
+  bool? fromDeepLink;
+  late UserModel _userModel;
+  LoginController({this.fromDeepLink});
   init() async {
     _setUpListener();
-    if(kIsWeb){
-      _googleSignInPlatform =  GoogleSignIn(
-        signInOption: SignInOption.standard,
-        clientId: webClientId,
-      );
-    }else{
-      _googleSignInPlatform = GoogleSignIn(
-        signInOption: SignInOption.standard,
-        clientId: iosClientId,
-        serverClientId: webClientId,
-      );
+    if (kIsWeb) {
+      try {
+        _googleSignInPlatform = GoogleSignIn(
+          signInOption: SignInOption.standard,
+          clientId: webClientId,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
+    } else {
+      try {
+        _googleSignInPlatform = GoogleSignIn(
+          signInOption: SignInOption.standard,
+          clientId: iosClientId,
+          serverClientId: webClientId,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print(e);
+        }
+      }
     }
-   _userModel =  Get.find<UserModel>();
+    _userModel = Get.find<UserModel>();
     if (_prefs.containsKey('token')) {
       try {
-        _userModel.getDetails();
+        await _userModel.getDetails();
         _token = _prefs.getString('token');
-        _role = RoleUtil.fromString(_userModel
-            .role);
       } catch (e) {
         if (kDebugMode) {
           print(e);
@@ -57,7 +64,13 @@ class LoginController extends GetxController {
     }
     await initConnectivity();
     if (_connectivityController.connected.value) {
-      _supabase = Supabase.instance.client;
+     try{
+       _supabase = Supabase.instance.client;
+     }catch(e){
+       if(kDebugMode){
+         print(e);
+       }
+     }
       _isInit = true;
     }
     try {
@@ -65,9 +78,9 @@ class LoginController extends GetxController {
         if (_connected) {
           await _supabase.auth.refreshSession();
         }
-       navigate();
+        Get.back();
       } else {
-        Get.offAll(() => const LoginScreen());
+        await Get.to(() => const LoginScreen());
       }
     } catch (e) {
       signOut();
@@ -131,8 +144,9 @@ class LoginController extends GetxController {
         _googleSignInPlatform.signOut();
       }
     }
+    _token = null;
     _userModel.remove();
-    Get.offAll(() => const LoginScreen());
+    Get.offAllNamed('/');
   }
 
   googleSignIn() async {
@@ -141,11 +155,11 @@ class LoginController extends GetxController {
     }
     try {
       late final GoogleSignInAccount? googleUser;
-      if(kIsWeb){
+      if (kIsWeb) {
         googleUser = await GoogleSignIn(
-          clientId : webClientId,
+          clientId: webClientId,
         ).signIn();
-      }else{
+      } else {
         googleUser = await _googleSignInPlatform.signIn();
       }
       if (googleUser == null) {
@@ -170,9 +184,10 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<AuthResponse> _signInWithIdToken({required Provider provider,
-    required String idToken,
-    required String accessToken}) async {
+  Future<AuthResponse> _signInWithIdToken(
+      {required Provider provider,
+      required String idToken,
+      required String accessToken}) async {
     AuthResponse res = await _supabase.auth.signInWithIdToken(
       provider: Provider.google,
       idToken: idToken,
@@ -194,12 +209,7 @@ class LoginController extends GetxController {
         CustomerApi api = Get.find();
         await api.init();
         await api.getCustomerDetails(res.user!.id);
-        _role = RoleUtil.fromString(Get.find<UserModel>().role);
-        if(deepLinkId == null){
-         navigate();
-        }else{
           Get.back();
-        }
       } catch (e, s) {
         log('error', error: e, stackTrace: s);
         signOut();
@@ -240,15 +250,5 @@ class LoginController extends GetxController {
       }
     }
     _supabase = Supabase.instance.client;
-  }
-
-  void navigate() {
-    Get.put<MyRequestModel>(MyRequestModel(), permanent: true);
-    if (_role == ROLE.customer) {
-      Get.offAllNamed('/home');
-    } else {
-      Get.put<AllRequestModel>(AllRequestModel(), permanent: true);
-      Get.offAllNamed('/recep_home');
-    }
   }
 }

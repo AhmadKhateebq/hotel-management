@@ -126,4 +126,5 @@ class RoomApi extends RoomRepository {
 
     return a.map((e) => Room.fromDynamicMap(e as Map)).toList()..sort();
   }
+
 }

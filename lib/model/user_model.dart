@@ -13,7 +13,7 @@ class UserModel {
   late String role;
   late String customerId;
 
-  getDetails() {
+  getDetails() async {
     _UserDetails details = _UserDetails.fromJson(_pref.getString(tag)!);
     profileImageUrl = details.profileImageUrl;
     firstName = details.firstName;
@@ -45,6 +45,7 @@ class UserModel {
 
   void remove() {
     _pref.remove(tag);
+    _pref.remove('token');
   }
 }
 

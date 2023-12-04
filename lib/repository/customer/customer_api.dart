@@ -51,7 +51,7 @@ class CustomerApi {
     List<dynamic> ids =
         await _supabase.from('customer').select('*').eq('id', id);
     if (ids.isEmpty) {
-      await Get.off(AddCustomer(viewModel: AddNewCustomerViewModel()));
+      await Get.to(AddCustomer(viewModel: AddNewCustomerViewModel()));
       ids = await _supabase.from('customer').select('*').eq('id', id);
       if (ids.isEmpty) {}
     }

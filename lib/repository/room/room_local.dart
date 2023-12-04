@@ -11,12 +11,16 @@ class RoomLocal extends RoomRepository {
   final SharedPreferences _prefs = SharedPrefController.reference;
 
   @override
-  getEmptyRooms(
-      {required DateTime start, required DateTime end})  {
-    return _prefs
-        .getStringList('rooms')!
-        .map((e) => Room.fromDynamic(jsonDecode(e)))
-        .toList();
+  List<Room> getEmptyRooms({required DateTime start, required DateTime end}) {
+    try{
+      return _prefs
+          .getStringList('rooms')!
+          .map((e) => Room.fromDynamic(jsonDecode(e)))
+          .toList();
+    }catch(e){
+      return [];
+    }
+
   }
 
   @override
@@ -87,6 +91,7 @@ class RoomLocal extends RoomRepository {
   getMyRooms({required String userId}) {
     Get.snackbar('No Internet Connection', 'try again later');
   }
+
   @Deprecated("Unimplemented")
   @override
   getNextID(String floor) {
@@ -97,6 +102,7 @@ class RoomLocal extends RoomRepository {
   Future<void> saveRoom(Room room) async {
     Get.snackbar('No Internet Connection', 'try again later');
   }
+
   @Deprecated("Unimplemented")
   @override
   Future<String> uploadImage(File file, String roomId) {
@@ -122,4 +128,6 @@ class RoomLocal extends RoomRepository {
     await _prefs.setStringList(
         'rooms', rooms.map((e) => jsonEncode(e)).toList());
   }
+
+
 }

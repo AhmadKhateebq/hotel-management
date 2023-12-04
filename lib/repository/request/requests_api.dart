@@ -31,7 +31,7 @@ class RoomRequestApi extends RoomRequestRepository {
       Get.snackbar("You already applied for this room", '');
     } else {
       await _supabase.from('request').insert(request.toJsonNoId());
-      Get.offNamed('/home');
+      Navigator.pushReplacementNamed(Get.context!,'/home');
       Get.snackbar("Room Applied", '');
     }
   }

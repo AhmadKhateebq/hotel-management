@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/view/request/requests_page_view.dart';
+import 'package:hotel_management/view/room/room_detail_view.dart';
 import 'package:hotel_management/view/splash_screen.dart';
 
+import 'util/file_output.dart';
 import 'view/room/home_screen.dart';
 
 final primaryColor = Colors.primaries[3];
 bool internet = false;
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(GetMaterialApp(
 
+  WidgetsFlutterBinding.ensureInitialized();
+
+  CustomLogger.logger.t('start',time: DateTime.now());
+  runApp(GetMaterialApp(
     color: primaryColor,
     theme: ThemeData(
         fontFamily: 'RobotoCondensed',
@@ -34,15 +38,17 @@ void main() async {
         )),
     defaultTransition: Transition.cupertino,
     transitionDuration: const Duration(milliseconds: 500),
+    navigatorKey: GlobalKey<NavigatorState>(),
+    key: GlobalKey(),
     getPages: [
       GetPage(name: '/home', page: () => const HomeScreen()),
-      GetPage(name: '/splash', page: () => const SplashScreen()),
+      GetPage(name: '/', page: () => const SplashScreen()),
+      GetPage(name: '/deepLink/room/:roomId', page: () => const RoomDetailsView()),
       GetPage(name: '/recep_home', page: () => const RequestsPagesView()),
-
     ],
     home: const SplashScreen(),
-    initialRoute: '/splash',
-    unknownRoute: GetPage( name: SplashScreen.routeName, page: () => const SplashScreen(), ),
+    // initialRoute: '/',
+    // unknownRoute: GetPage( name: SplashScreen.routeName, page: () => const SplashScreen(), ),
   ));
 }
 

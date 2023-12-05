@@ -68,6 +68,6 @@ class AddNewCustomerViewModel {
   }
 
   skip() async {
-
+    Get.back();
   }
 }

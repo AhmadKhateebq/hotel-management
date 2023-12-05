@@ -94,11 +94,14 @@ class RoomDetailsViewModel {
   }
 
   Future<DateTimeRange?> _dateRangePicker() async {
+    if(startingDate==null || startingDate!.isBefore(DateTime.now())){
+      startingDate = DateTime.now();
+    }
     return await showDateRangePicker(
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(const Duration(days: 1461)),
         initialDateRange: DateTimeRange(
-            start: startingDate ?? DateTime.now(),
+            start: startingDate!,
             end: endingDate ?? DateTime.now().add(const Duration(days: 1))),
         context: Get.context!);
   }

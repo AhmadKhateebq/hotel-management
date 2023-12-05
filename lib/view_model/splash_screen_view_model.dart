@@ -85,12 +85,14 @@ class SplashScreenViewModel {
   }
 
   setUpNav() async {
-    try{
+    try {
       await FlutterBranchSdk.init();
-      FlutterBranchSdk.validateSDKIntegration();
-    }catch(e,_){
-      CustomLogger.logger.e('init error',error: e);
-      Get.to(() => Center(child: Text(e.toString()),));
+      // FlutterBranchSdk.validateSDKIntegration();
+    } catch (e, _) {
+      CustomLogger.logger.e('init error', error: e);
+      Get.to(() => Center(
+            child: Text(e.toString()),
+          ));
     }
     // FlutterBranchSdk.listSession().listen(onData);
     var data = await FlutterBranchSdk.getLatestReferringParams();
@@ -101,8 +103,10 @@ class SplashScreenViewModel {
     log(data.toString());
     if (data.containsKey("+clicked_branch_link") &&
         data["+clicked_branch_link"] == true) {
+      String path = '${data['\$deeplink_path']}';
+      String query = Uri.parse(data['~referring_link']).query;
+      navigate(path : '$path?$query');
       //Link clicked. Add logic to get link data and route user to correct screen
-      log('Custom string: ${data["custom_string"]}');
     } else if (data.containsKey('+non_branch_link')) {
       String value = data['+non_branch_link'];
       var uri = Uri.parse(value);
@@ -126,22 +130,23 @@ class SplashScreenViewModel {
       _navToHome(role);
     } else {
       var name = path.split('/')[1];
+      name = name.split('?')[0];
       if (!deepLinks.contains(name)) {
         Get.snackbar('Not Found', 'Sorry, We Cant Find Your Screen !');
         _navToHome(role);
       } else {
-        Get.toNamed('/deepLink$path');
+        Get.offNamed('/deepLink$path');
       }
     }
   }
 
   _navToHome(ROLE role) {
     if (role == ROLE.customer) {
-      Navigator.pushReplacementNamed(Get.context!, '/home');
+      Get.offNamed('/home');
     } else {
-      Navigator.pushReplacementNamed(Get.context!, '/recep_home');
+      Get.offNamed('/recep_home');
     }
   }
 }
 
-const deepLinks = ['room'];
+const deepLinks = ['/room','room'];

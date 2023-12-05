@@ -44,6 +44,7 @@ void main() async {
       GetPage(name: '/home', page: () => const HomeScreen()),
       GetPage(name: '/', page: () => const SplashScreen()),
       GetPage(name: '/deepLink/room/:roomId', page: () => const RoomDetailsView()),
+      GetPage(name: '/deepLink/room', page: () => const RoomDetailsView()),
       GetPage(name: '/recep_home', page: () => const RequestsPagesView()),
     ],
     home: const SplashScreen(),

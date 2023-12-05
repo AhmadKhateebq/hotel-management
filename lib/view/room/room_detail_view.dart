@@ -31,7 +31,7 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
     viewModel.init().then((value) {
 
       setState(() {});
-      if(value){
+      if (value) {
         viewModel.reserveRoom();
       }
     });
@@ -49,9 +49,9 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              if(widget.fromDeepLink??false){
+              if (viewModel.fromDeepLink) {
                 Get.offNamed('/home');
-              }else{
+              } else {
                 Get.back();
               }
             },

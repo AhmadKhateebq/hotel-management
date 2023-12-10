@@ -73,12 +73,5 @@
 		<key>test</key>
 		<string>key_test_hlxrWC5Zx16DkYmWu4AHiimdqugRYMr</string>
 	</dict>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
 </dict>
 </plist>

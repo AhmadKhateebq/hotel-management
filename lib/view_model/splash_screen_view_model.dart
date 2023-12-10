@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hotel_management/analytics/analytics_service.dart';
 import 'package:hotel_management/controller/connectivity_controller.dart';
 import 'package:hotel_management/controller/login_controller.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
@@ -19,48 +20,29 @@ import 'package:hotel_management/repository/request/room_request_repository.dart
 import 'package:hotel_management/repository/room/room_repository.dart';
 import 'package:hotel_management/repository/room_repository_impl.dart';
 import 'package:hotel_management/repository/room_requests_repository_impl.dart';
-import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/file_output.dart';
 import 'package:hotel_management/util/util_classes.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreenViewModel {
-  late final String currentRoute;
-
   initApp() async {
     CustomLogger.logger.i('app init', time: DateTime.now());
-    currentRoute = Get.currentRoute;
     //shared pref
-    await SharedPrefController.init();
+    await Get.put(SharedPrefController(),permanent: true).init();
     Get.put(ConnectivityController(), permanent: true);
-    Get.put(CustomerApi(), permanent: true);
+    Get.put(SupabaseController(), permanent: true);
+    // Get.find<AnalyticsService>().trackContentTest();
     try {
-      await Get.find<CustomerApi>().init();
+      await Get.find<SupabaseController>().init();
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
-    //set up connectivity sub
+    Get.put(CustomerApi(), permanent: true);
     await Get.find<ConnectivityController>().init();
-    bool internet = Get.find<ConnectivityController>().connected.value;
-    //try to init firebase for analytics
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    //try to init supabase
-    if (internet) {
-      try {
-        await Supabase.initialize(
-          url: supabaseUrl,
-          anonKey: publicAnonKey,
-        );
-      } catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
-      }
-    }
     final LoginController loginController =
         Get.put(LoginController(), permanent: true);
     Get.put<RoomRequestRepository>(RoomRequestRepositoryImpl(),
@@ -79,6 +61,7 @@ class SplashScreenViewModel {
     }
     Get.put(RoomModel(), permanent: true);
     Get.put(UserModel(), permanent: true);
+    Get.put(AnalyticsService(), permanent: true);
     await loginController.init();
     setUpNav();
   }
@@ -97,13 +80,12 @@ class SplashScreenViewModel {
 
   void onData(Map<dynamic, dynamic> data) {
     log(data.toString());
-
     if (data.containsKey("+clicked_branch_link") &&
         data["+clicked_branch_link"] == true) {
+      //is from branch , set analytics
       String path = '${data['\$deeplink_path']}';
       String query = Uri.parse(data['~referring_link']).query;
-
-      navigate(path : '$path?$query',arguments:data);
+      navigate(path: '$path?$query', arguments: data);
       //Link clicked. Add logic to get link data and route user to correct screen
     } else if (data.containsKey('+non_branch_link')) {
       String value = data['+non_branch_link'];
@@ -111,14 +93,14 @@ class SplashScreenViewModel {
       var uri = Uri.parse(value);
       String path = uri.path;
       log('deep link');
-      navigate(path: '$path?${uri.query}',arguments: data);
+      navigate(path: '$path?${uri.query}', arguments: data);
     } else {
       log('non deep link');
       navigate();
     }
   }
 
-  void navigate({String? path,dynamic arguments}) {
+  void navigate({String? path, dynamic arguments}) {
     Get.find<UserModel>().getDetails();
     final role = RoleUtil.fromString(Get.find<UserModel>().role);
     Get.put<MyRequestModel>(MyRequestModel(), permanent: true);
@@ -134,7 +116,7 @@ class SplashScreenViewModel {
         Get.snackbar('Not Found', 'Sorry, We Cant Find Your Screen !');
         _navToHome(role);
       } else {
-        Get.offNamed('/deepLink$path',arguments: arguments);
+        Get.offNamed('/deepLink$path', arguments: arguments);
       }
     }
   }
@@ -148,4 +130,4 @@ class SplashScreenViewModel {
   }
 }
 
-const deepLinks = ['/room','room'];
+const deepLinks = ['/room', 'room'];

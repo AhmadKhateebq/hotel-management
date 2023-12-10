@@ -38,8 +38,6 @@ void main() async {
         )),
     defaultTransition: Transition.cupertino,
     transitionDuration: const Duration(milliseconds: 500),
-    navigatorKey: GlobalKey<NavigatorState>(),
-    key: GlobalKey(),
     getPages: [
       GetPage(name: '/home', page: () => const HomeScreen()),
       GetPage(name: '/', page: () => const SplashScreen()),

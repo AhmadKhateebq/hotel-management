@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -24,7 +25,9 @@ class FileOutputImpl extends LogOutput {
       }
     } else {
       for (var line in event.lines) {
-        print(line);
+        if (kDebugMode) {
+          print(line);
+        }
       }
     }
   }

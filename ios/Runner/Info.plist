@@ -46,31 +46,39 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <!-- TODO Replace this value: -->
-          <!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-          <string>390986779944-9d6an0drc87etrsd35u5kf3scoils0gj.apps.googleusercontent.com</string>
-        </array>
-      </dict>
-    </array>
-    <key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <!-- TODO Replace this value: -->
-          <!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-          <string>com.googleusercontent.apps.my-ios</string>
-        </array>
-      </dict>
-    </array>
-
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.my-ios</string>
+				<string>branchsters</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>io.Branch.Branchsters</string>
+		</dict>
+	</array>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>hotel-management-quizplus.web.app</string>
+		<string>hotel-management-quizplus.firebaseapp.com</string>
+		<string>51fjc.app.link</string>
+		<string>51fjc-alternate.app.link</string>
+	</array>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_funur9GWIqTF4cVBawSDcoaeCxjr944l</string>
+		<key>test</key>
+		<string>key_test_hlxrWC5Zx16DkYmWu4AHiimdqugRYMr</string>
+	</dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

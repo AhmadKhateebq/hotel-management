@@ -43,6 +43,11 @@ class Room implements Comparable {
     );
   }
 
+  String get floorText {
+    var floor = int.parse(roomId.replaceAll(RegExp(r'[^0-9]'), ''));
+    return floor == 1 ? 'First Floor' : floor == 2 ? 'Second Floor' : '${floor}th Floor';
+  }
+
   static List<String> _getSlideShow(List<dynamic> values) {
     return values.map((e) => e.toString()).toList();
   }

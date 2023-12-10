@@ -14,8 +14,7 @@ import 'package:hotel_management/view/login_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginController extends GetxController {
-  late final SupabaseClient _supabase;
-  final _prefs = SharedPrefController.reference;
+  final _prefs = Get.find<SharedPrefController>().reference;
   final ConnectivityController _connectivityController = Get.find();
   late GoogleSignIn _googleSignInPlatform;
   final Connectivity _connectivity = Connectivity();
@@ -65,7 +64,7 @@ class LoginController extends GetxController {
     await initConnectivity();
     if (_connectivityController.connected.value) {
      try{
-       _supabase = Supabase.instance.client;
+       await Get.find<SupabaseController>().init();
      }catch(e){
        if(kDebugMode){
          print(e);
@@ -76,7 +75,7 @@ class LoginController extends GetxController {
     try {
       if (_token != null) {
         if (_connected) {
-          await _supabase.auth.refreshSession();
+          await Get.find<SupabaseController>().client.auth.refreshSession();
         }
         Get.back();
       } else {
@@ -109,7 +108,7 @@ class LoginController extends GetxController {
       return;
     }
     try {
-      final AuthResponse res = await _supabase.auth.signUp(
+      final AuthResponse res = await Get.find<SupabaseController>().client.auth.signUp(
         email: email,
         password: password,
       );
@@ -125,7 +124,7 @@ class LoginController extends GetxController {
       return 'false';
     }
     try {
-      final AuthResponse res = await _supabase.auth.signInWithPassword(
+      final AuthResponse res = await Get.find<SupabaseController>().client.auth.signInWithPassword(
         email: email,
         password: password,
       );
@@ -139,7 +138,7 @@ class LoginController extends GetxController {
 
   signOut() async {
     if (_connected) {
-      await _supabase.auth.signOut();
+      await Get.find<SupabaseController>().client.auth.signOut();
       if (await _googleSignInPlatform.isSignedIn()) {
         _googleSignInPlatform.signOut();
       }
@@ -188,7 +187,7 @@ class LoginController extends GetxController {
       {required Provider provider,
       required String idToken,
       required String accessToken}) async {
-    AuthResponse res = await _supabase.auth.signInWithIdToken(
+    AuthResponse res = await Get.find<SupabaseController>().client.auth.signInWithIdToken(
       provider: Provider.google,
       idToken: idToken,
       accessToken: accessToken,
@@ -207,7 +206,6 @@ class LoginController extends GetxController {
       await _prefs.setString('token', res.session!.accessToken);
       try {
         CustomerApi api = Get.find();
-        await api.init();
         await api.getCustomerDetails(res.user!.id);
           Get.back();
       } catch (e, s) {
@@ -249,6 +247,5 @@ class LoginController extends GetxController {
         print(e);
       }
     }
-    _supabase = Supabase.instance.client;
   }
 }

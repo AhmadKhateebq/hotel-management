@@ -8,7 +8,7 @@ import 'package:hotel_management/repository/room/room_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomLocal extends RoomRepository {
-  final SharedPreferences _prefs = SharedPrefController.reference;
+  final SharedPreferences _prefs = Get.find<SharedPrefController>().reference;
 
   @override
   List<Room> getEmptyRooms({required DateTime start, required DateTime end}) {

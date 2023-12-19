@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hotel_management/analytics/analytics_service.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/interface/request.dart';
+import 'package:hotel_management/interface/room.dart';
 import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/repository/request/room_request_repository.dart';
 import 'package:hotel_management/util/const.dart';
@@ -9,7 +12,7 @@ import 'package:hotel_management/util/util_classes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RoomRequestApi extends RoomRequestRepository {
-  late final SupabaseClient _supabase;
+  final _supabase = Get.find<SupabaseController>().client;
 
   Future<void> init() async {
     try {
@@ -22,7 +25,6 @@ class RoomRequestApi extends RoomRequestRepository {
         print(e);
       }
     }
-    _supabase = Supabase.instance.client;
   }
 
   @override
@@ -31,7 +33,8 @@ class RoomRequestApi extends RoomRequestRepository {
       Get.snackbar("You already applied for this room", '');
     } else {
       await _supabase.from('request').insert(request.toJsonNoId());
-      Get.offNamed('/home');
+      await logRoomPurchase(request.roomId);
+      Navigator.pushReplacementNamed(Get.context!, '/home');
       Get.snackbar("Room Applied", '');
     }
   }
@@ -87,6 +90,13 @@ class RoomRequestApi extends RoomRequestRepository {
   @override
   approve(int id, String roomId) async {
     await _supabase.from('request').update({'status': 'approved'}).eq('id', id);
+    await logRoomPurchase(roomId);
+  }
+
+  logRoomPurchase(String roomId) async {
+    var room =
+        await _supabase.from('room').select('*').eq('room_id', roomId).single();
+    await Get.find<AnalyticsService>().logReserve(Room.fromDynamicMap(room));
   }
 
   @override
@@ -128,19 +138,19 @@ class RoomRequestApi extends RoomRequestRepository {
   Stream<List<Map<String, dynamic>>> getStream() {
     return _supabase.from('request').stream(primaryKey: ['id']);
   }
+
   Stream<List<Map<String, dynamic>>> getMyStream() {
-    final customerId =  Get.find<UserModel>().customerId;
-    return _supabase.from('request').stream(primaryKey: ['id']).eq('customer_id', customerId);
+    final customerId = Get.find<UserModel>().customerId;
+    return _supabase
+        .from('request')
+        .stream(primaryKey: ['id']).eq('customer_id', customerId);
   }
 
   @override
   Future<List<RoomRequest>> getMyRoomRequests() async {
-    String userId =  Get.find<UserModel>().customerId;
+    String userId = Get.find<UserModel>().customerId;
     var res = await _supabase.rpc('get_my_requests',
-        params: {'user_id': userId})
-        .select<List<Map<String, dynamic>>>('*');
-    return res
-        .map(RoomRequest.fromDynamicMap)
-        .toList();
+        params: {'user_id': userId}).select<List<Map<String, dynamic>>>('*');
+    return res.map(RoomRequest.fromDynamicMap).toList();
   }
 }

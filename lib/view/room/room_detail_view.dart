@@ -9,12 +9,11 @@ import '../../view_model/room/room_details_view_model.dart';
 import '../../component/rating/rating_bar.dart';
 
 class RoomDetailsView extends StatefulWidget {
-  const RoomDetailsView({
-    super.key,
-    required this.room,
-  });
+  const RoomDetailsView({super.key, this.room, this.id, this.fromDeepLink});
 
-  final Room room;
+  final Room? room;
+  final String? id;
+  final bool? fromDeepLink;
 
   @override
   State<RoomDetailsView> createState() => _RoomDetailsViewState();
@@ -25,8 +24,17 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
 
   @override
   void initState() {
-    viewModel = RoomDetailsViewModel(room: widget.room);
-    viewModel.getAvg();
+    viewModel = RoomDetailsViewModel(
+        room: widget.room,
+        id: widget.id,
+        fromDeepLink: widget.fromDeepLink ?? false);
+    viewModel.init().then((value) {
+
+      setState(() {});
+      if (value) {
+        viewModel.reserveRoom();
+      }
+    });
     super.initState();
   }
 
@@ -41,7 +49,11 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              Get.back();
+              if (viewModel.fromDeepLink) {
+                Get.offNamed('/home');
+              } else {
+                Get.back();
+              }
             },
             icon: const Icon(Icons.close)),
         title: Text('Room ${viewModel.roomId}'),
@@ -75,11 +87,10 @@ class _RoomDetailsViewState extends State<RoomDetailsView> {
               endIndent: 0,
               color: Colors.grey,
             ),
-            const Text('Room Details',style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20
-            ),),
-
+            const Text(
+              'Room Details',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
             Expanded(
               flex: 1,
               child: Row(

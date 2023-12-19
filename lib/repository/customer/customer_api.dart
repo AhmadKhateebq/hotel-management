@@ -1,39 +1,19 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/interface/customer.dart';
 import 'package:hotel_management/interface/customer_details.dart';
 import 'package:hotel_management/model/user_model.dart';
-import 'package:hotel_management/view/add_new_customer_view.dart';
-import 'package:hotel_management/view_model/add_new_customer_view_model.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/util_classes.dart';
+import 'package:hotel_management/view/add_new_customer_view.dart';
+import 'package:hotel_management/view_model/add_new_customer_view_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CustomerApi {
-  late final SupabaseClient _supabase;
-  final _prefs = SharedPrefController.reference;
+   final SupabaseClient _supabase =  Get.find<SupabaseController>().client;
+  final _prefs = Get.find<SharedPrefController>().reference;
 
-  init() async {
-    try {
-      await Supabase.initialize(
-        url: supabaseUrl,
-        anonKey: publicAnonKey,
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-    try {
-      _supabase = Supabase.instance.client;
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
 
   Future<String> getCustomerName(String customerId) async {
     try {
@@ -51,7 +31,7 @@ class CustomerApi {
     List<dynamic> ids =
         await _supabase.from('customer').select('*').eq('id', id);
     if (ids.isEmpty) {
-      await Get.off(AddCustomer(viewModel: AddNewCustomerViewModel()));
+      await Get.to(AddCustomer(viewModel: AddNewCustomerViewModel()));
       ids = await _supabase.from('customer').select('*').eq('id', id);
       if (ids.isEmpty) {}
     }

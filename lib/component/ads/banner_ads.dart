@@ -62,26 +62,24 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
     return _isLoaded && !_closed
         ? Align(
             alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: width,
-                    height: height,
-                    child: AdWidget(ad: _bannerAd!),
-                  ),
-                  widget.withClose
-                      ? IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _closed = true;
-                            });
-                          },
-                          icon: const Icon(Icons.close))
-                      : const SizedBox()
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: width,
+                  height: height,
+                  child: AdWidget(ad: _bannerAd!),
+                ),
+                widget.withClose
+                    ? IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _closed = true;
+                          });
+                        },
+                        icon: const Icon(Icons.close))
+                    : const SizedBox()
+              ],
             ),
           )
         : const SizedBox();

@@ -53,7 +53,7 @@ class RoomRepositoryImpl extends RoomRepository {
       await local.saveRoomsToPref(temp);
       return temp;
     } else {
-      return await local.getEmptyRooms(start: start, end: end);
+      return  local.getEmptyRooms(start: start, end: end);
     }
   }
 
@@ -180,6 +180,18 @@ class RoomRepositoryImpl extends RoomRepository {
   }
 
   List<Room> getRoomsFromCache() {
-    return local.getEmptyRooms(start: DateTime.now() , end: DateTime.now());
+    var list =  local.getEmptyRooms(start: DateTime.now() , end: DateTime.now());
+    if(list.isEmpty){
+      getEmptyRooms(start: DateTime.now(), end: DateTime.now());
+    }
+    return list;
+  }
+
+  Future<List<Room>> getRooms() async {
+    if (await _isOnline()) {
+    return await api.getEmptyRooms(start: DateTime.now(), end: DateTime.now());
+    } else {
+    return getRoomsFromCache();
+    }
   }
 }

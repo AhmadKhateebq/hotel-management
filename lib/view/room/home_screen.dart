@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 minHeight: 0,
               ),
               kIsWeb?const SizedBox():const BannerAdWidget(
-                withClose: false,
+                withClose: true,
               ),
             ]),
             appBar: AppBar(

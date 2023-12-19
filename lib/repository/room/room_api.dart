@@ -1,5 +1,6 @@
-
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/interface/room.dart';
 import 'package:hotel_management/util/const.dart';
 import 'package:hotel_management/util/date_formatter_util.dart';
@@ -9,7 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'room_repository.dart';
 
 class RoomApi extends RoomRepository {
-  late final SupabaseClient _supabase;
+  final _supabase = Get.find<SupabaseController>().client;
 
   init() async {
     try {
@@ -22,7 +23,6 @@ class RoomApi extends RoomRepository {
         print(e);
       }
     }
-    _supabase = Supabase.instance.client;
   }
 
   Future<List<Room>> _getAllRooms() async {
@@ -42,7 +42,9 @@ class RoomApi extends RoomRepository {
         .map((e) => e.roomId.replaceAll(RegExp(r'[^A-Z]'), ''))
         .toList()
       ..sort());
-    String roomID = list.isNotEmpty?list.last:(String.fromCharCode('A'.codeUnitAt(0) - 1));
+    String roomID = list.isNotEmpty
+        ? list.last
+        : (String.fromCharCode('A'.codeUnitAt(0) - 1));
     return (String.fromCharCode(roomID.codeUnitAt(0) + 1));
   }
 

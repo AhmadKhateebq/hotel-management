@@ -1,19 +1,19 @@
 import 'package:get/get.dart';
+import 'package:hotel_management/controller/shared_pref_controller.dart';
 import 'package:hotel_management/interface/room.dart';
 import 'package:hotel_management/interface/room_review.dart';
 import 'package:hotel_management/model/user_model.dart';
 import 'package:hotel_management/repository/room/room_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyRoomsFacade {
-  late final SupabaseClient _supabase =  Supabase.instance.client;
+  final _supabase = Get.find<SupabaseController>().client;
   final RoomRepository _roomApi = Get.find();
   final String _userId = Get.find<UserModel>().customerId;
 
   Future<List<Room>> getRooms() async {
     try {
       return await _roomApi.getMyRooms(userId: _userId);
-    }  catch(e){
+    } catch (e) {
       return [];
     }
   }
@@ -33,8 +33,6 @@ class MyRoomsFacade {
       Get.snackbar('Review Sent', 'your review has been Updated');
     }
   }
-
-
 
   reviewExist(String roomId) async {
     var res = await _supabase

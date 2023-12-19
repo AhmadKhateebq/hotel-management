@@ -1,3 +1,5 @@
+
+
 enum ROLE {
   customer,
   admin,
@@ -5,7 +7,6 @@ enum ROLE {
 }
 
 enum STATUS { pending, approved, denied, reserved }
-
 class RoleUtil {
   static const customer = ROLE.customer;
   static const admin = ROLE.admin;

@@ -10,7 +10,7 @@ import 'package:hotel_management/repository/request/room_request_repository.dart
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomRequestLocal extends RoomRequestRepository {
-  final SharedPreferences _prefs = SharedPrefController.reference;
+  final SharedPreferences _prefs = Get.find<SharedPrefController>().reference;
 
   @override
   approve(int id, String roomId) async {

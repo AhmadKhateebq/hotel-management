@@ -1,11 +1,12 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:hotel_management/controller/shared_pref_controller.dart';
 
 const tag = 'user_details';
 
 class UserModel {
-  final _pref = SharedPrefController.reference;
+  final _pref = Get.find<SharedPrefController>().reference;
 
   late String profileImageUrl;
   late String firstName;
@@ -13,7 +14,7 @@ class UserModel {
   late String role;
   late String customerId;
 
-  getDetails() {
+  getDetails() async {
     _UserDetails details = _UserDetails.fromJson(_pref.getString(tag)!);
     profileImageUrl = details.profileImageUrl;
     firstName = details.firstName;
@@ -45,6 +46,7 @@ class UserModel {
 
   void remove() {
     _pref.remove(tag);
+    _pref.remove('token');
   }
 }
 

@@ -85,8 +85,7 @@ class RoomCard extends StatelessWidget {
   }
 
   String get floorText {
-    var floor = int.parse(_room.roomId.replaceAll(RegExp(r'[^0-9]'), ''));
-    return '${floor == 1 ? 'First Floor' : floor == 2 ? 'Second Floor' : '${floor}th Floor'} '
+    return '${_room.floorText}'
         '\nRoom ${_room.roomId.replaceAll(RegExp(r'[^A-Z]'), '')}';
   }
 

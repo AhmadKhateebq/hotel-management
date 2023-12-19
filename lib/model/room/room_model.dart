@@ -89,4 +89,14 @@ class RoomModel extends GetxController{
         ? await impl.uploadImage(File(image.path), roomId)
         : noImage;
   }
+
+  Future<Room> getRoom(String id) async {
+    if(rooms.isEmpty){
+      rooms = impl.getRoomsFromCache();
+    }
+    if(rooms.isEmpty){
+      rooms = await impl.getRooms();
+    }
+    return rooms.where((element) => element.roomId == id).first;
+  }
 }

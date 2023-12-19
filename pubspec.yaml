@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.1.0+1
 
 environment:
   sdk: '>=3.1.3 <4.0.0'
@@ -38,6 +38,36 @@ dependencies:
   get: ^4.6.6
   supabase_flutter: ^1.10.24
   intl: ^0.18.1
+  google_sign_in: ^6.1.5
+  loading_indicator: ^3.1.1
+  image_picker: ^1.0.4
+  image_card: ^0.0.4
+  flip_card: ^0.7.0
+  flutter_image_slideshow: ^0.1.6
+  flutter_rating_bar: ^4.0.1
+  sliding_up_panel: ^2.0.0+1
+  path: ^1.8.3
+  provider: ^6.1.1
+  in_app_review: ^2.0.8
+  rate_my_app: ^2.0.0
+  firebase_core: ^2.22.0
+  firebase_analytics: ^10.7.0
+  google_mobile_ads: ^4.0.0
+  parallax: ^1.0.3
+  firebase_performance: ^0.9.3+4
+  shared_preferences: ^2.2.2
+  connectivity_plus: ^5.0.1
+  cached_network_image: ^3.3.0
+  styled_widget: ^0.4.1
+  mockito: ^5.4.3
+  app_links: ^3.4.5
+  logger: ^2.0.2+1
+  path_provider: ^2.1.1
+  flutter_branch_sdk: ^7.0.1
+  flutter_quill: ^8.2.2
+  flutter_bloc: ^8.1.3
+  html_editor_enhanced: ^2.5.1
+  file_picker: ^5.2.0+1
 
 
 dev_dependencies:
@@ -50,6 +80,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  test: ^1.24.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -63,8 +94,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/image/
+    - fonts/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -78,11 +110,14 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+  fonts:
+      - family: RobotoCondensed
+        fonts:
+         - asset: fonts/RobotoCondensed-Regular.ttf
+         - asset: fonts/RobotoCondensed-Italic.ttf
+      - family: Lobster
+        fonts:
+         - asset: fonts/Lobster-Regular.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
